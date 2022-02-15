@@ -1,0 +1,28 @@
+cd # Maintainer: DemonKiller
+pkgname=pearos-settings
+destname="/etc"
+pkgver=22.02
+pkgrel=1
+pkgdesc="Settings for pearOS NiceC0re"
+arch=('x86_64')
+url="https://github.com/Pear-Project"
+license=('GPL3')
+makedepends=('git')
+
+depends=('plasma-desktop' 'vlc' 'firefox' 'tela-circle-icon' 'konsole')
+
+optdepends=('paru: an AUR helper'
+            'neofetch: screenfetch utility'
+            'cups: printing support'
+            'system-config-printer: CUPS status applet'
+            'bluemdevil: bluetooth manager')
+conflicts=()
+provides=("${pkgname}")
+options=(!strip !emptydirs)
+source=(${pkgname}::"git+${url}/${pkgname}")
+sha256sums=('SKIP')
+
+package() {
+	install -dm755 ${pkgdir}${destname}
+	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
+}
