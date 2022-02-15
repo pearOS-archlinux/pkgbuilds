@@ -1,0 +1,21 @@
+#Maintainer: DemonKiller
+pkgname=pearos-livecd-desktop
+destname="/etc/skel/Desktop"
+pkgver=22.02
+pkgrel=2
+pkgdesc="Show Calamares to install pearOS"
+arch=('any')
+url="https://github.com/Pear-Project"
+license=('GPL3')
+makedepends=('custom')
+depends=()
+conflicts=()
+provides=("${pkgname}")
+options=(!strip !emptydirs)
+source=(${pkgname}::"git+${url}/${pkgname}")
+sha256sums=('SKIP')
+package() {
+	install -dm755 ${pkgdir}${destname}
+	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
+	#chmod 755 ${destname}/calamares.desktop
+}
