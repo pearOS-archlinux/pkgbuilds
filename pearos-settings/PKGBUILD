@@ -1,6 +1,7 @@
 cd # Maintainer: DemonKiller
 pkgname=pearos-settings
 destname="/etc"
+destnameusr="/usr"
 pkgver=22.02
 pkgrel=1
 pkgdesc="Settings for pearOS NiceC0re"
@@ -24,5 +25,7 @@ sha256sums=('SKIP')
 
 package() {
 	install -dm755 ${pkgdir}${destname}
+	install -dm755 ${pkgdir}${destnameusr}
 	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
+	cp -r ${srcdir}/${pkgname}${destnameusr}/* ${pkgdir}${destnameusr}
 }
