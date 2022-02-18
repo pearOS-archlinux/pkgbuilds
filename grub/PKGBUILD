@@ -308,3 +308,4 @@ package() {
 	echo "Package grub bios stuff..."
 	_package_grub-common_and_bios
 }
+## end
