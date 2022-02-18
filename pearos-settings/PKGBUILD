@@ -10,7 +10,7 @@ url="https://github.com/pearOS-archlinux"
 license=('GPL3')
 makedepends=('git')
 
-depends=('plasma-desktop' 'vlc' 'firefox' 'tela-circle-icon' 'konsole')
+depends=('plasma-desktop' 'firefox' 'konsole')
 
 optdepends=('paru: an AUR helper'
             'neofetch: screenfetch utility'
