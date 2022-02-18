@@ -1,3 +1,5 @@
+#  Made by Alexandru Balan
+
 build:
 	makepkg -sr --sign --skippgpcheck
 clean:
