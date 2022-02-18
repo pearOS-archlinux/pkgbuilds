@@ -1,0 +1,17 @@
+# Maintainer: Alexandru Balan
+
+pkgname=pearos-grub-theme
+pkgver=22.02
+pkgrel=1
+pkgdesc="Grub theme for pearOS NiceC0re"
+arch=('any')
+url="https://github.com/pearOS-archlinux/pearOS-Default-GRUB"
+depends=('grub')
+source=("work::git+https://github.com/pearOS-archlinux/pearOS-Default-GRUB.git")
+sha256sums=('SKIP')
+
+package() {
+    cd ${srcdir}/work
+    mkdir -p ${pkgdir}/usr/share/grub/themes
+    cp -rv pearOS ${pkgdir}/usr/share/grub/themes/.
+}
