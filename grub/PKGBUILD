@@ -60,17 +60,13 @@ validpgpkeys=('E53D497F3FA42AD8C9B4D1E835A93B74E82E4209'  # Vladimir 'phcoder' S
 source=("git+https://git.savannah.gnu.org/git/grub.git#tag=${_tag}?signed"
         'git+https://git.savannah.gnu.org/git/gnulib.git'
         "https://ftp.gnu.org/gnu/unifont/unifont-${_unifont_ver}/unifont-${_unifont_ver}.bdf.gz"{,.sig}
-        '0001-00_header-add-GRUB_COLOR_-variables.patch'
-        '0002-10_linux-detect-archlinux-initramfs.patch'
         'grub.default')
 
 sha256sums=('SKIP'
             'SKIP'
             '391d194f6307fcd0915daafd360509a734e26f3e4013e63d47deb2530d59e66e'
             'SKIP'
-            '5dee6628c48eef79812bb9e86ee772068d85e7fcebbd2b2b8d1e19d24eda9dab'
-            '8488aec30a93e8fe66c23ef8c23aefda39c38389530e9e73ba3fbcc8315d244d'
-            'c17bf255a41103f6b71a1710afc7e9addaebc578bcf51a48845e227b2f651682')
+            '12bf2f9902ac885f0b1cabf912b4981a0a1d7334012eb4f7a5add14a4a2a1f28')
 
 _backports=(
 	# fs/xfs: Fix unreadable filesystem with v4 superblock
@@ -311,3 +307,4 @@ package() {
 	echo "Package grub bios stuff..."
 	_package_grub-common_and_bios
 }
+
