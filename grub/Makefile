@@ -1,5 +1,5 @@
 build:
-	makepkg -sr --sign
+	makepkg -sr --sign --skippgpcheck
 clean:
 	rm -rf pkg/
 	rm -rf src/
