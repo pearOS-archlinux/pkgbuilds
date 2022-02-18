@@ -6,3 +6,6 @@ clean:
 	rm -rf alg-*
 	rm -rf *.zst
 	rm -rf *.sig
+	rm -rf uni*
+	rm -rf gnulib/
+	rm -rf grub/
