@@ -1,0 +1,31 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,111,71)
+  { pn_displays Panel
+    MoveScaled(8,10,84,44)
+    Visible = False
+    { brand PictureBox
+      MoveScaled(31,1,23,24)
+      Picture = Picture["sur.png"]
+      Mode = PictureBox.Contain
+    }
+    { lbl_os Label
+      MoveScaled(31,25,18,4)
+      Font = Font["Bold,+6"]
+      Text = ("Display 1")
+    }
+    { Button8 Button
+      MoveScaled(60,36,20,3)
+      Font = Font["-1"]
+      Text = ("Display Preferences") & "..."
+    }
+    { lbl_inch Label
+      MoveScaled(31,30,18,3)
+      Text = ("No-inch (resolution)")
+    }
+    { lbl_gpu_name Label
+      MoveScaled(31,33,29,4)
+    }
+  }
+}

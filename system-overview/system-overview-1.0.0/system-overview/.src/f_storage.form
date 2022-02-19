@@ -1,0 +1,39 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,84,43)
+  { pn_storage Panel
+    MoveScaled(0,0,84,26)
+    { brand2 PictureBox
+      MoveScaled(6,6,11,10)
+      Picture = Picture["disk.png"]
+      Mode = PictureBox.Contain
+    }
+    { lbl_storage_available Label
+      MoveScaled(18,8,23,5)
+      Font = Font["Bitstream,+1"]
+      Text = ("0 GB available of 0 GB")
+    }
+    { btn_manage Button
+      MoveScaled(71,8,10,3)
+      Font = Font["-1"]
+      Text = ("Manage") & "..."
+    }
+    { lbl_storage_total Label
+      MoveScaled(8,16,6,6)
+      Alignment = Align.Center
+      Text = ("0 GB")
+    }
+    { lbl_storage_name Label
+      MoveScaled(18,5,30,4)
+      Font = Font["Bitstream,+2"]
+    }
+    { lbl_nice_storage Label
+      MoveScaled(6,20,14,3)
+      Text = ("Nice Storage")
+    }
+    { storage_bar ProgressBar
+      MoveScaled(18,13,63,4)
+    }
+  }
+}

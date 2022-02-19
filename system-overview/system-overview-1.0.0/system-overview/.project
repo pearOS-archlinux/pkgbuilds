@@ -1,0 +1,23 @@
+# Gambas Project File 3.0
+Title=System informations
+Startup=FMain
+Version=1.0.0
+Component=gb.image
+Component=gb.gui.qt
+Component=gb.form
+Description="First version of the pearOS NiceC0re System Overview application"
+Authors="Alexandru Balan - Main dev.\nAndrei Muntean  - Artwork, logos and graphics"
+TabSize=2
+Language=en_US
+SourcePath=/home/pear/Desktop
+Maintainer=Alexandru Balan
+Vendor=PearProject
+Address=alex@pearos.xyz
+Url=https://pearos.xyz
+License=Pear Public License v2
+PackageName=system-overview-1.0.0
+Packager=1
+Systems=archlinux
+Menus=archlinux:"Applications/System/Administration"
+Categories=archlinux:"System"
+Groups=archlinux:"kde"
