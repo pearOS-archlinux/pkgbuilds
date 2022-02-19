@@ -1,7 +1,7 @@
 #Maintainer: DemonKiller
 pkgname=pearos-livecd-desktop
 destname="/etc/skel/Desktop"
-pkgver=22.02
+pkgver=22.02.1
 pkgrel=2
 pkgdesc="Show Calamares to install pearOS"
 arch=('any')
