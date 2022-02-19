@@ -28,3 +28,5 @@ package() {
   install -m755 system-overview.gambas ${pkgdir}/usr/bin/system-overview
   install -Dm644 ${srcdir}/license.txt ${pkgdir}/usr/share/licenses/system-overview/license.txt
 }
+sha256sums=('f2d8d78be651dcb856d6af85f2c06f8c042d4a4579acc9c9e35e43e5dabcde23'
+            '573578cd414f8fcf0f1b75ee52bad16863dc037226e557f017306900e54edb62')
