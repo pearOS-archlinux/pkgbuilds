@@ -1,0 +1,18 @@
+' Gambas class file
+
+Public Sub Form_Open()
+  Dim pcent As String
+  
+  Me.W = pn_storage.W
+  Me.H = pn_storage.H
+  
+  Shell "x=$(df | grep '^/dev/' | awk '{s+=$2} END {print  s/1048576}'); echo ${x%.*} | tr -d '\n'" To lbl_storage_total.Text
+  lbl_storage_total.Text = lbl_storage_total.Text & " GB"
+  
+  Shell "df -h --output=avail / | sed '1d' | tr -d ' ' | tr -d '\n' | tr -d 'G'" To lbl_storage_available.Text
+  lbl_storage_available.Text = lbl_storage_available.Text & " GB available of " & lbl_storage_total.Text & "B"
+  
+  Shell "df -h --output=pcent / | sed '1d' | tr -d ' ' | tr -d '\n' | tr -d '%'" To pcent
+
+  storage_bar.Value = Val(pcent) / 100
+End
