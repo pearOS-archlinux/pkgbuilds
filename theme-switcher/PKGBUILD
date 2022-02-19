@@ -1,0 +1,23 @@
+# Maintainer: Alexandru Balan
+pkgname=theme-switcher-bin
+pkgver=0.0.8
+pkgrel=1
+pkgdesc="Switch between dark and light theme in NiceC0re based systems This program is written in Gambas."
+arch=('any')
+url="https://github.com/pearOS-archlinux/theme-switcher"
+license=('custom')
+groups=('')
+depends=('desktop-file-utils' 'gambas3-gb-form>=3.16' 'gambas3-gb-gtk3>=3.16' 'gambas3-gb-gtk3<3.99.0' 'gambas3-gb-image>=3.16' 'gambas3-gb-image<3.99.0' 'gambas3-runtime>=3.16' 'gambas3-runtime<3.99.0' 'hicolor-icon-theme')
+options=('!strip' '!emptydirs')
+install=${pkgname}.install
+source=("https://github.com/pearOS-archlinux/theme-switcher/releases/download/latest/theme-switcher-latest.deb")
+sha512sums=('d7d39f386dcb75694d22d171f0adff9fe5f5aeb1dae6d57fedcf50a49baae1af458e9f80a7cac43edaf68808add68e04022945dde63860fd250199b71d7eeead')
+
+package(){
+
+	# Extract package data
+	tar xf data.tar.xz -C "${pkgdir}"
+
+	install -D -m644 "/usr/share/doc/theme-switcher/copyright" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+
+}
