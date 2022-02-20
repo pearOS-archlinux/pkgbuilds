@@ -1,0 +1,23 @@
+# Maintainer : Alexandru Balan <alex@pearos.xyz>
+
+pkgname=system-update
+_realname=system-update
+pkgdesc="pearOS System Update application that notifies you when a new pearOS update is coming"
+pkgver=22.01
+pkgrel=1
+arch=('any')
+license=('custom')
+source=('system-update' 'system-update.glade' 'internal-pext-logo.png' 'pext-installer.png')
+
+package() {
+  sudo mkdir -p /usr/share/pext-installer/data/media
+  sudo chown -R $USER:$USER /usr/share/pext-installer
+  install -m755 system-update  /usr/share/pext-installer/
+  install -m755 system-update.glade /usr/share/pext-installer/
+  install -m755 internal-pext-logo.png /usr/share/pext-installer/data/media/
+  install -m755 pext-installer.png /usr/share/pext-installer/data/media/
+}
+sha256sums=('b620359a02de095233ff09597e5fa11305182c68f39b04493ed386c43b7f69d2'
+            'c0b82f822338085e5eb7accd505f79d9fd29adef0a1aef93e4ec19a5d06868dd'
+            '66a5feff7628ab5fc4d332f6af7fdf690440c0f26b7c11a2a4c5473a3a44b714'
+            'e8d6af8e65ba288d27c5d73116dbcfc24650fec954fb3d518d51e60d07888056')
