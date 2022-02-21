@@ -1,0 +1,21 @@
+# Maintainer: Alexandru Balan
+pkgname=pear-calamares-config
+destname="/etc"
+pkgver=22.02
+pkgrel=1
+pkgdesc="Calamares Confog files for pearOS and NiceC0re based Systems"
+arch=('any')
+url="https://github.com/pearOS-archlinux"
+license=('custom')
+makedepends=('git')
+depends=()
+conflicts=()
+provides=("${pkgname}")
+options=(!strip !emptydirs)
+source=(${pkgname}::"git+${url}/${pkgname}")
+sha256sums=('SKIP')
+package() {
+	install -dm755 ${pkgdir}${destname}
+	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
+    chmod 755 ${pkgdir}/etc/calamares/launch.sh
+}
