@@ -1,9 +1,9 @@
 #Maintainer: DemonKiller
 pkgname=pearos-livecd-desktop
 destname="/etc/skel/Desktop"
-pkgver=22.02.1
-pkgrel=2
-pkgdesc="Show Calamares to install pearOS"
+pkgver=22.03
+pkgrel=1
+pkgdesc="Default pearOS installer in Electron"
 arch=('any')
 url="https://github.com/pearOS-archlinux"
 license=('PPL2')
