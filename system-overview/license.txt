@@ -1,1 +1,1 @@
-This program is under : Pear Public License v2
+This program is under : GNU Public Licence V3 or newer

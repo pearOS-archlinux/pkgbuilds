@@ -1,5 +1,5 @@
 build:
-	makepkg -sr --sign
+	makepkg -sr
 clean:
 	rm -rf pkg/
 	rm -rf src/
