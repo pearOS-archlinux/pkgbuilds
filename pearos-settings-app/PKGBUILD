@@ -10,7 +10,6 @@ url="https://pearos.xyz"
 license=('GPLv3')
 source=("file://${startdir}/license.txt")
 sha256sums=('SKIP')
-install=system-settings.install
 prepare() {
   cp -r ${startdir}/${_realname} ${srcdir}/
 }
