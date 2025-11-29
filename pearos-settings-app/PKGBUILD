@@ -25,8 +25,8 @@ package() {
   cp -r ${srcdir}/${_realname} ${pkgdir}/usr/share/extras/
 
   install -d ${pkgdir}/usr/bin
-  install -m755 launch.sh ${pkgdir}/usr/bin/systemsettings
+  install -m755 launch.sh ${pkgdir}/usr/bin/systemsettings1
   
-  install -Dm644 ${srcdir}/license.txt ${pkgdir}/usr/share/licenses/system-overview/license.txt
+  install -Dm644 ${srcdir}/license.txt ${pkgdir}/usr/share/licenses/pearos-system-settings/license.txt
 }
 
