@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog, shell, screen } = require('electron');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const fs = require('fs');
 
 if (process.platform === 'linux') {
@@ -35,7 +35,8 @@ function createWindow() {
     titleBarStyle: 'default',
     backgroundColor: '#00000000', 
     frame: false, 
-    show: false 
+    show: false,
+    skipTaskbar: true
   });
 
   
@@ -51,8 +52,56 @@ function createWindow() {
       if (mainWindow.setVisualEffectState) {
         mainWindow.setVisualEffectState('active');
       }
+      
+      // Ascunde din taskbar și Alt+Tab - metode multiple pentru compatibilitate
+      mainWindow.setSkipTaskbar(true);
+      
+      // Funcție helper pentru a ascunde fereastra din taskbar
+      const hideFromTaskbar = () => {
+        try {
+          // Obține ID-ul ferestrei direct din Electron
+          const nativeHandle = mainWindow.getNativeWindowHandle();
+          if (nativeHandle) {
+            // Pe Linux, nativeHandle este un Buffer cu ID-ul ferestrei X11
+            const windowId = nativeHandle.readUInt32LE(0);
+            
+            // Setează proprietățile X11 direct
+            exec(`xprop -id ${windowId} -f _NET_WM_STATE 32a -set _NET_WM_STATE _NET_WM_STATE_SKIP_TASKBAR _NET_WM_STATE_SKIP_PAGER 2>/dev/null || true`, () => {});
+            exec(`wmctrl -i -r ${windowId} -b add,skip_taskbar,skip_pager 2>/dev/null || true`, () => {});
+          }
+        } catch (error) {
+          // Fallback: folosește xdotool pentru a găsi fereastra
+          exec('xdotool search --class "electron" --name "About This Computer" 2>/dev/null | head -1', (error2, stdout) => {
+            if (!error2 && stdout) {
+              const windowId = stdout.trim();
+              exec(`xprop -id ${windowId} -f _NET_WM_STATE 32a -set _NET_WM_STATE _NET_WM_STATE_SKIP_TASKBAR _NET_WM_STATE_SKIP_PAGER 2>/dev/null || true`, () => {});
+              exec(`wmctrl -i -r ${windowId} -b add,skip_taskbar,skip_pager 2>/dev/null || true`, () => {});
+            }
+          });
+        }
+      };
+      
+      // Încearcă imediat
+      setTimeout(hideFromTaskbar, 100);
+      setTimeout(hideFromTaskbar, 500);
+      setTimeout(hideFromTaskbar, 1000);
     }
   });
+  
+  // Setează skipTaskbar imediat după creare (pentru Linux)
+  if (process.platform === 'linux') {
+    mainWindow.setSkipTaskbar(true);
+    
+    // Setează și după ce fereastra este creată complet
+    mainWindow.once('show', () => {
+      mainWindow.setSkipTaskbar(true);
+    });
+    
+    // Setează și după ce fereastra este complet încărcată
+    mainWindow.webContents.once('did-finish-load', () => {
+      mainWindow.setSkipTaskbar(true);
+    });
+  }
 
   
   
@@ -900,6 +949,60 @@ ipcMain.handle('get-battery-health', async () => {
   });
 });
 
+// Funcție pentru a formata numele procesorului (extrage doar modelul și frecvența)
+function formatChipName(cpuName) {
+  if (!cpuName) return 'Unknown';
+  
+  // Pattern pentru frecvența (@ 2.40GHz, @ 3.2 GHz, etc.)
+  const frequencyPattern = /@\s*([\d.]+)\s*(GHz|MHz)/i;
+  const freqMatch = cpuName.match(frequencyPattern);
+  const frequency = freqMatch ? `@ ${freqMatch[1]}${freqMatch[2]}` : '';
+  
+  // Pattern pentru procesoare Intel (i3/i5/i7/i9/i11 urmat de model)
+  const intelPattern = /(?:Intel\s+)?(?:\(R\)\s+)?(?:Core\s+)?(?:\(TM\)\s+)?(?:11th\s+Gen\s+)?(?:12th\s+Gen\s+)?(?:13th\s+Gen\s+)?(?:14th\s+Gen\s+)?(i[3579]|i\d+-[\w-]+)/i;
+  
+  // Pattern pentru procesoare AMD (Ryzen, Athlon, etc.)
+  const amdPattern = /(?:AMD\s+)?(Ryzen\s+[\d\s\w-]+|Athlon\s+[\w-]+|EPYC\s+[\w-]+|Threadripper\s+[\w-]+|FX[\s-][\w-]+|Phenom\s+[\w-]+)/i;
+  
+  // Pattern pentru alte procesoare (Pentium, Celeron, etc.)
+  const otherPattern = /(Pentium\s+[\w-]+|Celeron\s+[\w-]+|Atom\s+[\w-]+|Xeon\s+[\w-]+)/i;
+  
+  let model = '';
+  
+  // Încearcă să găsească modelul în ordine: Intel, AMD, altele
+  const intelMatch = cpuName.match(intelPattern);
+  if (intelMatch) {
+    model = intelMatch[1] || intelMatch[0];
+  } else {
+    const amdMatch = cpuName.match(amdPattern);
+    if (amdMatch) {
+      model = amdMatch[1] || amdMatch[0];
+    } else {
+      const otherMatch = cpuName.match(otherPattern);
+      if (otherMatch) {
+        model = otherMatch[1] || otherMatch[0];
+      }
+    }
+  }
+  
+  // Curăță spațiile extra
+  if (model) {
+    model = model.replace(/\s+/g, ' ').trim();
+  }
+  
+  // Combină modelul și frecvența
+  if (model && frequency) {
+    return `${model} ${frequency}`;
+  } else if (model) {
+    return model;
+  } else if (frequency) {
+    return frequency;
+  }
+  
+  // Dacă nu găsește pattern-uri, returnează originalul
+  return cpuName;
+}
+
 ipcMain.handle('get-system-info', async () => {
   return new Promise((resolve) => {
     const systemInfo = {
@@ -920,7 +1023,8 @@ ipcMain.handle('get-system-info', async () => {
       
       exec('lscpu | grep "Model name" | cut -d":" -f2 | xargs', (error, stdout) => {
         if (!error && stdout) {
-          systemInfo.chip = stdout.trim();
+          const rawChip = stdout.trim();
+          systemInfo.chip = formatChipName(rawChip);
         }
 
         
@@ -937,14 +1041,14 @@ ipcMain.handle('get-system-info', async () => {
             }
 
             
-            exec('grep DISTRIB_ID /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
+            exec('grep "^PRETTY_NAME=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_ID /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
               if (!error && stdout) {
                 systemInfo.osName = stdout.trim();
               } else {
                 systemInfo.osName = 'Unknown';
               }
 
-              exec('grep DISTRIB_RELEASE /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
+              exec('grep "^VERSION=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep "^VERSION_ID=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_RELEASE /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
                 if (!error && stdout) {
                   systemInfo.osVersion = stdout.trim();
                 } else {
@@ -1313,7 +1417,7 @@ ipcMain.handle('get-installed-system-info', async () => {
       }
       
       
-      exec('grep "^DISTRIB_RELEASE=" /etc/lsb-release 2>/dev/null', (error2, stdout2) => {
+      exec('grep "^DISTRIB_RELEASE=" /etc/os-release 2>/dev/null', (error2, stdout2) => {
         if (!error2 && stdout2) {
           const match = stdout2.match(/DISTRIB_RELEASE="?([^"]+)"?/);
           if (match) {
@@ -2916,6 +3020,30 @@ ipcMain.handle('deny-require-app', async (event, filePath) => {
 ipcMain.handle('open-external-link', async (event, url) => {
   return new Promise((resolve) => {
     shell.openExternal(url);
+    resolve({ success: true });
+  });
+});
+
+ipcMain.handle('open-system-settings-about', async () => {
+  return new Promise((resolve, reject) => {
+    const settingsDir = '/usr/share/extras/system-settings';
+    
+    // Verifică dacă directorul există
+    if (!fs.existsSync(settingsDir)) {
+      reject(new Error(`Directory ${settingsDir} does not exist`));
+      return;
+    }
+    
+    // Rulează npm start about în directorul respectiv
+    const npmProcess = spawn('npm', ['start', 'about'], {
+      cwd: settingsDir,
+      detached: true,
+      stdio: 'ignore'
+    });
+    
+    // Detasează procesul pentru a rula în background
+    npmProcess.unref();
+    
     resolve({ success: true });
   });
 });

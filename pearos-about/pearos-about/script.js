@@ -61,8 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const moreInfoButton = document.getElementById('more-info-button');
   if (moreInfoButton) {
     moreInfoButton.addEventListener('click', () => {
-      if (window.electronAPI && window.electronAPI.openExternalLink) {
-        window.electronAPI.openExternalLink('https://pear-software.com');
+      if (window.electronAPI && window.electronAPI.openSystemSettingsAbout) {
+        window.electronAPI.openSystemSettingsAbout().catch((error) => {
+          console.error('Error opening system settings about:', error);
+        });
       }
     });
   }

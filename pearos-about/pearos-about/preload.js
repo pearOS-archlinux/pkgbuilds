@@ -77,6 +77,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   allowRequireApp: (filePath, allowAction) => ipcRenderer.invoke('allow-require-app', filePath, allowAction),
   denyRequireApp: (filePath) => ipcRenderer.invoke('deny-require-app', filePath),
   openExternalLink: (url) => ipcRenderer.invoke('open-external-link', url),
+  openSystemSettingsAbout: () => ipcRenderer.invoke('open-system-settings-about'),
   changePassword: (oldPassword, newPassword) => ipcRenderer.invoke('change-password', oldPassword, newPassword),
   checkFingerprintDevice: () => ipcRenderer.invoke('check-fingerprint-device'),
   listFingerprints: () => ipcRenderer.invoke('list-fingerprints'),
