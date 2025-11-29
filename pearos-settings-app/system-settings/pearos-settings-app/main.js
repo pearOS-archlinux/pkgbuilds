@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, screen, nativeImage } = require('electron');
 const path = require('path');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
@@ -11,6 +11,45 @@ if (process.platform === 'linux') {
     app.commandLine.appendSwitch('ozone-platform', 'wayland');
   }
 }
+
+// Setează numele aplicației
+app.setName('PearOS Settings');
+
+// Setează iconița aplicației (folosește iconițe de diferite dimensiuni pentru compatibilitate)
+function loadAppIcon() {
+  // Pe Linux, folosim iconițe mai mici pentru taskbar (48x48 sau 32x32)
+  const iconPaths = process.platform === 'linux' ? [
+    path.join(__dirname, 'assets', 'preferences.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop-48.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop-32.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop-64.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop.svg')
+  ] : [
+    path.join(__dirname, 'assets', 'preferences.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop.png'),
+    path.join(__dirname, 'assets', 'preferences-desktop.svg'),
+    path.join(__dirname, 'assets', 'gtk-preferences.png'),
+    path.join(__dirname, 'assets', 'gtk-preferences.svg')
+  ];
+  
+  for (const iconPath of iconPaths) {
+    if (fs.existsSync(iconPath)) {
+      try {
+        const icon = nativeImage.createFromPath(iconPath);
+        if (!icon.isEmpty()) {
+          app.setIcon(icon);
+          return icon;
+        }
+      } catch (error) {
+        continue;
+      }
+    }
+  }
+  return null;
+}
+
+const appIcon = loadAppIcon();
 
 let mainWindow;
 
@@ -38,6 +77,51 @@ function getPageArgument() {
 function createWindow() {
   const pageArg = getPageArgument();
   
+  // Încarcă iconița pentru fereastră (folosește iconițe mai mici pe Linux pentru taskbar)
+  let windowIcon = appIcon;
+  if (!windowIcon || process.platform === 'linux') {
+    const linuxIconPaths = [
+      path.join(__dirname, 'assets', 'preferences.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-48.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-32.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-64.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop.png')
+    ];
+    
+    for (const iconPath of linuxIconPaths) {
+      if (fs.existsSync(iconPath)) {
+        try {
+          const icon = nativeImage.createFromPath(iconPath);
+          if (!icon.isEmpty()) {
+            windowIcon = icon;
+            break;
+          }
+        } catch (error) {
+          continue;
+        }
+      }
+    }
+  }
+
+  // Pe Linux, folosim calea directă pentru iconiță (uneori funcționează mai bine)
+  let iconOption = windowIcon;
+  if (process.platform === 'linux' && !iconOption) {
+    // Încearcă să găsească o iconiță PNG validă
+    const iconPaths = [
+      path.join(__dirname, 'assets', 'preferences.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-48.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-32.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop-64.png'),
+      path.join(__dirname, 'assets', 'preferences-desktop.png')
+    ];
+    for (const iconPath of iconPaths) {
+      if (fs.existsSync(iconPath)) {
+        iconOption = iconPath; // Folosește calea directă pe Linux
+        break;
+      }
+    }
+  }
+
   mainWindow = new BrowserWindow({
     width: 700,
     height: 600,
@@ -50,13 +134,30 @@ function createWindow() {
       backgroundThrottling: false,
       preload: path.join(__dirname, 'preload.js')
     },
-    
+    icon: iconOption || undefined,
     transparent: true,
     titleBarStyle: 'default',
     backgroundColor: '#00000000', 
     frame: false, 
     show: false 
   });
+  
+  // Setează iconița ferestrei explicit după creare (pentru Linux)
+  if (process.platform === 'linux') {
+    if (windowIcon) {
+      mainWindow.setIcon(windowIcon);
+    } else if (iconOption && typeof iconOption === 'string') {
+      // Dacă iconOption este o cale, încarcă-o ca nativeImage
+      try {
+        const icon = nativeImage.createFromPath(iconOption);
+        if (!icon.isEmpty()) {
+          mainWindow.setIcon(icon);
+        }
+      } catch (error) {
+        // Ignoră eroarea
+      }
+    }
+  }
 
   
   mainWindow.loadFile('index.html');
@@ -70,6 +171,28 @@ function createWindow() {
       
       if (mainWindow.setVisualEffectState) {
         mainWindow.setVisualEffectState('active');
+      }
+      
+      // Setează iconița din nou după ce fereastra este afișată (pentru taskbar)
+      // Folosește iconițe mai mici pentru taskbar pe Linux
+      const taskbarIconPaths = [
+        path.join(__dirname, 'assets', 'preferences.png')
+      ];
+      
+      for (const iconPath of taskbarIconPaths) {
+        if (fs.existsSync(iconPath)) {
+          try {
+            const taskbarIcon = nativeImage.createFromPath(iconPath);
+            if (!taskbarIcon.isEmpty()) {
+              mainWindow.setIcon(taskbarIcon);
+              // Setează și pentru aplicație
+              app.setIcon(taskbarIcon);
+              break;
+            }
+          } catch (error) {
+            continue;
+          }
+        }
       }
     }
     
