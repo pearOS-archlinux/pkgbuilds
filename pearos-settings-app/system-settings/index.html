@@ -1,0 +1,2697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>System Settings</title>
+<link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <div class="element-overlay"></div>
+  <div class="window">
+  <div class="inner-wrapper">
+  <div class="topnav">
+    <div class="traffic-lights">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    </div>
+    <div class="navigation-bar">
+      <div class="nav-buttons">
+        <button class="nav-button back" id="nav-back">
+          <i data-feather="chevron-left"></i>
+        </button>
+        <div class="nav-separator">|</div>
+        <button class="nav-button forward" id="nav-forward">
+          <i data-feather="chevron-right"></i>
+        </button>
+      </div>
+      <div class="title-bar">
+        <h2 class="page-title">Settings</h2>
+      </div>
+    </div>
+    <div class="sidenav">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="search-icon" data-feather="search"></i>
+          <input type="search" placeholder="Search" class="sidebar-search"/>
+        </div>
+      </div>
+      <div class="user-signin-section">
+        <img src="./assets/user.png" alt="User" class="user-avatar">
+        <div class="user-signin-content">
+          <h3 class="user-signin-title">Sign in</h3>
+          <p class="user-signin-description">with your pear account</p>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item software-update-item" id="software-update-notification" style="display: none;">
+            <div class="content">
+              <p class="name1">Software Update Available</p>
+              <span class="update-badge" id="update-badge">0</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/cs-network.svg" class="icon" alt="Wi-Fi"/><p class="name">Wi-Fi</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/cs-bluetooth.svg" class="icon" alt="Bluetooth"/><p class="name">Bluetooth</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/cs-network.svg" class="icon" alt="Network"/><p class="name">Network</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/cs-power.svg" class="icon" alt="Battery"/><p class="name">Battey</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item">
+            <div class="content"><img src="./assets/application-default-icon.svg" class="icon gray" alt="General"/><p class="name">General</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon gray" alt="Accessibility"/><p class="name">Accessibility</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-desktop-theme-global.svg" class="icon gray" alt="Appearance"/><p class="name">Appearance</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-ubuntu-panel.svg" class="icon gray" alt="Menu Bar"/><p class="name">Menu Bar</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon gray" alt="Pear Intelligence"/><p class="name">Pear Piri</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-desktop-workspaces.svg" class="icon gray" alt="Desktop and Dock"/><p class="name">Desktop and Dock</p>
+            </div>
+          </div>
+          <div class="item" data-page="Displays">
+            <div class="content"><img src="./assets/cinnamon-preferences-desktop-display.svg" class="icon gray" alt="Displays"/><p class="name">Displays</p>
+            </div>
+          </div>
+          <div class="item" data-page="Wallpaper">
+            <div class="content"><img src="./assets/preferences-desktop-wallpaper.svg" class="icon gray" alt="Wallpaper"/><p class="name">Wallpaper</p>
+            </div>
+          </div>
+          <div class="item">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon gray" alt="Spotlight"/><p class="name">Spotlight</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item" data-page="Notifications">
+            <div class="content"><img src="./assets/cs-notifications.svg" class="icon" alt="Notifications"/><p class="name">Notifications</p>
+            </div>
+          </div>
+          <div class="item" data-page="Sound">
+            <div class="content"><img src="./assets/cs-sound.svg" class="icon" alt="Sound"/><p class="name">Sound</p>
+            </div>
+          </div>
+          <div class="item" data-page="Focus">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon" alt="Focus"/><p class="name">Focus</p>
+            </div>
+          </div>
+          <div class="item" data-page="Screen Time">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon" alt="Screen Time"/><p class="name">Screen Time</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item" data-page="Lock Screen">
+            <div class="content"><img src="./assets/preferences-desktop-user-password.svg" class="icon" alt="Lock Screen"/><p class="name">Lock Screen</p>
+            </div>
+          </div>
+          <div class="item" data-page="Privacy and Security">
+            <div class="content"><img src="./assets/cs-privacy.svg" class="icon" alt="Privacy and Security"/><p class="name">Privacy and Security</p>
+            </div>
+          </div>
+          <div class="item" data-page="Touch ID and Password">
+            <div class="content"><img src="./assets/preferences-desktop-user-password.svg" class="icon" alt="Touch ID and Password"/><p class="name">Touch ID and Password</p>
+            </div>
+          </div>
+          <div class="item" data-page="Users & Groups">
+            <div class="content"><img src="./assets/cs-user-accounts.svg" class="icon" alt="Users & Groups"/><p class="name">Users & Groups</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item" data-page="Internet Accounts">
+            <div class="content"><img src="./assets/cs-online-accounts.svg" class="icon" alt="Internet Accounts"/><p class="name">Internet Accounts</p>
+            </div>
+          </div>
+          <div class="item" data-page="Game Center">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon" alt="Game Center"/><p class="name">Game Center</p>
+            </div>
+          </div>
+          <div class="item" data-page="pCloud">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon" alt="pCloud"/><p class="name">pCloud</p>
+            </div>
+          </div>
+          <div class="item" data-page="Wallet & Pear Pay">
+            <div class="content"><img src="./assets/preferences-other.svg" class="icon" alt="Wallet & Pear Pay"/><p class="name">Wallet & Pear Pay</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="items">
+          <div class="item" data-page="Keyboard">
+            <div class="content"><img src="./assets/cs-keyboard.svg" class="icon" alt="Keyboard"/><p class="name">Keyboard</p>
+            </div>
+          </div>
+          <div class="item" data-page="Trackpad">
+            <div class="content"><img src="./assets/preferences-desktop-touchpad.svg" class="icon" alt="Trackpad"/><p class="name">Trackpad</p>
+            </div>
+          </div>
+          <div class="item" data-page="Printers & Scanners">
+            <div class="content"><img src="./assets/cs-printer.svg" class="icon" alt="Printers & Scanners"/><p class="name">Printers & Scanners</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="content-area">
+        <!-- Spinner pentru loading -->
+        <div id="content-spinner" class="content-spinner" style="display: none;">
+          <div class="spinner"></div>
+        </div>
+        <div class="page-content" id="appearance-page" style="display: none;">
+          <div class="settings-card">
+            <h3 class="card-title">Appearance</h3>
+            <div class="theme-buttons">
+              <div class="theme-button-wrapper active">
+                <button class="theme-button active" data-theme="auto">
+                  <img src="./assets/auto.png" alt="Auto" class="theme-icon-image">
+                  <span class="theme-icon">🌓</span>
+                </button>
+                <span class="theme-label">Auto</span>
+              </div>
+              <div class="theme-button-wrapper">
+                <button class="theme-button" data-theme="light">
+                  <img src="./assets/light.png" alt="Light" class="theme-icon-image">
+                  <span class="theme-icon">☀️</span>
+                </button>
+                <span class="theme-label">Light</span>
+              </div>
+              <div class="theme-button-wrapper">
+                <button class="theme-button" data-theme="dark">
+                  <img src="./assets/dark.png" alt="Dark" class="theme-icon-image">
+                  <span class="theme-icon">🌙</span>
+                </button>
+                <span class="theme-label">Dark</span>
+              </div>
+            </div>
+          </div>
+          <h3 class="section-title">Theme</h3>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Color</h4>
+              <div class="color-radio-buttons">
+                <label class="color-radio-label" style="--color: #8B5CF6;">
+                  <input type="radio" name="color" value="purple" class="color-radio">
+                  <span class="color-dot" style="background-color: #8B5CF6;"></span>
+                  <span class="color-name">Purple</span>
+                </label>
+                <label class="color-radio-label" style="--color: #EC4899;">
+                  <input type="radio" name="color" value="magenta" class="color-radio">
+                  <span class="color-dot" style="background-color: #EC4899;"></span>
+                  <span class="color-name">Magenta</span>
+                </label>
+                <label class="color-radio-label" style="--color: #F97316;">
+                  <input type="radio" name="color" value="orange" class="color-radio">
+                  <span class="color-dot" style="background-color: #F97316;"></span>
+                  <span class="color-name">Orange</span>
+                </label>
+                <label class="color-radio-label" style="--color: #EAB308;">
+                  <input type="radio" name="color" value="yellow" class="color-radio">
+                  <span class="color-dot" style="background-color: #EAB308;"></span>
+                  <span class="color-name">Yellow</span>
+                </label>
+                <label class="color-radio-label" style="--color: #22C55E;">
+                  <input type="radio" name="color" value="green" class="color-radio">
+                  <span class="color-dot" style="background-color: #22C55E;"></span>
+                  <span class="color-name">Green</span>
+                </label>
+                <label class="color-radio-label" style="--color: #06B6D4;">
+                  <input type="radio" name="color" value="azul" class="color-radio">
+                  <span class="color-dot" style="background-color: #06B6D4;"></span>
+                  <span class="color-name">Azul</span>
+                </label>
+                <label class="color-radio-label" style="--color: #3B82F6;">
+                  <input type="radio" name="color" value="blue" class="color-radio" checked>
+                  <span class="color-dot" style="background-color: #3B82F6;"></span>
+                  <span class="color-name">Blue</span>
+                </label>
+                <label class="color-radio-label" style="--color: #A855F7;">
+                  <input type="radio" name="color" value="lila" class="color-radio">
+                  <span class="color-dot" style="background-color: #A855F7;"></span>
+                  <span class="color-name">Lila</span>
+                </label>
+                <label class="color-radio-label" style="--color: #6B21A8;">
+                  <input type="radio" name="color" value="dark-purple" class="color-radio">
+                  <span class="color-dot" style="background-color: #6B21A8;"></span>
+                  <span class="color-name">Dark Purple</span>
+                </label>
+                <label class="color-radio-label" style="--color: #6B7280;">
+                  <input type="radio" name="color" value="grey" class="color-radio">
+                  <span class="color-dot" style="background-color: #6B7280;"></span>
+                  <span class="color-name">Grey</span>
+                </label>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Text highlight color</h4>
+              <select class="highlight-dropdown" disabled>
+                <option value="automatic" selected>Automatic</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Icon & widget style</h4>
+              <div class="style-buttons">
+                <button class="style-button" data-style="default">Default</button>
+                <button class="style-button" data-style="dark">Dark</button>
+                <button class="style-button" data-style="clear">Clear</button>
+                <button class="style-button active" data-style="tinted">Tinted</button>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Folder color</h4>
+              <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end;">
+                <span class="folder-color-indicator"></span>
+                <select class="highlight-dropdown" disabled>
+                  <option value="automatic" selected>Automatic</option>
+                </select>
+              </div>
+            </div>
+        </div>
+          <h3 class="section-title">Windows</h3>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Sidebar icon size</h4>
+              <select class="size-dropdown">
+                <option value="small">Small</option>
+                <option value="medium" selected>Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Tint window background with wallpaper color</h4>
+              <label class="switch">
+                <input type="checkbox" id="tint-window-checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <h4 class="color-title">Show scroll bars</h4>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="scroll-bars" value="automatically" checked>
+                  <span class="radio-text">Automatically based on mouse or trackpad</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="scroll-bars" value="when-scrolling">
+                  <span class="radio-text">When scrolling</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="scroll-bars" value="always">
+                  <span class="radio-text">Always</span>
+                </label>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section-vertical">
+              <h4 class="color-title">Click in the scroll bar to</h4>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="scroll-click" value="jump-to-spot" checked>
+                  <span class="radio-text">Jump to the spot that's clicked</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="scroll-click" value="jump-to-next-page">
+                  <span class="radio-text">Jump to the next page</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Conținutul pentru Pear Intelligence and Piri -->
+        <div class="page-content" id="pear-piri-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section-image">
+              <img src="./assets/preferences-other.svg" alt="Pear Piri" class="feature-image">
+              <div class="feature-content">
+                <h3 class="feature-title">Pear Piri</h3>
+                <p class="feature-description">Pear Piri is an intelligent assistant that helps you get things done. It can answer questions, provide information, and assist with various tasks.</p>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Piri Intelligence</h4>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <h3 class="section-title">Piri Requests</h3>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Piri</h4>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Listen for</h4>
+              <select class="size-dropdown">
+                <option value="on">On</option>
+                <option value="off" selected>Off</option>
+              </select>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Keyboard shortcut</h4>
+              <select class="size-dropdown">
+                <option value="wip" selected>WIP</option>
+              </select>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Language</h4>
+              <select class="size-dropdown">
+                <option value="english-us" selected>English (United States)</option>
+              </select>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Voice</h4>
+              <div class="voice-section">
+                <span class="voice-text">Default voice</span>
+                <button class="select-button">Select...</button>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Piri history</h4>
+              <button class="delete-button">Delete Piri History...</button>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Piri responses</h4>
+              <select class="size-dropdown">
+                <option value="prefer-spoken">Prefer spoken responses</option>
+                <option value="automatic" selected>Automatic</option>
+                <option value="prefer-silent">Prefer silent responses</option>
+              </select>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section-info">
+              <p class="info-text">Voice input is processed on your computer, but transcripts of your requests are sent to Pear <a href="#" class="info-link">About Piri, Dictations & privacy...</a></p>
+        </div>
+      </div>
+          <button class="piri-suggestions-button">Piri Suggestions & Privacy</button>
+        </div>
+        <!-- Conținutul pentru Wi-Fi -->
+        <div class="page-content" id="wifi-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section-image">
+              <img src="./assets/cs-network.svg" alt="Wi-Fi" class="feature-image">
+              <div class="feature-content">
+                <h3 class="feature-title">Wi-Fi</h3>
+                <p class="feature-description">Set up Wi-Fi to wirelessly connect your computer to the internet. Turn on Wi-Fi, then choose a network to join.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="wifi-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <hr class="card-divider" id="wifi-divider" style="display: none;">
+            <div class="card-section" id="wifi-connected-section" style="display: none; padding-left: 16px; padding-right: 16px; flex-direction: column; align-items: flex-start;">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;margin-bottom: -16px;">
+                <h4 class="color-title" id="wifi-ssid" style="margin: 0;">Network Name</h4>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <img id="wifi-lock-icon" src="./assets/lock.svg" alt="Lock" style="width: 14px; height: 14px; display: none; opacity: 0.7;" class="wifi-icon-theme">
+                  <img id="wifi-link-icon" src="./assets/link.svg" alt="Link" style="width: 30px; height: 20px; display: none; opacity: 0.7;" class="wifi-icon-theme">
+                  <button class="select-button">Details...</button>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: #28ca42; display: inline-block;"></span>
+                <span style="font-size: 12px; color: var(--text-secondary);">Connected</span>
+              </div>
+            </div>
+          </div>
+          <h3 class="section-title">Known networks</h3>
+          <div class="settings-card">
+            <div class="card-section" id="known-network-section" style="display: none;">
+              <div class="network-item" style="justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <span class="network-checkmark">✓</span>
+                  <span class="network-ssid" id="known-network-ssid">Network Name</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <img id="known-network-lock-icon" src="./assets/lock.svg" alt="Lock" style="width: 12px; height: 12px; opacity: 0.7; display: none;" class="wifi-icon-theme">
+                  <span class="network-signal" id="known-network-signal">0%</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-section" id="no-network-section">
+              <p class="no-network-text">No known networks</p>
+            </div>
+          </div>
+          <h3 class="section-title">Other Networks</h3>
+          <div class="settings-card">
+            <div class="card-section-vertical" id="wifi-networks-list">
+              <p class="no-network-text">Scanning for networks...</p>
+            </div>
+          </div>
+        </div>
+        <!-- Modal pentru conectare Wi-Fi -->
+        <div class="modal-overlay" id="wifi-modal" style="display: none;">
+          <div class="modal-content">
+            <div class="settings-card">
+              <div class="card-section-image">
+                <img src="./assets/cs-network.svg" alt="Wi-Fi" class="feature-image">
+                <div class="feature-content">
+                  <h3 class="feature-title">The Wi-Fi network "<span id="modal-network-name">Network Name</span>" requires a password.</h3>
+                  <p class="feature-description">You can also access this Wi-Fi network by sharing the password from a nearby PearPhone which has connected to this network and has you in their contacts.</p>
+                </div>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Password</h4>
+                <input type="password" id="wifi-password-input" class="password-input" placeholder="Enter password">
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Show password</h4>
+                <label class="switch">
+                  <input type="checkbox" id="show-password-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-button cancel-button" id="wifi-modal-cancel">Cancel</button>
+              <button class="modal-button connect-button" id="wifi-modal-connect">Connect</button>
+        </div>
+      </div>
+        </div>
+        <!-- Modal pentru Details Wi-Fi -->
+        <div class="modal-overlay" id="wifi-details-modal" style="display: none;">
+          <div class="modal-content">
+            <div class="settings-card">
+              <div class="card-section-image">
+                <img src="./assets/cs-network.svg" alt="Wi-Fi" class="feature-image">
+                <div class="feature-content">
+                  <h3 class="feature-title" id="details-modal-network-name">Network Name</h3>
+                </div>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Security</h4>
+                <span id="details-modal-security" style="font-size: 12px; color: var(--text-secondary);">--</span>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Signal Strength</h4>
+                <span id="details-modal-signal" style="font-size: 12px; color: var(--text-secondary);">0%</span>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Status</h4>
+                <span id="details-modal-status" style="font-size: 12px; color: var(--text-secondary);">Connected</span>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-button cancel-button" id="wifi-details-modal-cancel">Cancel</button>
+              <button class="modal-button connect-button" id="wifi-details-modal-forget" style="background: #ff3b30; color: white;">Forget</button>
+            </div>
+          </div>
+        </div>
+        <!-- Conținutul pentru Bluetooth -->
+        <div class="page-content" id="bluetooth-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section-image">
+              <img src="./assets/cs-bluetooth.svg" alt="Bluetooth" class="feature-image">
+              <div class="feature-content">
+                <h3 class="feature-title">Bluetooth</h3>
+                <p class="feature-description">Set up Bluetooth to wirelessly connect your computer to Bluetooth devices. Turn on Bluetooth, then choose a device to connect.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="bluetooth-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="card-section-info">
+              <p class="info-text">This Computer is discoverable as "<span id="bluetooth-device-name">Computer Name</span>"</p>
+            </div>
+          </div>
+          <h3 class="section-title">My Devices</h3>
+          <div class="settings-card">
+            <div class="card-section-vertical" id="bluetooth-devices-list">
+              <p class="no-network-text">No devices found</p>
+            </div>
+          </div>
+          <div class="section-title-with-spinner">
+            <h3 class="section-title">Nearby Devices</h3>
+            <div class="spinner" id="bluetooth-scanning-spinner"></div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical" id="bluetooth-nearby-devices-list">
+              <p class="no-network-text">Searching...</p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Network -->
+        <div class="page-content" id="network-page" style="display: none;">
+          <div class="settings-card">
+            <h3 class="card-title">Active Connections</h3>
+            <div class="card-section-vertical" id="active-connections-list">
+              <p class="no-network-text">Loading connections...</p>
+            </div>
+          </div>
+          <h3 class="section-title">Radio Controls</h3>
+          <div class="settings-card">
+            <div class="card-section-vertical" id="rfkill-controls">
+              <p class="no-network-text">Loading radio controls...</p>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina Battery -->
+        <div class="page-content" id="battery-page" style="display: none;">
+          <div class="settings-card">
+            <h3 class="card-title">Battery</h3>
+            <div class="card-section-vertical" id="battery-info">
+              <p class="no-network-text">Loading battery information...</p>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Low power mode</h4>
+              <label class="switch">
+                <input type="checkbox" id="low-power-mode-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3 class="card-title">Battery Health</h3>
+            <div class="card-section-vertical" id="battery-health-info">
+              <p class="no-network-text">Loading battery health...</p>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="battery-tabs">
+              <button class="battery-tab active" data-period="24h">Last 24 hours</button>
+              <button class="battery-tab" data-period="10d">Last 10 days</button>
+            </div>
+            <div class="battery-wip-notice">
+              <p class="wip-text">This section is still work in progress</p>
+            </div>
+            <div class="battery-charts-container">
+              <div class="battery-chart-section">
+                <h4 class="chart-title">Battery Level</h4>
+                <canvas id="battery-level-chart" width="600" height="150"></canvas>
+              </div>
+              <div class="battery-chart-section">
+                <h4 class="chart-title">Screen On Usage</h4>
+                <canvas id="screen-usage-chart" width="600" height="150"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina General -->
+        <div class="page-content" id="general-page" style="display: none;">
+          <div class="settings-card general-hero-card">
+            <div class="general-hero-image">
+              <img src="./assets/application-default-icon.svg" alt="General" class="hero-icon">
+            </div>
+            <h3 class="general-hero-title">General</h3>
+            <p class="general-hero-description">Manage your overall setup and preferences for Pear, such as software updates, device language, PearDrop, and more.</p>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/system-help.svg" alt="About" class="general-menu-icon">
+                  <span class="general-menu-label">About</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/system-software-update.svg" alt="Software Update" class="general-menu-icon">
+                  <span class="general-menu-label">Software Update</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-disks.svg" alt="Storage" class="general-menu-icon">
+                  <span class="general-menu-label">Storage</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="PearCare & Warranty" class="general-menu-icon">
+                  <span class="general-menu-label">PearCare & Warranty</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="PearDrop & Handoff" class="general-menu-icon">
+                  <span class="general-menu-label">PearDrop & Handoff</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-user-password.svg" alt="AutoFill & Passwords" class="general-menu-icon">
+                  <span class="general-menu-label">AutoFill & Passwords</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-time.svg" alt="Date & Time" class="general-menu-icon">
+                  <span class="general-menu-label">Date & Time</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/cs-language.svg" alt="Language & Region" class="general-menu-icon">
+                  <span class="general-menu-label">Language & Region</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-login.svg" alt="Login Items & Extensions" class="general-menu-icon">
+                  <span class="general-menu-label">Login Items & Extensions</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-network-sharing.svg" alt="Sharing" class="general-menu-icon">
+                  <span class="general-menu-label">Sharing</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-disks.svg" alt="Startup Disk" class="general-menu-icon">
+                  <span class="general-menu-label">Startup Disk</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-system-backup.svg" alt="Time Machine" class="general-menu-icon">
+                  <span class="general-menu-label">Time Machine</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="Device Management" class="general-menu-icon">
+                  <span class="general-menu-label">Device Management</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="Transfer or Reset" class="general-menu-icon">
+                  <span class="general-menu-label">Transfer or Reset</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina About -->
+        <div class="page-content" id="about-page" style="display: none;">
+          <div class="about-device-header">
+            <img id="about-device-image" src="" alt="Device" class="about-device-image">
+            <div class="about-device-type" id="about-device-type">Loading...</div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section-vertical">
+              <div class="card-section-item">
+                <div class="card-section-label">Name</div>
+                <div class="card-section-value" id="about-name">Loading...</div>
+              </div>
+              <div class="card-section-item">
+                <div class="card-section-label">Chip</div>
+                <div class="card-section-value" id="about-chip">Loading...</div>
+              </div>
+              <div class="card-section-item">
+                <div class="card-section-label">Memory</div>
+                <div class="card-section-value" id="about-memory">Loading...</div>
+              </div>
+              <div class="card-section-item">
+                <div class="card-section-label">Serial number</div>
+                <div class="card-section-value" id="about-serial">Loading...</div>
+              </div>
+              <div class="card-section-item">
+                <div class="card-section-label">Coverage Status</div>
+                <div class="card-section-value" id="about-coverage">Loading...</div>
+              </div>
+              <div class="card-section-item">
+                <div class="card-section-label">Parts & Service</div>
+                <div class="card-section-value" id="about-parts">Loading...</div>
+              </div>
+            </div>
+          </div>
+          <div class="section-title">pearOS</div>
+          <div class="settings-card">
+            <div class="card-section-os">
+              <img id="os-logo" src="" alt="OS Logo" class="os-logo-image">
+              <div class="os-info">
+                <div class="os-name" id="os-name">Loading...</div>
+                <div class="os-version">
+                  <span>Version</span>
+                  <span id="os-version">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="section-title">Displays</div>
+          <div class="settings-card">
+            <div id="displays-list" class="card-section-vertical">
+              <div class="display-item">
+                <div class="display-info">
+                  <img id="display-icon" src="" alt="Display" class="display-icon">
+                  <div class="display-details">
+                    <div class="display-name-row">
+                      <div class="display-name" id="display-name">Loading...</div>
+                      <div class="display-specs" id="display-specs">Loading...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="display-settings-button-container">
+                <button class="display-settings-button">Display Settings...</button>
+              </div>
+            </div>
+          </div>
+          <div class="section-title">Storage</div>
+          <div class="settings-card">
+            <div id="storage-list" class="card-section-vertical">
+              <div class="storage-item">
+                <div class="storage-info">
+                  <img id="storage-icon" src="" alt="Storage" class="storage-icon">
+                  <div class="storage-details">
+                    <div class="storage-name-row">
+                      <div class="storage-name" id="storage-name">Loading...</div>
+                      <div class="storage-space" id="storage-space">Loading...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="storage-settings-button-container">
+                <button class="storage-settings-button">Storage Settings...</button>
+              </div>
+            </div>
+          </div>
+          <div class="about-footer">
+            <button class="system-report-button">System Report...</button>
+            <div class="copyright-text">
+              © 2017-<span id="current-year"></span> <a href="https://pear-software.com" target="_blank" rel="noopener noreferrer">Pear Software and Services L.T.D.</a> All Rights Reserved
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Software Update -->
+        <div class="page-content" id="software-update-page" style="display: none;">
+          <div id="updates-container">
+            <div class="updates-loading">Loading updates...</div>
+          </div>
+          <div class="update-actions" style="display: none;">
+            <button class="update-button update-tonight-button">Update Tonight</button>
+            <button class="update-button update-now-button">Update Now</button>
+          </div>
+          <div class="settings-card" id="installed-system-card">
+            <div class="card-section">
+              <h4 class="color-title">Installed</h4>
+              <div class="installed-system-info" id="installed-system-info">Loading...</div>
+        </div>
+      </div>
+          <div class="settings-card" id="updates-settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Automatic Updates</h4>
+              <label class="switch">
+                <input type="checkbox" id="automatic-updates-toggle">
+                <span class="slider"></span>
+              </label>
+        </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Beta Updates</h4>
+              <label class="switch">
+                <input type="checkbox" id="beta-updates-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card" id="license-card">
+            <div class="card-section-info">
+              <p class="license-text">Use of this software is subject to the original license agreement that accompanied the software being updated</p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina PearCare & Warranty -->
+        <div class="page-content" id="pearcare-page" style="display: none;">
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/preferences-other.svg" alt="PearCare" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">No Pear Products</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              You don't have any registered Pear products. When you purchase a Pear device, you can register it here to access warranty information and support services.
+            </p>
+          </div>
+        </div>
+        <!-- Pagina PearDrop & Handoff -->
+        <div class="page-content" id="peardrop-page" style="display: none;">
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/preferences-other.svg" alt="PearDrop" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">Feature not available</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              This feature is currently not available. Please check back later for updates.
+            </p>
+          </div>
+        </div>
+        <!-- Pagina AutoFill & Passwords -->
+        <div class="page-content" id="autofill-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-desktop-user-password.svg" alt="Passwords" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">All Your Passwords in One Place</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                Passwords, passkeys, and verification codes are safely stored in the KWallet app and are available to use in your Web Browser and other apps.
+              </p>
+              <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                <button class="update-button" id="open-kwallet-button">Open KWallet</button>
+          </div>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina Date & Time -->
+        <div class="page-content" id="date-time-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Set time and date automatically</h4>
+              <label class="switch">
+                <input type="checkbox" id="auto-time-date-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Date and time</h4>
+              <div style="display: flex; align-items: center; gap: 10px; margin-left: auto;">
+                <div class="date-time-display" id="date-time-display">Nov 18, 2025 at 19:52:32</div>
+                <button class="update-button" id="set-time-button" style="display: none;">Set...</button>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">24-hour time</h4>
+              <label class="switch">
+                <input type="checkbox" id="24-hour-time-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Time Zone</h4>
+              <select id="timezone-select" class="timezone-select">
+                <option value="">Loading timezones...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Login Items & Extensions -->
+        <div class="page-content" id="login-items-page" style="display: none;">
+          <h3 class="section-title">Open at Login</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); margin: 10px 0 20px 0; line-height: 1.5;">
+            These items will open automatically when you log in.
+          </p>
+          <div class="settings-card">
+            <table class="login-items-table">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Kind</th>
+                </tr>
+              </thead>
+              <tbody id="login-items-tbody">
+                <tr>
+                  <td colspan="2" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                    Loading...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="login-items-actions">
+            <button class="login-item-button login-item-add" id="login-item-add" title="Add login item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+            <button class="login-item-button login-item-remove" id="login-item-remove" title="Remove selected item" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </button>
+      </div>
+        </div>
+        <!-- Pagina Sharing -->
+        <div class="page-content" id="sharing-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-system-network-sharing.svg" alt="Sharing" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Device Management -->
+        <div class="page-content" id="device-management-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-system-users.svg" alt="Device Management" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Time Machine -->
+        <div class="page-content" id="time-machine-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-system-backup.svg" alt="Time Machine" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Transfer or Reset -->
+        <div class="page-content" id="transfer-reset-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-other.svg" alt="Transfer or Reset" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina Accessibility -->
+        <div class="page-content" id="accessibility-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-other.svg" alt="Accessibility" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Menu Bar -->
+        <div class="page-content" id="menu-bar-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-ubuntu-panel.svg" alt="Menu Bar" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Spotlight -->
+        <div class="page-content" id="spotlight-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-other.svg" alt="Spotlight" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Desktop and Dock -->
+        <div class="page-content" id="desktop-dock-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-desktop-workspaces.svg" alt="Desktop and Dock" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina Displays -->
+        <div class="page-content" id="displays-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Displays</h4>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section-vertical" id="displays-list-page">
+              <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                Loading displays...
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" id="resolution-settings-card" style="display: none;">
+            <div class="card-section" style="padding-left: 0; padding-right: 0; flex-direction: column; align-items: stretch;">
+              <h4 class="color-title" style="padding-left: 16px; padding-right: 16px;">Resolution</h4>
+              <div class="resolution-options" id="resolution-options" style="padding: 0 16px; margin-left: auto; margin-right: auto;">
+                <div class="resolution-option" data-resolution="larger" style="display: flex; flex-direction: column; align-items: center; padding: 8px; border-radius: 8px; transition: background-color 0.2s;">
+                  <div class="resolution-preview" style="width: 50px; height: 32px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <div class="macos-window" style="width: 90%; height: 80%; background: var(--bg-primary); border-radius: 2px; border: 1px solid var(--border-light); display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                      <div class="window-traffic-lights" style="display: flex; gap: 2px; padding: 2px 3px; border-bottom: 1px solid var(--border-light);">
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ff5f57;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ffbd2e;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #28ca42;"></div>
+                      </div>
+                      <div style="flex: 1; padding: 2px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 6px; color: var(--text-primary); font-weight: 500;">Text</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--text-primary);">Larger Text</div>
+                  <div class="resolution-value" style="margin-top: 4px; font-size: 9px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden;">-</div>
+                </div>
+                <div class="resolution-option" data-resolution="medium" style="display: flex; flex-direction: column; align-items: center; padding: 8px; border-radius: 8px; transition: background-color 0.2s;">
+                  <div class="resolution-preview" style="width: 50px; height: 32px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <div class="macos-window" style="width: 85%; height: 75%; background: var(--bg-primary); border-radius: 2px; border: 1px solid var(--border-light); display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                      <div class="window-traffic-lights" style="display: flex; gap: 2px; padding: 2px 3px; border-bottom: 1px solid var(--border-light);">
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ff5f57;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ffbd2e;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #28ca42;"></div>
+                      </div>
+                      <div style="flex: 1; padding: 2px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 5px; color: var(--text-primary); font-weight: 500;">Text</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--text-primary);">Medium</div>
+                  <div class="resolution-value" style="margin-top: 4px; font-size: 9px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden;">-</div>
+                </div>
+                <div class="resolution-option active" data-resolution="default" style="display: flex; flex-direction: column; align-items: center; padding: 8px; border-radius: 8px; transition: background-color 0.2s;">
+                  <div class="resolution-preview" style="width: 50px; height: 32px; background: var(--bg-secondary); border-radius: 4px; border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+                    <div class="macos-window" style="width: 80%; height: 70%; background: var(--bg-primary); border-radius: 2px; border: 1px solid var(--border-light); display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                      <div class="window-traffic-lights" style="display: flex; gap: 2px; padding: 2px 3px; border-bottom: 1px solid var(--border-light);">
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ff5f57;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #ffbd2e;"></div>
+                        <div style="width: 4px; height: 4px; border-radius: 50%; background: #28ca42;"></div>
+                      </div>
+                      <div style="flex: 1; padding: 2px; display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 4px; color: var(--text-primary); font-weight: 500;">Text</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--text-primary);">Default</div>
+                  <div class="resolution-value" style="margin-top: 4px; font-size: 9px; color: var(--text-secondary); opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden;">-</div>
+                </div>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" id="brightness-section">
+              <h4 class="color-title">Brightness</h4>
+              <div class="brightness-slider-container">
+                <svg class="brightness-icon brightness-icon-small" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <input type="range" id="brightness-slider" class="brightness-slider" min="0" max="100" value="50" step="1">
+                <div class="slider-container" id="brightness-slider-container">
+                  <div class="slider-progress" id="brightness-progress"></div>
+                  <div class="slider-thumb-glass" id="brightness-thumb">
+                    <div class="slider-thumb-glass-filter"></div>
+                    <div class="slider-thumb-glass-overlay"></div>
+                    <div class="slider-thumb-glass-specular"></div>
+                  </div>
+                </div>
+                <svg class="brightness-icon brightness-icon-large" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" id="display-revert-card" style="display: none;">
+            <div class="card-section" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span id="revert-timer-text" style="font-size: 13px; color: var(--text-primary);">Reverting your changes in <span id="revert-countdown">15</span>s...</span>
+              </div>
+              <div style="display: flex; gap: 10px; width: 100%;">
+                <button id="revert-keep-button" style="flex: 1; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 12px; font-weight: 500; transition: all 0.2s;">Keep</button>
+                <button id="revert-revert-button" style="flex: 1; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 12px; font-weight: 500; transition: all 0.2s;">Revert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Wallpaper -->
+        <div class="page-content" id="wallpaper-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section" style="display: flex; align-items: center; gap: 20px;">
+              <div style="flex: 1;">
+                <img id="current-wallpaper-preview" src="" alt="Current Wallpaper" style="width: 100%; max-width: 400px; height: auto; border-radius: 8px; object-fit: cover;">
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+                <div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Current Wallpaper</div>
+                  <div id="current-wallpaper-name" style="font-size: 14px; color: var(--text-primary); word-break: break-all;">Loading...</div>
+                </div>
+                <div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Fill Mode</div>
+                  <select id="wallpaper-fill-mode" class="timezone-select" style="width: 100%;">
+                    <option value="Fill screen">Fill screen</option>
+                    <option value="Fit to screen">Fit to screen</option>
+                    <option value="Stretch to Fill Screen">Stretch to Fill Screen</option>
+                    <option value="Center">Center</option>
+                    <option value="Tile">Tile</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; justify-content: space-between; align-items: center;">
+              <h4 class="color-title">Available Wallpapers</h4>
+              <button id="browse-wallpaper-btn" class="modal-button">Browse...</button>
+            </div>
+            <hr class="card-divider">
+            <div id="wallpapers-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 15px;">
+              <div style="text-align: center; padding: 20px; color: var(--text-secondary); grid-column: 1 / -1;">
+                Loading wallpapers...
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Notifications -->
+        <div class="page-content" id="notifications-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/cs-notifications.svg" alt="Notifications" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Sound -->
+        <div class="page-content" id="sound-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Output</h4>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; flex-direction: column; gap: 15px;">
+              <select id="output-device-select" class="timezone-select" style="width: 100%;">
+                <option value="">Loading devices...</option>
+              </select>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" id="output-volume-slider" class="brightness-slider" min="0" max="100" value="50" step="1">
+                <div class="slider-container" id="output-volume-slider-container" style="flex: 1;">
+                  <div class="slider-progress" id="output-volume-progress"></div>
+                  <div class="slider-thumb-glass" id="output-volume-thumb">
+                    <div class="slider-thumb-glass-filter"></div>
+                    <div class="slider-thumb-glass-overlay"></div>
+                    <div class="slider-thumb-glass-specular"></div>
+                  </div>
+                </div>
+                <span class="brightness-value" id="output-volume-value">50%</span>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section">
+              <h4 class="color-title">Input</h4>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; flex-direction: column; gap: 15px;">
+              <select id="input-device-select" class="timezone-select" style="width: 100%;">
+                <option value="">Loading devices...</option>
+              </select>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <input type="range" id="input-volume-slider" class="brightness-slider" min="0" max="100" value="50" step="1">
+                <div class="slider-container" id="input-volume-slider-container" style="flex: 1;">
+                  <div class="slider-progress" id="input-volume-progress"></div>
+                  <div class="slider-thumb-glass" id="input-volume-thumb">
+                    <div class="slider-thumb-glass-filter"></div>
+                    <div class="slider-thumb-glass-overlay"></div>
+                    <div class="slider-thumb-glass-specular"></div>
+                  </div>
+                </div>
+                <span class="brightness-value" id="input-volume-value">50%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Focus -->
+        <div class="page-content" id="focus-page" style="display: none;">
+          <div class="settings-card" style="padding: 40px; position: relative;">
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+              <div style="text-align: center; margin-bottom: 10px;">
+                <img src="./assets/preferences-other.svg" alt="Focus" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+              </div>
+              <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature not available</h3>
+              <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                This feature is currently not available. Please check back later for updates.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Lock Screen -->
+        <div class="page-content" id="lock-screen-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Turn display off on battery when inactive</h4>
+              <select id="battery-timeout-select" class="timezone-select">
+                <option value="60">1 minute</option>
+                <option value="120">2 minutes</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="0">Never</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section">
+              <h4 class="color-title">Turn display off on power adapter when inactive</h4>
+              <select id="ac-timeout-select" class="timezone-select">
+                <option value="60">1 minute</option>
+                <option value="120">2 minutes</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="0">Never</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section">
+              <h4 class="color-title">Require password after screen saver begins or display is turned off</h4>
+              <select id="lock-delay-select" class="timezone-select">
+                <option value="0">Immediately</option>
+                <option value="60">1 minute</option>
+                <option value="120">2 minutes</option>
+                <option value="300">5 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="-1">Never</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Privacy and Security -->
+        <div class="page-content" id="privacy-security-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section-os">
+              <img src="./assets/cs-privacy.svg" alt="Privacy" style="width: 40px; height: 40px; opacity: 0.8;">
+              <div class="os-info" style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
+                <div class="os-name" style="font-size: 16px; font-weight: 600; color: var(--text-primary); text-align: left;">Privacy</div>
+                <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin: 0; text-align: left;">
+                  Control which apps can access your data, location, camera, and microphone, and manage safety protections.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/cs-privacy.svg" alt="Location Services" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Location Services</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-system-time.svg" alt="Calendars" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Calendars</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/system-users.svg" alt="Contacts" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Contacts</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-document.svg" alt="Files & Folders" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Files & Folders</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-system-disks.svg" alt="Full Disk Access" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Full Disk Access</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Home Accessories" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Home Accessories</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-multimedia.svg" alt="Media & Pear Music" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Media & Pear Music</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-web-browser-ssl.svg" alt="Passkeys Access for Web Browsers" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Passkeys Access for Web Browsers</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-wallpaper.svg" alt="Photos" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Photos</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-notification-bell.svg" alt="Reminders" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Reminders</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-accessibility.svg" alt="Accessibility" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Accessibility</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-plugin.svg" alt="App Management" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">App Management</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Automation" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Automation</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-system-bluetooth.svg" alt="Bluetooth" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Bluetooth</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Camera" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Camera</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Developer Tools" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Developer Tools</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Focus" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Focus</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-keyboard.svg" alt="Input Monitoring" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Input Monitoring</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-system-network.svg" alt="Local Network" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Local Network</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-sound.svg" alt="Microphone" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Microphone</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Motion & Fitness" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Motion & Fitness</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-remote-desktop.svg" alt="Remote Desktop" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Remote Desktop</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-sound.svg" alt="Screen & System Audio Recording" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Screen & System Audio Recording</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-text-to-speech.svg" alt="Speech Recognition" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Speech Recognition</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-security.svg" alt="Sensitive Content Warning" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Sensitive Content Warning</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/system-users.svg" alt="Blocked Contacts" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Blocked Contacts</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Analytics & Improvement" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Analytics & Improvement</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Apple Advertising" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Apple Advertising</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-other.svg" alt="Pear Intelligence Report" style="width: 24px; height: 24px; opacity: 0.8;">
+                <h4 class="color-title" style="margin: 0;">Pear Intelligence Report</h4>
+              </div>
+              <span style="font-size: 13px; color: var(--text-secondary); margin-left: auto;">Unavailable</span>
+            </div>
+          </div>
+          <h3 class="section-title">Security</h3>
+          <div class="settings-card">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Allow applications from</h4>
+              <select class="timezone-select">
+                <option value="everyone" selected>Everyone</option>
+              </select>
+            </div>
+          </div>
+          <h3 class="section-title" style="margin-top: 30px;">Apps that require your attention</h3>
+          <div class="settings-card" style="display: flex; justify-content: center; padding: 12px;">
+            <div id="require-apps-list" style="display: flex; flex-direction: column; gap: 20px; padding: 15px 0; align-items: center; width: 100%; max-width: 600px; box-sizing: border-box;">
+              <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                Loading applications...
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Touch ID and Password -->
+        <div class="page-content" id="touch-id-password-page" style="display: none;">
+          <h3 class="section-title">Password</h3>
+          <div class="settings-card">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <p style="margin: 0; font-size: 13px; color: var(--text-primary);">A login password has been set for this user.</p>
+              </div>
+              <button class="update-button" id="change-password-button">Change...</button>
+            </div>
+          </div>
+          <h3 class="section-title" style="margin-top: 30px;">Touch ID</h3>
+          <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 20px 0;">
+            Touch ID lets you use your fingerprint to unlock your Computer and make purchases within apps.
+          </p>
+          <div id="touch-id-status" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 20px; padding: 20px;">
+            <div style="color: var(--text-secondary);">Loading...</div>
+          </div>
+        </div>
+        <!-- Pagina Users & Groups -->
+        <div class="page-content" id="users-groups-page" style="display: none;">
+          <div class="settings-card" id="users-list-card" style="max-width: 450px;">
+            <div id="users-list" style="padding: 12px;">
+              <div style="color: var(--text-secondary);">Loading users...</div>
+            </div>
+          </div>
+          <div class="settings-card" id="autologin-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Automatically log in</div>
+              </div>
+              <select id="autologin-dropdown" class="timezone-select">
+                <option value="off">Off</option>
+                <option value="on">On</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Internet Accounts -->
+        <div class="page-content" id="internet-accounts-page" style="display: none;">
+          <div class="settings-card" style="max-width: 450px;">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-online-accounts.svg" alt="Pear Cloud" class="general-menu-icon">
+                  <div style="display: flex; flex-direction: column;">
+                    <span class="general-menu-label">Pear Cloud</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-top: 2px;">Pear Drive, Contacts, Calendars, Pafari, Reminders, Notes, and Piri</span>
+                  </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Game Center -->
+        <div class="page-content" id="game-center-page" style="display: none;">
+          <div class="settings-card" style="max-width: 450px;">
+            <div class="card-section-vertical">
+              <div class="general-menu-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="Game Center" class="general-menu-icon">
+                  <div style="display: flex; flex-direction: column;">
+                    <span class="general-menu-label">Game Center</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-top: 2px;">A social gaming service that lets you interact with friends, track and compare cores and achievements, challenge other players, and compete in multiplayer games.</span>
+                  </div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="game-center-toggle">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina pCloud -->
+        <div class="page-content" id="pcloud-page" style="display: none;">
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/preferences-other.svg" alt="pCloud" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">Feature not available</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              This feature is currently not available. Please check back later for updates.
+            </p>
+          </div>
+        </div>
+        <!-- Pagina Wallet & Pear Pay -->
+        <div class="page-content" id="wallet-pear-pay-page" style="display: none;">
+          <h3 class="section-title">Payment Cards</h3>
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/preferences-other.svg" alt="Wallet & Pear Pay" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">Feature not available</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              This feature is currently not available. Please check back later for updates.
+            </p>
+          </div>
+        </div>
+        <!-- Pagina Keyboard -->
+        <div class="page-content" id="keyboard-page" style="display: none;">
+          <div class="settings-card" style="max-width: 450px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Key Repeat</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">When enabled, holding down a key repeats that key</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="key-repeat-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Key Repeat Delay</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Time before a key starts repeating</div>
+              </div>
+              <select id="key-repeat-delay-select" class="timezone-select" style="min-width: 120px;">
+                <option value="200">Short</option>
+                <option value="400">Medium</option>
+                <option value="600" selected>Long</option>
+                <option value="800">Very Long</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Key Repeat Rate</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">How fast keys repeat when held down</div>
+              </div>
+              <select id="key-repeat-rate-select" class="timezone-select" style="min-width: 120px;">
+                <option value="10">Slow</option>
+                <option value="20">Medium</option>
+                <option value="25" selected>Fast</option>
+                <option value="30">Very Fast</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Keyboard Layout</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Select your keyboard layout</div>
+              </div>
+              <select id="keyboard-layout-select" class="timezone-select" style="min-width: 150px;">
+                <option value="us">US</option>
+                <option value="uk">UK</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+                <option value="es">Spanish</option>
+                <option value="it">Italian</option>
+                <option value="ro">Romanian</option>
+                <option value="ru">Russian</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Trackpad -->
+        <div class="page-content" id="trackpad-page" style="display: none;">
+          <div class="settings-card" style="max-width: 450px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Tap to Click</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Tap the trackpad to click</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="tap-to-click-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Natural Scrolling</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Content scrolls in the direction of finger movement</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="natural-scrolling-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Two-Finger Scrolling</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Use two fingers to scroll</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="two-finger-scrolling-toggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <div style="flex: 1;">
+                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Trackpad Speed</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Adjust the speed of the pointer</div>
+              </div>
+              <select id="trackpad-speed-select" class="timezone-select" style="min-width: 120px;">
+                <option value="0.5">Slow</option>
+                <option value="1.0" selected>Normal</option>
+                <option value="1.5">Fast</option>
+                <option value="2.0">Very Fast</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Printers & Scanners -->
+        <div class="page-content" id="printers-scanners-page" style="display: none;">
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/cs-printer.svg" alt="Printers & Scanners" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">Feature not available</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              This feature is currently not available. Please check back later for updates.
+            </p>
+          </div>
+        </div>
+        <!-- Pagina Screen Time -->
+        <div class="page-content" id="screen-time-page" style="display: none;">
+          <div class="settings-card" style="text-align: center; padding: 60px 40px; display: flex; flex-direction: column; align-items: center;">
+            <div style="margin-bottom: 30px;">
+              <img src="./assets/preferences-other.svg" alt="Screen Time" style="width: 80px; height: 80px; opacity: 0.6; margin: 0 auto; display: block;">
+            </div>
+            <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">Feature not available</h3>
+            <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 500px; margin: 0 auto;">
+              This feature is currently not available. Please check back later for updates.
+            </p>
+          </div>
+        </div>
+        <!-- Modal pentru înregistrarea fingerprint-ului -->
+        <div class="modal-overlay" id="enroll-fingerprint-modal" style="display: none;">
+          <div class="modal-content">
+            <div class="settings-card">
+              <div class="card-section">
+                <h3 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 0 0 10px 0;">Enroll Fingerprint</h3>
+                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin: 0 0 20px 0;">
+                  Follow the on-screen instructions to enroll your fingerprint.
+                </p>
+                <div id="enroll-status" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                  Starting enrollment process...
+                </div>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-button cancel-button" id="enroll-fingerprint-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+        <!-- Modal pentru schimbarea parolei -->
+        <div class="modal-overlay" id="change-password-modal" style="display: none;">
+          <div class="modal-content">
+            <div class="settings-card">
+              <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="color-title" style="margin: 0;">Old password</h4>
+                <input type="password" id="old-password-input" class="password-input" placeholder="Enter old password" style="width: auto; min-width: 200px;">
+              </div>
+              <hr class="card-divider">
+              <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="color-title" style="margin: 0;">New password</h4>
+                <input type="password" id="new-password-input" class="password-input" placeholder="Enter new password" style="width: auto; min-width: 200px;">
+              </div>
+              <hr class="card-divider">
+              <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="color-title" style="margin: 0;">Verify</h4>
+                <input type="password" id="verify-password-input" class="password-input" placeholder="Verify new password" style="width: auto; min-width: 200px;">
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button class="modal-button cancel-button" id="change-password-cancel">Cancel</button>
+              <button class="modal-button connect-button" id="change-password-submit">Change Password</button>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Startup Disk -->
+        <div class="page-content" id="startup-disk-page" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section">
+              <h4 class="color-title">Select the system you want to use to start up your computer</h4>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <div class="boot-entries-grid" id="boot-entries-grid">
+                <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                  Loading boot entries...
+                </div>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <div class="startup-disk-selection">
+                <p class="startup-disk-text" id="startup-disk-text">You have selected <span id="selected-boot-name">-</span> on the disk <span id="selected-boot-disk">-</span></p>
+                <button class="update-button" id="restart-button" disabled>Restart...</button>
+          </div>
+        </div>
+      </div>
+        </div>
+        <!-- Pagina Storage -->
+        <div class="page-content" id="storage-page" style="display: none;">
+          <div class="settings-card" id="storage-disk-card">
+            <div class="card-section">
+              <h4 class="color-title" id="storage-disk-name">Loading...</h4>
+              <div class="storage-usage-text" id="storage-usage-text">Loading...</div>
+            </div>
+            <div class="storage-bar-container" id="storage-bar-container">
+              <div class="storage-loading-spinner">
+                <div class="spinner"></div>
+                <span>Analyzing storage...</span>
+              </div>
+              <div class="storage-bar-wrapper" id="storage-bar-wrapper" style="display: none;">
+                <div class="storage-bar-base" id="storage-bar-base">
+                  <div class="storage-tooltip" id="storage-tooltip" style="display: none;">
+                    <div class="tooltip-title" id="tooltip-title"></div>
+                    <div class="tooltip-size" id="tooltip-size"></div>
+                  </div>
+                </div>
+                <div class="storage-bar-overlay">
+                  <div class="storage-bar-segment storage-applications" id="storage-segment-applications" style="left: 0%; width: 0%;" data-name="Applications"></div>
+                  <div class="storage-bar-segment storage-documents" id="storage-segment-documents" style="left: 0%; width: 0%;" data-name="Documents"></div>
+                  <div class="storage-bar-segment storage-photos" id="storage-segment-photos" style="left: 0%; width: 0%;" data-name="Photos"></div>
+                  <div class="storage-bar-segment storage-downloads" id="storage-segment-downloads" style="left: 0%; width: 0%;" data-name="Downloads"></div>
+                  <div class="storage-bar-segment storage-desktop" id="storage-segment-desktop" style="left: 0%; width: 0%;" data-name="Desktop"></div>
+                  <div class="storage-bar-segment storage-system" id="storage-segment-system" style="left: 0%; width: 0%;" data-name="System Data"></div>
+                </div>
+              </div>
+            </div>
+            <div class="storage-legend" id="storage-legend" style="display: none;">
+              <div class="legend-item">
+                <span class="legend-color storage-applications"></span>
+                <span class="legend-label">Applications</span>
+                <span class="legend-size" id="legend-applications">0 GB</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color storage-documents"></span>
+                <span class="legend-label">Documents</span>
+                <span class="legend-size" id="legend-documents">0 GB</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color storage-photos"></span>
+                <span class="legend-label">Photos</span>
+                <span class="legend-size" id="legend-photos">0 GB</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color storage-downloads"></span>
+                <span class="legend-label">Downloads</span>
+                <span class="legend-size" id="legend-downloads">0 GB</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color storage-desktop"></span>
+                <span class="legend-label">Desktop</span>
+                <span class="legend-size" id="legend-desktop">0 GB</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-color storage-system"></span>
+                <span class="legend-label">System Data</span>
+                <span class="legend-size" id="legend-system">0 GB</span>
+              </div>
+            </div>
+          </div>
+          <div class="section-title">Recommendations</div>
+          <div class="settings-card">
+            <div class="card-section-image">
+              <img src="./assets/preferences-system-disks.svg" alt="Trash" class="feature-image" style="width: 32px; height: 32px;">
+              <div style="flex: 1;">
+                <h4 class="color-title">Empty Trash automatically</h4>
+                <p class="card-description">Save space by automatically erasing items that have been in the Trash for more than 30 days.</p>
+              </div>
+              <button class="update-button" style="margin-left: auto;">Turn On...</button>
+            </div>
+          </div>
+          <div class="settings-card" id="storage-categories-card">
+            <div class="card-section-item" id="storage-category-applications">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/applications-featured.svg" alt="Applications" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">Applications</span>
+              </div>
+              <span class="card-section-value" id="storage-category-applications-size">0 GB</span>
+            </div>
+            <div class="card-section-item" id="storage-category-documents">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-document.svg" alt="Documents" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">Documents</span>
+              </div>
+              <span class="card-section-value" id="storage-category-documents-size">0 GB</span>
+            </div>
+            <div class="card-section-item" id="storage-category-photos">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/applications-graphics.svg" alt="Photos" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">Photos</span>
+              </div>
+              <span class="card-section-value" id="storage-category-photos-size">0 GB</span>
+            </div>
+            <div class="card-section-item" id="storage-category-downloads">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/download.svg" alt="Downloads" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">Downloads</span>
+              </div>
+              <span class="card-section-value" id="storage-category-downloads-size">0 GB</span>
+            </div>
+            <div class="card-section-item" id="storage-category-desktop">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/desktop.svg" alt="Desktop" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">Desktop</span>
+              </div>
+              <span class="card-section-value" id="storage-category-desktop-size">0 GB</span>
+            </div>
+          </div>
+          <div class="settings-card" id="storage-system-card">
+            <div class="card-section-item" id="storage-pearos-item" style="display: none;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/application-default-icon.svg" alt="pearOS" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">pearOS</span>
+              </div>
+              <span class="card-section-value" id="storage-pearos-size">0 GB</span>
+            </div>
+            <div class="card-section-item" id="storage-system-data-item">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-system-disks.svg" alt="System Data" class="icon" style="width: 20px; height: 20px;">
+                <span class="card-section-label">System Data</span>
+              </div>
+              <span class="card-section-value" id="storage-system-data-size">0 GB</span>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Personal Information -->
+        <div class="page-content" id="personal-information-page" style="display: none;">
+          <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="card-section" id="personal-info-name-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Name</h4>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="personal-info-name" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Date of Birth</h4>
+              <span id="personal-info-birthdate" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Payment & Shipping -->
+        <div class="page-content" id="payment-shipping-page" style="display: none;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px 10px 10px 40px;">
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 0 0 8px 0;">Payment Method</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.4;">You can use Pear Cash with your Pear Account, to make purchases or subscribe to services from Pear.</p>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto; padding: 40px; position: relative;">
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="./assets/preferences-desktop-online-accounts.svg" alt="Payment & Shipping" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+                </div>
+                <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature Not available yet</h3>
+                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                  This feature is currently not available. Please check back later for updates.
+                </p>
+              </div>
+            </div>
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 30px 0 8px 0;">Shipping Address</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.4;">This name and address will be used for shipping Pear Store purchases.</p>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+              <div class="card-section" style="display: flex; align-items: center; gap: 12px;">
+                <img src="./assets/preferences-desktop-online-accounts.svg" alt="Shipping Address" style="width: 40px; height: 40px; opacity: 0.8;">
+                <div style="flex: 1;">
+                  <span id="payment-shipping-address" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+                </div>
+              </div>
+            </div>
+            <button class="modal-button" id="change-shipping-address-button" style="margin-top: 20px; margin-left: 0;">Change your shipping address...</button>
+          </div>
+        </div>
+        <!-- Pagina Pear Cloud -->
+        <div class="page-content" id="pear-cloud-page" style="display: none;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px 10px 10px 40px;">
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto; padding: 40px; position: relative;">
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="./assets/preferences-desktop-online-accounts.svg" alt="Pear Cloud" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+                </div>
+                <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature Not available yet</h3>
+                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                  This feature is currently not available. Please check back later for updates.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Device Info -->
+        <div class="page-content" id="device-details-page" style="display: none;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 40px 20px 40px; gap: 5px;">
+            <img id="device-details-image" src="./assets/laptop.svg" alt="Device" style="width: 120px; height: 120px; object-fit: contain;">
+            <h2 id="device-details-name" style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin: 0;">Device Name</h2>
+            <span id="device-details-this-device" style="font-size: 14px; color: var(--text-secondary); display: none;">(This Device)</span>
+          </div>
+          <div class="settings-card" id="pearid-lock-card" style="max-width: 600px; margin: 0 auto; display: none;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">pearID Lock</h4>
+              <span style="font-size: 13px; color: var(--text-primary);">On</span>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 20px auto 0 auto;">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Name</h4>
+              <span id="device-details-name-value" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 20px auto 0 auto;">
+            <div class="card-section" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <h4 class="color-title" style="margin: 0;">Remove from account</h4>
+                <button class="delete-button" id="remove-device-button">Remove from Account</button>
+              </div>
+              <p style="font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.4;">If you do not recognise this device, remove it and <a href="#" id="change-password-link" style="color: #007AFF; text-decoration: none; cursor: pointer;">change your password</a>.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Sign in with Pear -->
+        <div class="page-content" id="signin-pear-page" style="display: none;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px 10px 10px 40px;">
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto; padding: 40px; position: relative;">
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div style="text-align: center; margin-bottom: 10px;">
+                  <img src="./assets/cs-user.svg" alt="Sign in with Pear" style="width: 80px; height: 80px; opacity: 0.8; margin: 0 auto; display: block;">
+                </div>
+                <h3 style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; text-align: center;">Feature Not available yet</h3>
+                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5; max-width: 600px; margin: 0 auto; text-align: center;">
+                  This feature is currently not available. Please check back later for updates.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Media & Purchases -->
+        <div class="page-content" id="media-purchases-page" style="display: none;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px 10px 10px 40px;">
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 0 0 20px 0;">Pear Store, Music and Services</h2>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+              <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+                <h4 class="color-title" style="margin: 0;">Account</h4>
+                <span id="media-purchases-account-name" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+              </div>
+            </div>
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 30px 0 20px 0;">Installed Apps</h2>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+              <div class="card-section-vertical" id="media-purchases-apps-list">
+                <!-- Aplicațiile vor fi adăugate aici dinamic -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Sign In & Security -->
+        <div class="page-content" id="signin-security-page" style="display: none;">
+          <div style="max-width: 600px; margin: 0 auto; padding: 20px 10px 10px 40px;">
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 0 0 8px 0;">Email & Phone Numbers</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 20px 0; line-height: 1.4;">This email address and phone number can be used to sign in, verify your identity and help recover your account. Thy can also be used to reach you with PearMessage, PearTime, Game Center and more.</p>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+              <div class="card-section-vertical">
+                <div class="general-menu-item">
+                  <div class="general-menu-item-content" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                    <span id="signin-security-email" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+                    <span style="font-size: 11px; color: var(--text-secondary);">Primary email</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+                <div class="general-menu-item">
+                  <div class="general-menu-item-content">
+                    <span id="signin-security-phone" style="font-size: 13px; color: var(--text-primary);">Loading...</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+                <div class="general-menu-item" style="justify-content: flex-end;">
+                  <button class="modal-button" id="add-phone-number-button" style="margin: 0;">Add Or Change the Phone Number...</button>
+                </div>
+              </div>
+            </div>
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-primary); margin: 30px 0 20px 0;">Security</h2>
+            <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+              <div class="card-section">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                  <h4 class="color-title" style="margin: 0;">Password</h4>
+                  <span id="password-last-changed" style="font-size: 11px; color: var(--text-secondary);">Last Changed: Loading...</span>
+                </div>
+                <button class="delete-button" id="signin-security-change-password-button">Change Password...</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pagina Profil Utilizator -->
+        <!-- Pagina Sign In cu PearID (când nu suntem logați) -->
+        <div class="page-content" id="pearid-signin-page" style="display: none;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 30px 40px 20px 40px; gap: 15px; max-width: 600px; margin: 0 auto;">
+            <img src="./assets/pearid.png" alt="PearID" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background-color: rgba(0, 0, 0, 0.05); padding: 8px;">
+            <h2 id="pearid-signin-title" style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin: 0; text-align: center;">One account for everything Pear.</h2>
+            <p id="pearid-signin-description" style="font-size: 14px; color: var(--text-secondary); margin: 0; text-align: center; line-height: 1.5; max-width: 500px;">Sign in to securely access your personal data stored in PearCloud, set up the Pear Store, and use all Pear services on this Computer.</p>
+            <p id="pearid-signin-lock-email" style="font-size: 14px; color: var(--text-primary); margin: 8px 0 0 0; text-align: center; line-height: 1.5; max-width: 500px; display: none; font-weight: 500;"></p>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="card-section">
+              <h4 class="color-title" style="margin: 0;">Email or Phone Number</h4>
+              <input type="text" id="pearid-signin-email-input" class="password-input" placeholder="required" style="width: auto; min-width: 200px;">
+            </div>
+            <div class="card-section" id="pearid-signin-password-section" style="display: none;">
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title" style="margin: 0;">Password</h4>
+                <input type="password" id="pearid-signin-password-input" class="password-input" placeholder="required" style="width: auto; min-width: 200px;">
+              </div>
+            </div>
+          </div>
+          <div style="max-width: 600px; margin: 20px auto 0 auto; display: flex; justify-content: flex-end;">
+            <button class="modal-button modal-confirm-button" id="pearid-signin-continue-button" disabled>Continue</button>
+          </div>
+          <p style="max-width: 600px; margin: 12px auto 0 auto; font-size: 12px; color: var(--text-secondary); line-height: 1.4; padding: 0 40px;">This Computer will be associated with your Pear Account and data such as settings and config files will be stored in Pear Cloud so you can access them on other devices.</p>
+          <div style="max-width: 600px; margin: 12px auto 0 auto; display: flex; justify-content: flex-end;">
+            <button class="modal-button" id="pearid-signin-no-account-button">Don't Have an Account?</button>
+          </div>
+        </div>
+        <div class="page-content" id="user-profile-page" style="display: none;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 40px 20px 40px; gap: 5px;">
+            <div id="user-profile-avatar-container" style="position: relative; width: 120px; height: 120px; border-radius: 50%; overflow: hidden;">
+              <img id="user-profile-avatar" src="./assets/cs-user.svg" alt="User" style="width: 100%; height: 100%; object-fit: cover; background-color: rgba(0, 0, 0, 0.05);display: block;">
+              <div class="avatar-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.3s ease; pointer-events: none; display: flex; align-items: center; justify-content: center;">
+                <span style="color: white; font-size: 12px; font-weight: 500;">edit</span>
+              </div>
+            </div>
+            <h2 id="user-profile-name" style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin: 0;">User Name</h2>
+            <p id="user-profile-email" style="font-size: 14px; color: var(--text-secondary); margin: 0 0 30px 0;">user@example.com</p>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 0 auto;">
+            <div class="card-section-vertical">
+              <div class="general-menu-item" id="personal-information-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-user.svg" alt="Personal Information" class="general-menu-icon">
+                  <span class="general-menu-label">Personal Information</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item" id="signin-security-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-user-password.svg" alt="Sign In & Security" class="general-menu-icon">
+                  <span class="general-menu-label">Sign In & Security</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item" id="payment-shipping-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-online-accounts.svg" alt="Payment & Shipping" class="general-menu-icon">
+                  <span class="general-menu-label">Payment & Shipping</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 20px auto 0 auto;">
+            <div class="card-section-vertical">
+              <div class="general-menu-item" id="pear-cloud-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-desktop-online-accounts.svg" alt="Pear Cloud" class="general-menu-icon">
+                  <span class="general-menu-label">Pear Cloud</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item" id="media-purchases-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/preferences-other.svg" alt="Media & Purchases" class="general-menu-icon">
+                  <span class="general-menu-label">Media & Purchases</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+              <div class="general-menu-item" id="signin-pear-item">
+                <div class="general-menu-item-content">
+                  <img src="./assets/cs-user.svg" alt="Sign in with Pear" class="general-menu-icon">
+                  <span class="general-menu-label">Sign in with Pear</span>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </div>
+            </div>
+          </div>
+          <div style="max-width: 600px; margin: 30px auto 0 auto; padding: 0 20px;">
+            <h4 class="color-title" style="margin: 0 0 15px 0;">Devices</h4>
+          </div>
+          <div class="settings-card" style="max-width: 600px; margin: 0 auto;" id="devices-card">
+            <div class="card-section-vertical" id="devices-list">
+              <div style="color: var(--text-secondary); padding: 20px; text-align: center;">Loading devices...</div>
+            </div>
+          </div>
+          <div style="max-width: 600px; margin: 20px auto 0 auto; padding: 0 20px; display: flex; justify-content: flex-start;">
+            <button class="system-report-button" id="sign-out-button">Sign Out...</button>
+          </div>
+        </div>
+        <!-- Conținutul implicit -->
+        <div class="page-content" id="default-page">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+        </div>
+    <!-- Modal pentru vizualizarea numărului de telefon -->
+    <div id="view-phone-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="settings-card" style="margin-bottom: 20px;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color, #007AFF); margin-bottom: 10px;">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <h3 class="modal-title" id="view-phone-title" style="margin: 10px 0 8px 0;">Phone Number</h3>
+            <p class="modal-description" style="text-align: center; margin: 0;">This phone number can be used to sign in, verify your identity and help recover your account. It can also be used to reach you with PearMessage, PearTime, Game Centre and more.</p>
+          </div>
+        </div>
+        <p class="modal-description" style="margin-bottom: 20px;">If you want to remove this phone number, change your phone number to 0000.</p>
+        <div class="modal-buttons" style="justify-content: flex-end;">
+          <button class="modal-button modal-confirm-button" id="view-phone-done-button">Done</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru vizualizarea email-ului -->
+    <div id="view-email-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="settings-card" style="margin-bottom: 20px;">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-color, #007AFF); margin-bottom: 10px;">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+            <h3 class="modal-title" id="view-email-title" style="margin: 10px 0 8px 0;">Email</h3>
+            <p class="modal-description" style="text-align: center; margin: 0;">This email address can be used to sign in, verify your identity and help recover your account. It can also be used to reach you with PearMessage, PearTime, Game Centre and more.</p>
+          </div>
+        </div>
+        <p class="modal-description" style="margin-bottom: 20px;">Primary email address is used to receive emails from Pear. It is also visible to people you collaborate and share documents using PearCloud. You can't change the email address.</p>
+        <div class="modal-buttons" style="justify-content: flex-end;">
+          <button class="modal-button modal-confirm-button" id="view-email-done-button">Done</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru Change Shipping Address -->
+    <div id="change-shipping-address-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-primary); margin-bottom: 10px;">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <h3 class="modal-title">Change Shipping Address</h3>
+          <p class="modal-description" style="text-align: center; margin-top: 8px;">Update your shipping address for Pear Store purchases.</p>
+        </div>
+        <div class="settings-card">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">Address</h4>
+            <input type="text" id="shipping-address-input" class="password-input" placeholder="Enter address" style="width: auto; min-width: 300px;">
+          </div>
+        </div>
+        <div class="modal-buttons" style="justify-content: flex-end; margin-top: 20px;">
+          <button class="modal-button" id="change-shipping-address-cancel">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="change-shipping-address-continue">Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru Add Phone Number -->
+    <div id="add-phone-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-primary); margin-bottom: 10px;">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          <h3 class="modal-title">Add Phone Number</h3>
+          <p class="modal-description" style="text-align: center; margin-top: 8px;">A verification code will be sent to this number (or not).</p>
+        </div>
+        <div class="settings-card">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">Country</h4>
+            <select id="phone-country-select" class="password-input" style="width: auto; min-width: 200px;">
+              <!-- Options will be populated by JavaScript -->
+            </select>
+          </div>
+          <hr class="card-divider">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">Phone Number</h4>
+            <input type="tel" id="phone-number-input" class="password-input" placeholder="Phone number" style="width: auto; min-width: 200px;">
+          </div>
+        </div>
+        <div class="modal-buttons" style="margin-top: 20px;">
+          <button class="modal-button" id="add-phone-cancel-button">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="add-phone-continue-button">Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru verificarea parolei sudo (Change Password) -->
+    <div id="change-password-sudo-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <h3 class="modal-title">Enter Password</h3>
+        <p class="modal-description">Administrator password required to change your password.</p>
+        <input type="password" id="change-password-sudo-input" class="modal-password-input" placeholder="Password" autocomplete="off">
+        <div class="modal-buttons">
+          <button class="modal-button" id="change-password-sudo-cancel">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="change-password-sudo-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru noua parolă (Change Password) -->
+    <div id="change-password-new-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-primary); margin-bottom: 10px;">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <h3 class="modal-title">New Password</h3>
+          <p class="modal-description" style="text-align: center; margin-top: 8px;">Choose a secure password you can remember.</p>
+        </div>
+        <div class="settings-card">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">Old password</h4>
+            <input type="password" id="change-password-old-input" class="password-input" placeholder="Enter old password" style="width: auto; min-width: 200px;">
+          </div>
+          <hr class="card-divider">
+          <div class="card-section" style="display: flex; flex-direction: column; align-items: flex-start; padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <h4 class="color-title" style="margin: 0;">New Password</h4>
+              <input type="password" id="change-password-new-input" class="password-input" placeholder="Enter new password" style="width: auto; min-width: 200px;">
+            </div>
+            <div id="new-password-error" style="font-size: 11px; color: #fe5b51; margin-top: 4px; margin-left: 0; min-height: 16px; display: none;"></div>
+          </div>
+          <hr class="card-divider">
+          <div class="card-section" style="display: flex; flex-direction: column; align-items: flex-start; padding-bottom: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <h4 class="color-title" style="margin: 0;">Retype Password</h4>
+              <input type="password" id="change-password-retype-input" class="password-input" placeholder="Retype new password" style="width: auto; min-width: 200px;">
+            </div>
+            <div id="retype-password-error" style="font-size: 11px; color: #fe5b51; margin-top: 4px; margin-left: 0; min-height: 16px; display: none;"></div>
+          </div>
+        </div>
+        <p class="modal-description" style="margin-top: 15px; margin-bottom: 20px;">Your password must be at least 8 characters long, include a number, an uppercase letter, a lowercase letter and a special character.</p>
+        <div class="modal-buttons" style="justify-content: flex-end;">
+          <button class="modal-button" id="change-password-new-cancel">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="change-password-new-continue" disabled>Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru editarea numelui -->
+    <div id="edit-name-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <h3 class="modal-title" style="margin-bottom: 20px;">Name</h3>
+        <div class="settings-card">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">First</h4>
+            <input type="text" id="edit-first-name-input" class="password-input" placeholder="First name" style="width: auto; min-width: 200px;">
+          </div>
+          <hr class="card-divider">
+          <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+            <h4 class="color-title" style="margin: 0;">Last</h4>
+            <input type="text" id="edit-last-name-input" class="password-input" placeholder="Last name" style="width: auto; min-width: 200px;">
+          </div>
+        </div>
+        <div class="modal-buttons" style="margin-top: 20px;">
+          <button class="modal-button" id="edit-name-cancel-button">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="edit-name-done-button">Done</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru parolă (Software Update) -->
+    <div id="password-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <h3 class="modal-title">Enter Password</h3>
+        <p class="modal-description">Administrator password required to update software.</p>
+        <input type="password" id="password-input" class="modal-password-input" placeholder="Password" autocomplete="off">
+        <div class="modal-buttons">
+          <button class="modal-button" id="password-modal-cancel">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="password-modal-confirm">Confirm</button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal pentru setarea datei și orei -->
+    <div id="date-time-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <div class="settings-card">
+          <div class="card-section">
+            <h4 class="color-title">Date</h4>
+            <input type="date" id="date-picker" class="date-time-input">
+          </div>
+          <hr class="card-divider">
+          <div class="card-section">
+            <h4 class="color-title" id="time-label">Time</h4>
+            <input type="time" id="time-picker" class="date-time-input">
+          </div>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button modal-cancel-button" id="date-time-cancel">Cancel</button>
+          <button class="modal-button modal-confirm-button" id="date-time-confirm">Set</button>
+        </div>
+  </div>
+</div>
+
+    <!-- Modal pentru pearID Lock -->
+    <div id="pearid-lock-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content">
+        <p class="modal-description" style="text-align: left; margin: 0; padding: 20px;">
+          This device is pearID Locked: This means that you cannot login to a new pearID unless you log out of this device
+        </p>
+        <div class="modal-buttons">
+          <button class="modal-button modal-confirm-button" id="pearid-lock-done">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal pentru Don't Have an Account -->
+    <div id="pearid-no-account-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-content" style="max-width: 500px;">
+        <h3 class="modal-title">PearID</h3>
+        <p class="modal-description">Sign in to your account</p>
+        
+        <!-- Login Form -->
+        <div id="loginForm" style="display: none;">
+          <div class="settings-card">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Email</h4>
+              <input type="text" id="loginEmail" name="email" class="password-input" placeholder="Email" style="width: auto; min-width: 200px;" required>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Password</h4>
+              <input type="password" id="loginPassword" name="password" class="password-input" placeholder="Password" style="width: auto; min-width: 200px;" required>
+            </div>
+          </div>
+          <div class="modal-buttons" style="margin-top: 20px;">
+            <button class="modal-button" id="pearid-no-account-cancel">Cancel</button>
+            <button type="submit" class="modal-button modal-confirm-button" id="loginSubmitBtn">Sign In</button>
+          </div>
+          <p style="text-align: center; margin-top: 15px; font-size: 12px; color: var(--text-secondary);">
+            Don't have an account? <a href="#" id="showRegister" style="color: #007AFF; text-decoration: none; cursor: pointer;">Create one now</a>
+          </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm">
+          <div class="settings-card">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">First Name</h4>
+              <input type="text" id="firstName" name="first_name" class="password-input" placeholder="First Name" style="width: auto; min-width: 200px;" required>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Last Name</h4>
+              <input type="text" id="lastName" name="last_name" class="password-input" placeholder="Last Name" style="width: auto; min-width: 200px;" required>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Email</h4>
+              <input type="email" id="registerEmail" name="email" class="password-input" placeholder="Email" style="width: auto; min-width: 200px;" required>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Password</h4>
+              <input type="password" id="registerPassword" name="password" class="password-input" placeholder="Password (min 8 chars)" style="width: auto; min-width: 200px;" required minlength="8">
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Birthdate</h4>
+              <input type="date" id="birthdate" name="birthdate" class="password-input" style="width: auto; min-width: 200px;">
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
+              <h4 class="color-title" style="margin: 0;">Phone Number</h4>
+              <input type="tel" id="phoneNumber" name="phone_number" class="password-input" placeholder="Optional" style="width: auto; min-width: 200px;">
+            </div>
+            <hr class="card-divider">
+            <div class="card-section" style="display: flex; align-items: flex-start; justify-content: space-between; padding: 12px 0;">
+              <h4 class="color-title" style="margin: 0;">Billing Address</h4>
+              <textarea id="billingAddress" name="billing_address" class="password-input" placeholder="Optional" rows="3" style="width: auto; min-width: 200px; max-width: 300px; resize: vertical; margin: 0;"></textarea>
+            </div>
+          </div>
+          <div class="modal-buttons" style="margin-top: 20px;">
+            <button class="modal-button" id="pearid-no-account-cancel-register">Cancel</button>
+            <button type="submit" class="modal-button modal-confirm-button" id="registerSubmitBtn">Create Account</button>
+          </div>
+          <p style="text-align: center; margin-top: 15px; font-size: 12px; color: var(--text-secondary);">
+            Already have an account? <a href="#" id="showLogin" style="color: #007AFF; text-decoration: none; cursor: pointer;">Sign In</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- SVG Filter for Liquid Glass Slider -->
+    <svg width="0" height="0" style="position: absolute;">
+      <filter id="mini-liquid-lens" x="-50%" y="-50%" width="200%" height="200%">
+        <feImage x="0" y="0" result="normalMap" xlink:href="data:image/svg+xml;utf8,
+        <svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'>
+          <radialGradient id='invmap' cx='50%' cy='50%' r='75%'>
+            <stop offset='0%' stop-color='rgb(128,128,255)'/>
+            <stop offset='90%' stop-color='rgb(255,255,255)'/>
+          </radialGradient>
+          <rect width='100%' height='100%' fill='url(%23invmap)'/>
+        </svg>" />
+        <feDisplacementMap in="SourceGraphic" in2="normalMap" scale="-252" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+        <feMerge>
+          <feMergeNode in="displaced" />
+        </feMerge>
+      </filter>
+    </svg>
+    
+    <script src='./feather.min.js'></script><script src="./script.js"></script>
+
+  </body>
+  
+</html>
