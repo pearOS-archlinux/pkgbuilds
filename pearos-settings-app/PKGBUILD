@@ -3,13 +3,15 @@
 pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS NiceC0re System Settings application"
-pkgver=25.11.29
+pkgver=25.11.30
 pkgrel=1
 arch=('any')
 url="https://pearos.xyz"
 license=('GPLv3')
-source=("file://${startdir}/license.txt")
-sha256sums=('SKIP')
+source=("file://${startdir}/license.txt"
+        "file://${startdir}/pearos-systemsettings.desktop")
+sha256sums=('SKIP'
+            'SKIP')
 prepare() {
   cp -r ${startdir}/${_realname} ${srcdir}/
 }
@@ -25,6 +27,8 @@ package() {
 
   install -d ${pkgdir}/usr/bin
   install -m755 launch.sh ${pkgdir}/usr/bin/systemsettings1
+  
+  install -Dm644 ${srcdir}/pearos-systemsettings.desktop ${pkgdir}/usr/share/applications/pearos-systemsettings.desktop
   
   install -Dm644 ${srcdir}/license.txt ${pkgdir}/usr/share/licenses/pearos-system-settings/license.txt
 }
