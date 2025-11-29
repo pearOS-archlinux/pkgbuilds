@@ -1161,21 +1161,47 @@ ipcMain.handle('get-system-info', async () => {
             }
 
             
-            exec('grep DISTRIB_ID /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
+            exec('grep "^PRETTY_NAME=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_ID /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
               if (!error && stdout) {
                 systemInfo.osName = stdout.trim();
               } else {
                 systemInfo.osName = 'Unknown';
               }
 
-              exec('grep DISTRIB_RELEASE /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
+              exec('grep "^VERSION=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep "^VERSION_ID=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_RELEASE /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
                 if (!error && stdout) {
                   systemInfo.osVersion = stdout.trim();
                 } else {
                   systemInfo.osVersion = 'Unknown';
                 }
 
-                resolve(systemInfo);
+                exec('grep "^LOGO=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (logoError, logoStdout) => {
+                  let logoPath = '/usr/share/extras/release_logo.png';
+                  
+                  if (!logoError && logoStdout) {
+                    const logoName = logoStdout.trim();
+                    const possiblePaths = [
+                      `/usr/share/pixmaps/${logoName}.png`,
+                      `/usr/share/pixmaps/${logoName}`,
+                      `/usr/share/extras/${logoName}.png`,
+                      `/usr/share/extras/release_logo.png`
+                    ];
+                    
+                    for (const path of possiblePaths) {
+                      if (fs.existsSync(path)) {
+                        logoPath = path;
+                        break;
+                      }
+                    }
+                  } else {
+                    if (fs.existsSync('/usr/share/extras/release_logo.png')) {
+                      logoPath = '/usr/share/extras/release_logo.png';
+                    }
+                  }
+                  
+                  systemInfo.osLogo = logoPath;
+                  resolve(systemInfo);
+                });
               });
             });
           });

@@ -3,9 +3,10 @@
 pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS NiceC0re System Settings application"
-pkgver=25.11.33
+pkgver=25.11.34
 pkgrel=1
 arch=('any')
+depends=('imagemagick' 'net-tools' 'fprintd' 'tlp' 'jq' 'electron')
 url="https://pearos.xyz"
 license=('GPLv3')
 source=("file://${startdir}/license.txt"

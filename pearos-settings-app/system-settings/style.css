@@ -466,14 +466,16 @@ html, body {
 
 .window .inner-wrapper .main-content .content-area {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding-left: 7px;
   -webkit-app-region: no-drag;
   padding-top: 50px;
   padding-right: 16px;
-  padding-bottom: 50px;
+  padding-bottom: 20px;
   position: relative;
+  box-sizing: border-box;
 }
 
 /* Aplică tint-ul pe content-area pentru a acoperi întreaga zonă scrollable */
@@ -896,19 +898,6 @@ html, body {
   text-align: right;
 }
 
-.brightness-icon {
-  color: var(--text-secondary);
-  flex-shrink: 0;
-}
-
-.brightness-icon-small {
-  opacity: 0.7;
-}
-
-.brightness-icon-large {
-  opacity: 0.9;
-}
-
 /* Hide the original input slider */
 .brightness-slider {
   display: none;
@@ -1149,82 +1138,54 @@ html, body {
   max-width: 40px;
 }
 
-/* Stiluri pentru switch toggle - Liquid Glass Style */
+/* Stiluri pentru switch toggle */
 .switch {
   position: relative;
   display: inline-block;
-  width: 36px;
-  height: 15px;
+  width: 44px;
+  height: 24px;
   align-self: flex-end;
   -webkit-app-region: no-drag;
+  cursor: default;
 }
 
 .switch input {
+  cursor: default;
   opacity: 0;
   width: 0;
   height: 0;
-  position: absolute;
 }
 
 .slider {
-  width: 36px;
-  height: 15px;
-  border-radius: 8px;
-  padding: 2px;
-  margin: 0;
-  border: none;
-  background-color: rgba(120, 120, 120, 0.2);
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  vertical-align: middle;
-  -webkit-user-select: none;
-  user-select: none;
-  flex-shrink: 0;
-  display: inline-grid;
-  grid-template-columns: 0fr 2fr 1fr;
-  grid-template-rows: 1fr;
-  place-content: center;
-  transition: background-color 0.3s, grid-template-columns 0.2s;
   position: absolute;
+  cursor: default;
   top: 0;
   left: 0;
-}
-
-[data-theme="dark"] .slider {
-  background-color: rgba(255, 255, 255, 0.15);
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 24px;
 }
 
 .slider:before {
+  position: absolute;
   content: "";
-  border-radius: 13px;
-  background-color: rgba(255, 255, 255, 1);
-  grid-row-start: 1;
-  grid-column-start: 2;
-  transition: background-color 0.1s cubic-bezier(0.175, 0.885, 0.32, 2.2),
-    translate 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.2),
-    inset-inline-start 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.2),
-    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 2.2);
-  position: relative;
-  inset-inline-start: 0;
-  translate: 0;
-}
-
-.slider:active:before {
-  transform: scale(1.35);
-  box-shadow: 0 0.5px 4px 0 rgba(0, 0, 0, 0.12),
-    0 6px 13px 0 rgba(0, 0, 0, 0.12), 
-    inset 1px 1px 0 rgba(255, 255, 255, 0.8), 
-    inset 0 0 5px rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 2.2);
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
 }
 
 .switch input:checked + .slider {
   background-color: var(--accent-color, #007AFF);
-  grid-template-columns: 1fr 2fr 0fr;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(20px);
 }
 
 .switch input:disabled + .slider {

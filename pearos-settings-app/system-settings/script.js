@@ -4209,6 +4209,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+    
+    // Scroll automat la începutul paginii când se schimbă pagina
+    const contentArea = document.querySelector('.content-area');
+    if (contentArea) {
+      contentArea.scrollTop = 0;
+    }
   }
   
   
@@ -5852,7 +5858,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const osLogo = document.getElementById('os-logo');
       if (osLogo) {
-        osLogo.src = 'file:///usr/share/extras/release_logo.png';
+        osLogo.src = systemInfo.osLogo ? `file://${systemInfo.osLogo}` : 'file:///usr/share/extras/release_logo.png';
       }
 
       
