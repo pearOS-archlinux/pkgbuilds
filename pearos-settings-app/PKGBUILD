@@ -29,6 +29,7 @@ package() {
 
   install -d ${pkgdir}/usr/share/extras
   cp -r ${srcdir}/${_realname} ${pkgdir}/usr/share/extras/
+  chmod -R 755 ${pkgdir}/usr/share/extras/${_realname}
 
   install -d ${pkgdir}/usr/bin
   install -m755 ${srcdir}/launch.sh ${pkgdir}/usr/bin/systemsettings1
