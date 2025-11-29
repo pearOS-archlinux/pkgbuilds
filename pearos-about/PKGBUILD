@@ -20,11 +20,9 @@ build() {
 package() {
   cd ${srcdir}/${_realname}
 
-  # Instalează pearos-about în /usr/share/extras/pearos-about
   install -d ${pkgdir}/usr/share/extras
   cp -r ${srcdir}/${_realname} ${pkgdir}/usr/share/extras/
   
-  # Instalează launch.sh în /usr/bin/system-overview cu permisiuni executabile
   install -d ${pkgdir}/usr/bin
   install -m755 launch.sh ${pkgdir}/usr/bin/system-overview
   
