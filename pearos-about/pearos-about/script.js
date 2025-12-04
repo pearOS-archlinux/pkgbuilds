@@ -1,4 +1,4 @@
-feather.replace();
+//feather.replace();
 
 document.addEventListener('DOMContentLoaded', () => {
   const redDot = document.querySelector('.traffic-lights .dot.red');
