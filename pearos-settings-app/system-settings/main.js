@@ -3644,17 +3644,46 @@ ipcMain.handle('set-display-primary', async (event, displayName) => {
   });
 });
 
+
+
 ipcMain.handle('get-current-wallpaper', async () => {
   return new Promise((resolve) => {
-    exec('grep "Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null | grep -v "Image=true" | sed \'s/.*Image=//\' | tail -n 1', (error, stdout) => {
+
+    exec('grep "^[[:space:]]*Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc | sed "s/^.*Image=//" | head -n 1',
+      (error, stdout) => {
+
       if (error || !stdout || !stdout.trim()) {
         resolve({ path: null, name: null });
         return;
       }
-      
-      const wallpaperPath = stdout.trim();
+
+      let wallpaperPath = stdout.trim();
+
+      // ---------- Detect KDE wallpaper folder ----------
+      if (wallpaperPath.endsWith("/")) {
+        const imgDir = path.join(wallpaperPath, "contents/images");
+
+        try {
+          const files = fs.readdirSync(imgDir);
+
+          // găsim png/jpg/jpeg
+          const candidates = files.filter(f =>
+            f.toLowerCase().endsWith(".png") ||
+            f.toLowerCase().endsWith(".jpg") ||
+            f.toLowerCase().endsWith(".jpeg")
+          );
+
+          if (candidates.length > 0) {
+            // ia primul wallpaper real
+            wallpaperPath = path.join(imgDir, candidates[0]);
+          }
+        } catch (e) {
+          console.error("Wallpaper folder parse error:", e);
+        }
+      }
+
       const wallpaperName = wallpaperPath.split('/').pop();
-      
+
       resolve({
         path: wallpaperPath,
         name: wallpaperName
@@ -3662,6 +3691,28 @@ ipcMain.handle('get-current-wallpaper', async () => {
     });
   });
 });
+
+
+//ipcMain.handle('get-current-wallpaper', async () => {
+//  return new Promise((resolve) => {
+//    //exec('grep "Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null | grep -v "Image=true" | sed \'s/.*Image=//\' | tail -n 1', (error, stdout) => {
+//    exec('grep "^[[:space:]]*Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc | sed "s/.*Image=//" | head -n 1', (error, stdout) => {
+//
+//      if (error || !stdout || !stdout.trim()) {
+//        resolve({ path: null, name: null });
+//        return;
+//      }
+//      
+//      const wallpaperPath = stdout.trim();
+//      const wallpaperName = wallpaperPath.split('/').pop();
+//      
+//      resolve({
+//        path: wallpaperPath,
+//        name: wallpaperName
+//      });
+//    });
+//  });
+//});
 
 ipcMain.handle('get-wallpapers', async () => {
   return new Promise((resolve) => {
@@ -3745,18 +3796,61 @@ ipcMain.handle('set-wallpaper-fill-mode', async (event, fillMode) => {
 ipcMain.handle('get-wallpaper-color-at-position', async (event, windowX, windowY, windowWidth, windowHeight) => {
   return new Promise((resolve, reject) => {
     // Obține wallpaper-ul curent
-    exec('grep "Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null | grep -v "Image=true" | sed \'s/.*Image=//\' | tail -n 1', (error, stdout) => {
-      if (error || !stdout || !stdout.trim()) {
-        reject(new Error('Could not get wallpaper path'));
-        return;
+
+exec(
+  'grep "^[[:space:]]*Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc | sed "s/^.*Image=//" | head -n 1',
+  (error, stdout) => {
+
+    if (error || !stdout || !stdout.trim()) {
+      reject(new Error('Could not get wallpaper path'));
+      return;
+    }
+
+    let wallpaperPath = stdout.trim();
+
+    // ---------- Detect KDE wallpaper folder ----------
+    if (wallpaperPath.endsWith("/")) {
+      const imgDir = path.join(wallpaperPath, "contents/images");
+
+      try {
+        const files = fs.readdirSync(imgDir);
+
+        // găsim png/jpg/jpeg
+        const candidates = files.filter(f =>
+          f.toLowerCase().endsWith(".png") ||
+          f.toLowerCase().endsWith(".jpg") ||
+          f.toLowerCase().endsWith(".jpeg")
+        );
+
+        if (candidates.length > 0) {
+          // ia primul wallpaper real
+          wallpaperPath = path.join(imgDir, candidates[0]);
+        }
+      } catch (e) {
+        console.error("Wallpaper folder parse error:", e);
       }
-      
-      let wallpaperPath = stdout.trim();
-      
-      // Elimină prefixul file:// dacă există
-      if (wallpaperPath.startsWith('file://')) {
-        wallpaperPath = wallpaperPath.substring(7); // Elimină 'file://'
-      }
+    }
+
+    // Elimină prefixul file:// dacă există
+    if (wallpaperPath.startsWith('file://')) {
+      wallpaperPath = wallpaperPath.substring(7);
+    }
+
+    // continuă restul codului tău pentru fs.existsSync și extragerea culorii
+
+
+//    exec('grep "Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null | grep -v "Image=true" | sed \'s/.*Image=//\' | tail -n 1', (error, stdout) => {
+//      if (error || !stdout || !stdout.trim()) {
+//        reject(new Error('Could not get wallpaper path'));
+//        return;
+//      }
+//      
+//      let wallpaperPath = stdout.trim();
+//      
+//      // Elimină prefixul file:// dacă există
+//      if (wallpaperPath.startsWith('file://')) {
+//        wallpaperPath = wallpaperPath.substring(7); // Elimină 'file://'
+//      }
       
       // Verifică dacă fișierul există
       if (!fs.existsSync(wallpaperPath)) {
@@ -3764,6 +3858,7 @@ ipcMain.handle('get-wallpaper-color-at-position', async (event, windowX, windowY
         return;
       }
       
+
       // Obține dimensiunile ecranului și ale wallpaper-ului
       const primaryDisplay = screen.getPrimaryDisplay();
       const screenWidth = primaryDisplay.workAreaSize.width;
