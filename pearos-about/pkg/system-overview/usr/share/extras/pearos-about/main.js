@@ -1041,11 +1041,11 @@ ipcMain.handle('get-system-info', async () => {
             }
 
             
-            exec('grep "^PRETTY_NAME=" /etc/os-release 2>/dev/null | cut -d"=" -f2', (error, stdout) => {
+            exec('grep "^PRETTY_NAME=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_ID /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
               if (!error && stdout) {
                 systemInfo.osName = stdout.trim();
               } else {
-                systemInfo.osName = 'pearOS (?)';
+                systemInfo.osName = 'Unknown';
               }
 
               exec('grep "^VERSION=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep "^VERSION_ID=" /etc/os-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\' || grep DISTRIB_RELEASE /etc/lsb-release 2>/dev/null | cut -d"=" -f2 | tr -d \'"\'', (error, stdout) => {
