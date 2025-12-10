@@ -66,6 +66,12 @@ class AboutUsDialog(QDialog):
         dev_label.setAlignment(Qt.AlignLeft)
         layout.addWidget(dev_label)
         
+        # Developer info
+        developer_label = QLabel("Alexandru Balan under Pear Software and Services S.R.L.")
+        developer_label.setWordWrap(True)
+        developer_label.setAlignment(Qt.AlignLeft)
+        layout.addWidget(developer_label)
+        
         # Fork info with link
         fork_label = QLabel()
         fork_label.setOpenExternalLinks(True)

@@ -68,19 +68,10 @@ def run_calamares_if_live_iso(is_live_iso):
     if not is_live_iso:
         return
     
-    global _calamares_running
-    
-    with _calamares_lock:
-        if _calamares_running:
-            print("Calamares is already running")
-            return
-        _calamares_running = True
-    
     def run_calamares():
-        global _calamares_running
         try:
             result = subprocess.run(
-                ['bash' 'bin_install'],
+                ['bash', 'bin_install'],
                 capture_output=True,
                 text=True
             )
@@ -93,9 +84,6 @@ def run_calamares_if_live_iso(is_live_iso):
                 
         except Exception as e:
             print(f"runBinInstall Error: {e}")
-        finally:
-            with _calamares_lock:
-                _calamares_running = False
     
     # Run in separate thread to avoid blocking UI
     thread = threading.Thread(target=run_calamares, daemon=True)
