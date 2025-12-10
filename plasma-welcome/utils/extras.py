@@ -80,7 +80,7 @@ def run_calamares_if_live_iso(is_live_iso):
         global _calamares_running
         try:
             result = subprocess.run(
-                ['bin_install'],
+                ['bash' 'bin_install'],
                 capture_output=True,
                 text=True
             )
