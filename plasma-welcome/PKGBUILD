@@ -3,7 +3,7 @@
 pkgname=plasma-welcome
 _realname=plasma-welcome
 pkgdesc="pearOS NiceC0re Welcome application"
-pkgver=25.12.10
+pkgver=25.12.11
 pkgrel=1
 arch=('x86_64')
 depends=('python' 'pyside6')
