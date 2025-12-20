@@ -2997,7 +2997,7 @@ select::-webkit-scrollbar-thumb:hover {
 
 .window .inner-wrapper .sidenav .nav-section .items .item .icon.gray {
   color: var(--icon-color);
-  opacity: 0.6;
+  /* opacity: 0.6; */
 }
 
 .window .inner-wrapper .sidenav .nav-section .items .item img.icon {
@@ -3008,8 +3008,8 @@ select::-webkit-scrollbar-thumb:hover {
 }
 
 .window .inner-wrapper .sidenav .nav-section .items .item img.icon.gray {
-  opacity: 0.6;
-  filter: grayscale(100%);
+  /* opacity: 0.6;
+  filter: grayscale(100%); */
 }
 .window .inner-wrapper .inbox {
   background-color: var(--bg-primary);
