@@ -5169,8 +5169,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       console.log('Active connections received:', connections);
       
+      let connectionsHTML = '';
+      
       if (connections && connections.length > 0) {
-        connectionsList.innerHTML = connections.map(conn => {
+        connectionsHTML = connections.map(conn => {
           
           let icon = '📡';
           let displayType = conn.type.toUpperCase();
@@ -5201,7 +5203,71 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }).join('');
       } else {
-        connectionsList.innerHTML = '<p class="no-network-text">No active connections</p>';
+        connectionsHTML = '<p class="no-network-text">No active connections</p>';
+      }
+      
+      // Adăugăm itemul VPN Status
+      const vpnStatusHTML = `
+        <div class="connection-item">
+          <div class="connection-info">
+            <div class="connection-icon">
+              <img src="assets/nordvpn.png" alt="NordVPN" style="width: 24px; height: 24px; object-fit: contain;">
+            </div>
+            <div class="connection-details">
+              <div class="connection-name">Get NordVPN</div>
+              <div class="connection-status">Affiliate link</div>
+            </div>
+          </div>
+          <div class="connection-actions">
+            <button class="vpn-get-now-button" id="vpn-get-now-btn">Get Now</button>
+          </div>
+        </div>
+      `;
+      
+      // Adăugăm itemul NordPass
+      const nordPassHTML = `
+        <div class="connection-item">
+          <div class="connection-info">
+            <div class="connection-icon">
+              <img src="assets/nordpass.png" alt="NordPass" style="width: 24px; height: 24px; object-fit: contain;">
+            </div>
+            <div class="connection-details">
+              <div class="connection-name">Get NordPass</div>
+              <div class="connection-status">Affiliate link</div>
+            </div>
+          </div>
+          <div class="connection-actions">
+            <button class="vpn-get-now-button" id="nordpass-get-now-btn">Get Now</button>
+          </div>
+        </div>
+      `;
+      
+      connectionsList.innerHTML = connectionsHTML + vpnStatusHTML + nordPassHTML;
+      
+      // Adăugăm event listener pentru butonul Get Now - NordVPN
+      const getNowButton = document.getElementById('vpn-get-now-btn');
+      if (getNowButton) {
+        getNowButton.addEventListener('click', async () => {
+          const vpnLink = 'https://go.nordvpn.net/aff_c?offer_id=15&aff_id=136731&url_id=902';
+          if (window.electronAPI && window.electronAPI.openExternalLink) {
+            await window.electronAPI.openExternalLink(vpnLink);
+          } else {
+            window.open(vpnLink, '_blank');
+          }
+        });
+      }
+      
+      // Adăugăm event listener pentru butonul Get Now - NordPass
+      const nordPassButton = document.getElementById('nordpass-get-now-btn');
+      if (nordPassButton) {
+        nordPassButton.addEventListener('click', async () => {
+          const nordPassLink = 'https://go.nordpass.io/aff_c?offer_id=488&aff_id=136731&url_id=9356';
+          if (window.electronAPI && window.electronAPI.openExternalLink) {
+            await window.electronAPI.openExternalLink(nordPassLink);
+          } else {
+            window.open(nordPassLink, '_blank');
+          }
+        });
       }
     } catch (error) {
       console.error('Error updating active connections:', error);

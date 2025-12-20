@@ -2258,6 +2258,24 @@ html, body {
   border-radius: 4px;
 }
 
+.vpn-get-now-button {
+  padding: 6px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-app-region: no-drag;
+}
+
+.vpn-get-now-button:hover {
+  background-color: var(--hover-bg);
+  border-color: var(--border-color);
+}
+
 /* Stiluri pentru controale rfkill */
 .rfkill-info {
   display: flex;
@@ -2668,8 +2686,8 @@ select::-webkit-scrollbar-thumb:hover {
   border-radius: 19px 20px 0px 1px;
   background-color: var(--bg-secondary);
   margin-right: 10px;
-  max-width: 213 px;
-  width: 213 px;
+  max-width: 213px;
+  width: 213px;
   height: 55px;
 }
 

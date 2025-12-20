@@ -126,6 +126,7 @@ function createWindow() {
     width: 700,
     height: 600,
     minWidth: 700,
+    maxWidth: 700,
     minHeight: 400,
     webPreferences: {
       nodeIntegration: false,
@@ -161,6 +162,19 @@ function createWindow() {
 
   
   mainWindow.loadFile('index.html');
+
+  // Previne resize-ul peste maxWidth chiar și la window snap
+  mainWindow.on('will-resize', (event, newBounds) => {
+    if (newBounds.width > 700) {
+      event.preventDefault();
+      mainWindow.setBounds({
+        x: newBounds.x,
+        y: newBounds.y,
+        width: 700,
+        height: newBounds.height
+      });
+    }
+  });
 
   
   mainWindow.once('ready-to-show', () => {
@@ -288,6 +302,21 @@ function createWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+  
+  // Asigură că width-ul rămâne la maxWidth chiar și după resize (pentru window snap)
+  mainWindow.on('resize', () => {
+    if (mainWindow) {
+      const bounds = mainWindow.getBounds();
+      if (bounds.width > 700) {
+        mainWindow.setBounds({
+          x: bounds.x,
+          y: bounds.y,
+          width: 700,
+          height: bounds.height
+        });
+      }
+    }
   });
   
   // Detectează mișcarea ferestrei pentru tint-ul dinamic
