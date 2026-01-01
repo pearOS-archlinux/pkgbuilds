@@ -3811,12 +3811,26 @@ ipcMain.handle('set-wallpaper-fill-mode', async (event, fillMode) => {
     
     const kdeMode = kdeFillModes[fillMode] || '6';
     
-    exec(`kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 1 --group Wallpaper --group org.kde.image --group General --key FillMode ${kdeMode} && qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "var allDesktops = desktops();for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = 'org.kde.image';d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');d.writeConfig('FillMode', ${kdeMode})}"`, (error, stdout, stderr) => {
-      if (error) {
-        reject(new Error(`Error setting fill mode: ${error.message || stderr}`));
+    const script = `var allDesktops = desktops();for (i=0;i<allDesktops.length;i++) {d = allDesktops[i];d.wallpaperPlugin = 'org.kde.image';d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');d.writeConfig('FillMode', ${kdeMode})}`;
+    
+    // Folosim dbus-send în loc de qdbus pentru compatibilitate mai bună
+    const dbusCommand = `dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript string:"${script}"`;
+    
+    // Mai întâi actualizăm configurația
+    exec(`kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 1 --group Wallpaper --group org.kde.image --group General --key FillMode ${kdeMode}`, (configError) => {
+      if (configError) {
+        reject(new Error(`Error setting fill mode config: ${configError.message}`));
         return;
       }
-      resolve({ success: true });
+      
+      // Apoi aplicăm modificarea folosind dbus-send
+      exec(dbusCommand, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error(`Error setting fill mode: ${error.message || stderr}`));
+          return;
+        }
+        resolve({ success: true });
+      });
     });
   });
 });

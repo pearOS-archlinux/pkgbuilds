@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# === Colors ===
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+CYAN="\e[36m"
+BOLD="\e[1m"
+RESET="\e[0m"
+
+apply_theme_dark() {
+    nautilus --quit
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name="pearOS-Dark"/' ~/.gtkrc-2.0 || echo 'gtk-theme-name="pearOS-Dark"' >> ~/.gtkrc-2.0
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name=pearOS-Dark/' ~/.config/gtk-3.0/settings.ini || echo -e "[Settings]\ngtk-theme-name=pearOS-Dark" >> ~/.config/gtk-3.0/settings.ini
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name=pearOS-Dark/' ~/.config/gtk-4.0/settings.ini || echo -e "[Settings]\ngtk-theme-name=pearOS-Dark" >> ~/.config/gtk-4.0/settings.ini
+    rm -rf "$HOME/.config/gtk-4.0/assets"
+    ln -sf "$HOME/.themes/pearOS-Dark/gtk-4.0/"{assets,gtk.css,gtk-dark.css} "$HOME/.config/gtk-4.0/"
+    echo -e "${GREEN}✅ Switched to Dark Theme.${RESET}"
+}
+
+apply_theme_light() {
+    nautilus --quit
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name="pearOS-Light"/' ~/.gtkrc-2.0 || echo 'gtk-theme-name="pearOS-Light"' >> ~/.gtkrc-2.0
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name=pearOS-Light/' ~/.config/gtk-3.0/settings.ini || echo -e "[Settings]\ngtk-theme-name=pearOS-Light" >> ~/.config/gtk-3.0/settings.ini
+    sed -i 's/^gtk-theme-name=.*/gtk-theme-name=pearOS-Light/' ~/.config/gtk-4.0/settings.ini || echo -e "[Settings]\ngtk-theme-name=pearOS-Light" >> ~/.config/gtk-4.0/settings.ini
+    rm -rf "$HOME/.config/gtk-4.0/assets"
+    ln -sf "$HOME/.themes/pearOS-Light/gtk-4.0/"{assets,gtk.css,gtk-dark.css} "$HOME/.config/gtk-4.0/"
+    echo -e "${GREEN}✅ Switched to Light Theme.${RESET}"
+}
+
+show_help() {
+    echo -e "${YELLOW}Options:${RESET}"
+    echo -e "  ${GREEN}--dark${RESET}     Switch to Dark theme"
+    echo -e "  ${GREEN}--light${RESET}    Switch to Light theme"
+    echo -e "  ${GREEN}--help${RESET}     Show this help message"
+    echo -e "\nIf no option is provided, this help will be shown."
+}
+
+# === Argument handling ===
+if [ $# -gt 0 ]; then
+    case "$1" in
+        --dark) apply_theme_dark; exit 0 ;;
+        --light) apply_theme_light; exit 0 ;;
+        --help|-h) show_help; exit 0 ;;
+        *) echo -e "${RED}❌ Unknown argument: $1${RESET}\n"; show_help; exit 1 ;;
+    esac
+fi
+
+# === Interactive Menu Loop ===
+while true; do
+  echo -e "${YELLOW}Please choose a theme option:${RESET}\n"
+  echo -e "${BOLD} 1${RESET}. ${BLUE}Switch to Dark${RESET}"
+  echo -e "     ${GREEN}Force all KDE, Qt, GNOME/GTK, and LibAdwaita apps${RESET}"
+  echo -e "     ${GREEN}to use the Dark theme${RESET}"
+  echo -e "${BOLD} 2${RESET}. ${BLUE}Switch to Light${RESET}"
+  echo -e "     ${GREEN}Force all KDE, Qt, GNOME/GTK, and LibAdwaita apps${RESET}"
+  echo -e "     ${GREEN}to use the Light theme${RESET}"
+  echo -e "${BOLD} 0${RESET}. ${RED}Exit${RESET}\n"
+  read -rp "Enter your choice [0-2]: " choice
+
+  case "$choice" in
+    1) apply_theme_dark ;;
+    2) apply_theme_light ;;
+    0) echo -e "\n${GREEN}👋 Exiting..!${RESET}"; exit 0 ;;
+    *) echo -e "${RED}❌ Invalid choice. Please enter a number from 0 to 2.${RESET}" ;;
+  esac
+done
