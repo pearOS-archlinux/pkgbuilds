@@ -6,10 +6,9 @@ const fs = require('fs');
 if (process.platform === 'linux') {
   app.commandLine.appendSwitch('enable-transparent-visuals');
   
-  if (process.env.WAYLAND_DISPLAY) {
-    app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
-    app.commandLine.appendSwitch('ozone-platform', 'wayland');
-  }
+  // Activează explicit ozone layer cu X11
+  app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
+  app.commandLine.appendSwitch('ozone-platform', 'x11');
 }
 
 let mainWindow;
