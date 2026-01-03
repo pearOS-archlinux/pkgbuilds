@@ -2,7 +2,7 @@ cd # Maintainer: DemonKiller
 pkgname=pearos-settings
 destname="/etc"
 destnameusr="/usr"
-pkgver=25.30
+pkgver=25.31
 pkgrel=1
 pkgdesc="Settings for pearOS NiceC0re"
 arch=('x86_64')
