@@ -3,7 +3,7 @@
 pkgname=system-overview
 _realname=pearos-about
 pkgdesc="pearOS NiceC0re System Overview application"
-pkgver=25.12.02
+pkgver=25.12.04
 pkgrel=1
 arch=('any')
 url="https://pearos.xyz"
