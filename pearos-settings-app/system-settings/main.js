@@ -4,12 +4,16 @@ const { exec, spawn } = require('child_process');
 const fs = require('fs');
 
 if (process.platform === 'linux') {
-  app.commandLine.appendSwitch('enable-transparent-visuals');
+  // Detectă Wayland (verifică ambele variabile de mediu)
+  const isWayland = process.env.WAYLAND_DISPLAY || process.env.XDG_SESSION_TYPE === 'wayland';
   
-  if (process.env.WAYLAND_DISPLAY) {
-    app.commandLine.appendSwitch('enable-features', 'UseOzonePlatform');
-    app.commandLine.appendSwitch('ozone-platform', 'wayland');
+  if (isWayland) {
+    // Pe Wayland, forțăm X11 pentru compatibilitate (workaround pentru problemele Electron pe Wayland)
+    app.commandLine.appendSwitch('ozone-platform', 'x11');
   }
+  
+  // Activează transparent visuals (funcționează pe X11)
+  app.commandLine.appendSwitch('enable-transparent-visuals');
 }
 
 // Setează numele aplicației
@@ -52,6 +56,11 @@ function loadAppIcon() {
 const appIcon = loadAppIcon();
 
 let mainWindow;
+
+// Helper pentru detectarea Wayland
+function isWayland() {
+  return process.env.WAYLAND_DISPLAY || process.env.XDG_SESSION_TYPE === 'wayland';
+}
 
 function getPageArgument() {
   const args = process.argv;
@@ -136,7 +145,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     },
     icon: iconOption || undefined,
-    transparent: true,
+    transparent: true, // Transparent funcționează pe Wayland fără enable-transparent-visuals
     titleBarStyle: 'default',
     backgroundColor: '#00000000', 
     frame: false, 
