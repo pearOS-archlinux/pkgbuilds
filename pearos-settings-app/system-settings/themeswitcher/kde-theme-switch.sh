@@ -210,8 +210,10 @@ Current=$theme
 EOF
   if have sudo && sudo -n true 2>/dev/null; then
     sudo install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
-  elif have pkexec; then
-    pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
+  # Comentat: pkexec cere parola la fiecare schimbare light/dark; preferăm să nu deranjăm utilizatorul.
+  # Dacă vrei să actualizezi tema SDDM (ecran login), rulează manual: sudo install -Dm0644 /tmp/10-theme.conf /etc/sddm.conf.d/10-theme.conf
+  # elif have pkexec; then
+  #   pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
   else
     msg "Cannot write SDDM theme without privileges. Run as root:"
     msg "sudo install -Dm0644 \"$tmpfile\" /etc/sddm.conf.d/10-theme.conf"
@@ -587,10 +589,12 @@ Current=$SDDM
 EOF
     if have sudo && sudo -n true 2>/dev/null; then
       sudo install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
-    elif have pkexec; then
-      pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
+    # Comentat: pkexec cere parola la fiecare schimbare light/dark; nu folosim pkexec ca să nu ceară parola.
+    # Pentru a actualiza tema SDDM (ecran login), rulează manual cu sudo.
+    # elif have pkexec; then
+    #   pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
     else
-    msg "Cannot write SDDM without privileges. Run manually:"
+      msg "Cannot write SDDM without privileges. Run manually:"
       echo "  sudo install -Dm0644 \"$tmpfile\" /etc/sddm.conf.d/10-theme.conf"
     fi
     rm -f "$tmpfile"

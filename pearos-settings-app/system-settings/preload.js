@@ -56,8 +56,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurrentWallpaper: () => ipcRenderer.invoke('get-current-wallpaper'),
   getWallpapers: () => ipcRenderer.invoke('get-wallpapers'),
   setWallpaper: (wallpaperPath) => ipcRenderer.invoke('set-wallpaper', wallpaperPath),
-  browseWallpaper: () => ipcRenderer.invoke('browse-wallpaper'),
+  browseWallpaper: (theme) => ipcRenderer.invoke('browse-wallpaper', theme),
   setWallpaperFillMode: (fillMode) => ipcRenderer.invoke('set-wallpaper-fill-mode', fillMode),
+  getWallpaperThumbnail: (imagePath, size) => ipcRenderer.invoke('get-wallpaper-thumbnail', imagePath, size),
+  getWallpaperThumbnailsBatch: (paths, size) => ipcRenderer.invoke('get-wallpaper-thumbnails-batch', paths, size),
+  openWallpaperFolder: (folderPath) => ipcRenderer.invoke('open-wallpaper-folder', folderPath),
   getAudioOutputs: () => ipcRenderer.invoke('get-audio-outputs'),
   getAudioInputs: () => ipcRenderer.invoke('get-audio-inputs'),
   getOutputVolume: () => ipcRenderer.invoke('get-output-volume'),
@@ -98,6 +101,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setKeyRepeatRate: (delay, rate) => ipcRenderer.invoke('set-key-repeat-rate', delay, rate),
   setKeyboardLayout: (layout) => ipcRenderer.invoke('set-keyboard-layout', layout),
   getTrackpadSettings: () => ipcRenderer.invoke('get-trackpad-settings'),
+  getTouchpadConfig: () => ipcRenderer.invoke('get-touchpad-config'),
+  setTouchpadConfig: (config) => ipcRenderer.invoke('set-touchpad-config', config),
   setTapToClick: (enabled) => ipcRenderer.invoke('set-tap-to-click', enabled),
   setNaturalScrolling: (enabled) => ipcRenderer.invoke('set-natural-scrolling', enabled),
   setTwoFingerScrolling: (enabled) => ipcRenderer.invoke('set-two-finger-scrolling', enabled),
@@ -137,7 +142,19 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.removeAllListeners('window-moved');
   },
   saveTintWindowSetting: (enabled) => ipcRenderer.invoke('save-tint-window-setting', enabled),
-  loadTintWindowSetting: () => ipcRenderer.invoke('load-tint-window-setting')
+  loadTintWindowSetting: () => ipcRenderer.invoke('load-tint-window-setting'),
+  downloadPiriModel: () => ipcRenderer.invoke('download-piri-model'),
+  cancelPiriDownload: () => ipcRenderer.invoke('cancel-piri-download'),
+  piriModelExists: () => ipcRenderer.invoke('piri-model-exists'),
+  piriModelRemove: () => ipcRenderer.invoke('piri-model-remove'),
+  piriGetShowIcon: () => ipcRenderer.invoke('piri-get-show-icon'),
+  piriSetShowIcon: (value) => ipcRenderer.invoke('piri-set-show-icon', value),
+  onPiriDownloadProgress: (callback) => {
+    ipcRenderer.on('piri-download-progress', (event, data) => callback(data));
+  },
+  removePiriDownloadProgress: () => {
+    ipcRenderer.removeAllListeners('piri-download-progress');
+  }
 });
 
 

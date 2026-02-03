@@ -1,6 +1,142 @@
 feather.replace();
 
 document.addEventListener('DOMContentLoaded', () => {
+  // —— Rubber band scrolling (efect macOS) ——
+  function wrapRubberBandInner(container) {
+    if (container.querySelector('.rubber-band-inner')) return;
+    const inner = document.createElement('div');
+    inner.className = 'rubber-band-inner';
+    while (container.firstChild) inner.appendChild(container.firstChild);
+    container.appendChild(inner);
+  }
+  function enableRubberBand(container, opts) {
+    const axis = opts && opts.axis === 'x' ? 'x' : 'y';
+    const inner = container.querySelector('.rubber-band-inner');
+    if (!inner) return;
+    const RESISTANCE = 0.07;
+    const MAX_OVERSCROLL = 48;
+    const SPRING_K = 0.065;
+    const SPRING_DAMP = 0.82;
+    const getPullFactor = () => {
+      const t = Math.abs(overscroll) / MAX_OVERSCROLL;
+      return Math.max(0.02, RESISTANCE * (1 - 0.7 * t));
+    };
+    let overscroll = 0;
+    let releaseTimer = null;
+    let animId = null;
+    let touchStart = 0;
+    const isY = axis === 'y';
+    const scrollPos = () => isY ? container.scrollTop : container.scrollLeft;
+    const scrollMax = () => isY
+      ? container.scrollHeight - container.clientHeight
+      : container.scrollWidth - container.clientWidth;
+    const setTransform = (v) => {
+      if (isY) inner.style.transform = `translateY(${v}px)`;
+      else inner.style.transform = `translateX(${v}px)`;
+    };
+    const springBack = () => {
+      let v = 0;
+      const step = () => {
+        const acc = -overscroll * SPRING_K - v * SPRING_DAMP;
+        v += acc;
+        overscroll += v;
+        if (Math.abs(overscroll) < 0.5 && Math.abs(v) < 0.15) {
+          overscroll = 0;
+          setTransform(0);
+          return;
+        }
+        setTransform(overscroll);
+        animId = requestAnimationFrame(step);
+      };
+      if (animId) cancelAnimationFrame(animId);
+      animId = requestAnimationFrame(step);
+    };
+    const onRelease = () => {
+      releaseTimer = null;
+      if (Math.abs(overscroll) > 0) springBack();
+    };
+    const scheduleRelease = () => {
+      if (releaseTimer) clearTimeout(releaseTimer);
+      releaseTimer = setTimeout(onRelease, 180);
+    };
+    const handleWheel = (e) => {
+      const delta = isY ? e.deltaY : e.deltaX;
+      const atStart = scrollPos() <= 0;
+      const atEnd = scrollPos() >= scrollMax() - 1;
+      const pullStart = atStart && (isY ? delta < 0 : delta < 0);
+      const pullEnd = atEnd && (isY ? delta > 0 : delta > 0);
+      if (pullStart || pullEnd) {
+        e.preventDefault();
+        const sign = pullStart ? 1 : -1;
+        overscroll += sign * Math.abs(delta) * getPullFactor();
+        overscroll = Math.max(-MAX_OVERSCROLL, Math.min(MAX_OVERSCROLL, overscroll));
+        setTransform(overscroll);
+        scheduleRelease();
+      } else if (Math.abs(overscroll) > 0) {
+        e.preventDefault();
+        overscroll -= (isY ? e.deltaY : e.deltaX) * getPullFactor();
+        overscroll = Math.max(-MAX_OVERSCROLL, Math.min(MAX_OVERSCROLL, overscroll));
+        setTransform(overscroll);
+        scheduleRelease();
+      } else {
+        scheduleRelease();
+      }
+    };
+    const handleTouchStart = (e) => {
+      touchStart = isY ? e.touches[0].clientY : e.touches[0].clientX;
+    };
+    const handleTouchMove = (e) => {
+      const now = isY ? e.touches[0].clientY : e.touches[0].clientX;
+      const delta = now - touchStart;
+      touchStart = now;
+      const atStart = scrollPos() <= 0;
+      const atEnd = scrollPos() >= scrollMax() - 1;
+      const pullStart = atStart && (isY ? delta > 0 : delta > 0);
+      const pullEnd = atEnd && (isY ? delta < 0 : delta < 0);
+      if (pullStart || pullEnd) {
+        const sign = pullStart ? 1 : -1;
+        overscroll += sign * Math.abs(delta) * getPullFactor();
+        overscroll = Math.max(-MAX_OVERSCROLL, Math.min(MAX_OVERSCROLL, overscroll));
+        setTransform(overscroll);
+        scheduleRelease();
+      } else if (Math.abs(overscroll) > 0) {
+        overscroll -= delta * getPullFactor();
+        overscroll = Math.max(-MAX_OVERSCROLL, Math.min(MAX_OVERSCROLL, overscroll));
+        setTransform(overscroll);
+        scheduleRelease();
+      }
+    };
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('touchend', onRelease);
+    container.addEventListener('touchcancel', onRelease);
+  }
+  (function initRubberBand() {
+    const contentArea = document.querySelector('.main-content .content-area');
+    if (contentArea) {
+      wrapRubberBandInner(contentArea);
+      enableRubberBand(contentArea, { axis: 'y' });
+    }
+    const sidenav = document.querySelector('.window .inner-wrapper .sidenav');
+    if (sidenav) {
+      wrapRubberBandInner(sidenav);
+      enableRubberBand(sidenav, { axis: 'y' });
+    }
+    document.querySelectorAll('.modal-content').forEach((el) => {
+      wrapRubberBandInner(el);
+      enableRubberBand(el, { axis: 'y' });
+    });
+    document.querySelectorAll('.wallpapers-category-row').forEach((el) => {
+      if (!el.querySelector('.rubber-band-inner')) {
+        wrapRubberBandInner(el);
+        enableRubberBand(el, { axis: 'x' });
+      }
+    });
+    window.__wrapRubberBandInner = wrapRubberBandInner;
+    window.__enableRubberBand = enableRubberBand;
+  })();
+
   const redDot = document.querySelector('.traffic-lights .dot.red');
   const yellowDot = document.querySelector('.traffic-lights .dot.yellow');
   const greenDot = document.querySelector('.traffic-lights .dot.green');
@@ -33,6 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Încarcă setarea de tint window background la pornirea aplicației
     initTintWindowSetting();
+    
+    // Preîncarcă thumbnails wallpapers în background (la deschiderea secțiunii se afișează instant)
+    startWallpaperThumbnailsPreload();
   }
 
   
@@ -41,6 +180,53 @@ document.addEventListener('DOMContentLoaded', () => {
   
   
   let dateTimeInterval = null;
+
+  /** Cache thumbnails wallpapers (path -> dataURL). Preîncărcat la pornire. */
+  window.__wallpaperThumbnailsCache = window.__wallpaperThumbnailsCache || {};
+  /** Cache preview wallpaper curent (path -> dataURL). */
+  window.__wallpaperPreviewCache = window.__wallpaperPreviewCache || {};
+
+  function startWallpaperThumbnailsPreload() {
+    if (!window.electronAPI) return;
+    const runPreload = async () => {
+      try {
+        if (window.electronAPI.getCurrentWallpaper && window.electronAPI.getWallpaperThumbnail) {
+          const current = await window.electronAPI.getCurrentWallpaper();
+          if (current && current.path) {
+            let p = current.path;
+            if (p.startsWith('file://')) p = p.slice(7);
+            const thumb = await window.electronAPI.getWallpaperThumbnail(p, 'preview');
+            if (thumb) window.__wallpaperPreviewCache[p] = thumb;
+          }
+        }
+        if (!window.electronAPI.getWallpapers || !window.electronAPI.getWallpaperThumbnailsBatch) return;
+        const data = await window.electronAPI.getWallpapers();
+        const categories = (data && data.categories) || [];
+        const paths = [];
+        categories.forEach(cat => {
+          (cat.wallpapers || []).forEach(w => paths.push(w.path));
+        });
+        if (paths.length === 0) return;
+        const CHUNK_SIZE = 3;
+        for (let i = 0; i < paths.length; i += CHUNK_SIZE) {
+          const chunk = paths.slice(i, i + CHUNK_SIZE);
+          const results = await window.electronAPI.getWallpaperThumbnailsBatch(chunk, 'grid');
+          chunk.forEach((p, j) => {
+            if (results[j]) window.__wallpaperThumbnailsCache[p] = results[j];
+          });
+          await new Promise(r => setTimeout(r, 30));
+        }
+      } catch (e) {
+        console.error('Wallpaper thumbnails preload:', e);
+      }
+    };
+    const schedule = window.requestIdleCallback
+      ? (cb) => window.requestIdleCallback(cb, { timeout: 2500 })
+      : (cb) => setTimeout(cb, 1800);
+    schedule(() => {
+      runPreload();
+    });
+  }
 
   
   function updateNavigationButtons() {
@@ -76,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageTitle = document.querySelector('.page-title');
     if (pageTitle) {
       
-      if (pageName === 'Battey' || pageName === 'Battery') {
+      if (pageName === 'Battery') {
         updateBatteryTitle();
       } else if (pageName === 'General') {
         
@@ -2153,7 +2339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         item.classList.add('active');
         
         
-        if (pageName === 'Battey' || pageName === 'Battery') {
+        if (pageName === 'Battery') {
           updateBatteryTitle();
         } else if (pageName === 'General') {
           
@@ -3769,23 +3955,23 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Not found content area');
       return;
     }
-    
-    
+    const contentTarget = contentArea.querySelector('.rubber-band-inner') || contentArea;
+
     const pageDiv = document.createElement('div');
     pageDiv.className = 'page-content';
     pageDiv.id = `${page.id}-page`;
     pageDiv.style.display = 'none';
-    
-    
+
+
     let pageHTML = '';
-    
-    
+
+
     for (const contentItem of page.content) {
       pageHTML += renderElement(contentItem, moduleId);
     }
-    
+
     pageDiv.innerHTML = pageHTML;
-    contentArea.appendChild(pageDiv);
+    contentTarget.appendChild(pageDiv);
     
     
     feather.replace();
@@ -3852,10 +4038,11 @@ document.addEventListener('DOMContentLoaded', () => {
         appearancePage.style.display = 'block';
         initAppearancePage();
       }
-    } else if (pageName === 'Pear Intelligence and Piri' || pageName === 'Pear Piri') {
+    } else if (pageName === 'Pear Intelligence & Piri') {
       const pearPiriPage = document.getElementById('pear-piri-page');
       if (pearPiriPage) {
         pearPiriPage.style.display = 'block';
+        initPiriPage();
       }
     } else if (pageName === 'Wi-Fi') {
       const wifiPage = document.getElementById('wifi-page');
@@ -3875,7 +4062,7 @@ document.addEventListener('DOMContentLoaded', () => {
         networkPage.style.display = 'block';
         initNetworkPage();
       }
-    } else if (pageName === 'Battey' || pageName === 'Battery') {
+    } else if (pageName === 'Battery') {
       const batteryPage = document.getElementById('battery-page');
       if (batteryPage) {
         batteryPage.style.display = 'block';
@@ -4772,7 +4959,132 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  
+  let piriPageInitDone = false;
+  function initPiriPage() {
+    if (piriPageInitDone || !window.electronAPI) return;
+    const btn = document.getElementById('enable-piri-btn');
+    const disableBtn = document.getElementById('piri-disable-btn');
+    const stopBtn = document.getElementById('piri-stop-btn');
+    const showIconToggle = document.getElementById('piri-show-icon-toggle');
+    const container = document.getElementById('piri-progress-container');
+    const stageEl = document.getElementById('piri-progress-stage');
+    const barFill = document.getElementById('piri-progress-bar-fill');
+    const barTrack = container ? container.querySelector('.piri-progress-bar') : null;
+    const errorEl = document.getElementById('piri-progress-error');
+    if (!btn || !disableBtn || !stopBtn || !container || !stageEl || !barFill || !errorEl) return;
+    piriPageInitDone = true;
+
+    if (showIconToggle) {
+      (async () => {
+        try {
+          const { showIcon } = await window.electronAPI.piriGetShowIcon();
+          showIconToggle.checked = showIcon;
+        } catch (_) {
+          showIconToggle.checked = false;
+        }
+      })();
+      showIconToggle.addEventListener('change', async () => {
+        try {
+          await window.electronAPI.piriSetShowIcon(showIconToggle.checked);
+        } catch (err) {
+          alert('Failed to save: ' + (err.message || 'Unknown error'));
+        }
+      });
+    }
+
+    function setProgress(percent, stageText, indeterminate) {
+      stageEl.textContent = stageText;
+      barFill.style.width = percent + '%';
+      if (barTrack) {
+        if (indeterminate) barTrack.classList.add('indeterminate');
+        else barTrack.classList.remove('indeterminate');
+      }
+    }
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.style.display = 'block';
+    }
+
+    function hideError() {
+      errorEl.textContent = '';
+      errorEl.style.display = 'none';
+    }
+
+    function updatePiriUI(modelExists) {
+      if (modelExists) {
+        btn.style.display = 'none';
+        disableBtn.style.display = 'inline-block';
+        container.style.display = 'none';
+        stopBtn.style.display = 'none';
+      } else {
+        btn.style.display = 'inline-block';
+        disableBtn.style.display = 'none';
+        container.style.display = 'none';
+        stopBtn.style.display = 'none';
+      }
+    }
+
+    (async () => {
+      try {
+        const exists = await window.electronAPI.piriModelExists();
+        updatePiriUI(exists);
+      } catch (_) {
+        updatePiriUI(false);
+      }
+    })();
+
+    disableBtn.addEventListener('click', async () => {
+      disableBtn.disabled = true;
+      try {
+        await window.electronAPI.piriModelRemove();
+        updatePiriUI(false);
+      } catch (err) {
+        alert('Failed to remove model: ' + (err.message || 'Unknown error'));
+      } finally {
+        disableBtn.disabled = false;
+      }
+    });
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      hideError();
+      container.style.display = 'flex';
+      stopBtn.style.display = 'inline-block';
+      setProgress(0, 'Downloading', false);
+
+      window.electronAPI.onPiriDownloadProgress(({ percent, status }) => {
+        if (status === 'downloading') {
+          setProgress(percent, 'Downloading — ' + percent + '%', false);
+        } else if (status === 'extracting') {
+          setProgress(100, 'Extracting', true);
+        } else if (status === 'done') {
+          setProgress(100, 'Done', false);
+        }
+      });
+
+      stopBtn.onclick = () => {
+        window.electronAPI.cancelPiriDownload();
+      };
+
+      try {
+        await window.electronAPI.downloadPiriModel();
+        setProgress(100, 'Done', false);
+        const exists = await window.electronAPI.piriModelExists();
+        updatePiriUI(exists);
+      } catch (err) {
+        const msg = err.message || 'Unknown error';
+        showError(msg);
+        setProgress(0, 'Failed', false);
+      } finally {
+        btn.disabled = false;
+        stopBtn.style.display = 'none';
+        stopBtn.onclick = null;
+        window.electronAPI.removePiriDownloadProgress();
+      }
+    });
+  }
+
   function initWiFiPage() {
     const wifiToggle = document.getElementById('wifi-toggle');
     const wifiConnectedSection = document.getElementById('wifi-connected-section');
@@ -7956,7 +8268,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (browseBtn && window.electronAPI.browseWallpaper) {
       browseBtn.onclick = async () => {
         try {
-          const selectedPath = await window.electronAPI.browseWallpaper();
+          const theme = document.documentElement.getAttribute('data-theme') || 'system';
+          const selectedPath = await window.electronAPI.browseWallpaper(theme);
           if (selectedPath) {
             await window.electronAPI.setWallpaper(selectedPath);
             initWallpaperPage();
@@ -7979,71 +8292,140 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const currentWallpaper = await window.electronAPI.getCurrentWallpaper();
       if (currentWallpaper && currentWallpaper.path) {
-        
         let wallpaperPath = currentWallpaper.path;
         if (wallpaperPath.startsWith('file://')) {
           wallpaperPath = wallpaperPath.substring(7);
         }
-        
-        currentWallpaperPreview.src = wallpaperPath;
         currentWallpaperName.textContent = currentWallpaper.name || wallpaperPath.split('/').pop();
+        const previewCache = window.__wallpaperPreviewCache || {};
+        const thumb = previewCache[wallpaperPath]
+          || (window.electronAPI.getWallpaperThumbnail ? await window.electronAPI.getWallpaperThumbnail(wallpaperPath, 'preview') : null);
+        currentWallpaperPreview.src = thumb || wallpaperPath;
+        if (thumb && !previewCache[wallpaperPath]) previewCache[wallpaperPath] = thumb;
       } else {
         currentWallpaperPreview.src = '';
         currentWallpaperName.textContent = 'No wallpaper set';
       }
       
       
-      const wallpapers = await window.electronAPI.getWallpapers();
+      const data = await window.electronAPI.getWallpapers();
+      const categories = data && data.categories ? data.categories : [];
       
       wallpapersList.innerHTML = '';
+      wallpapersList.classList.add('wallpapers-by-category');
       
-      if (!wallpapers || wallpapers.length === 0) {
-        wallpapersList.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary); width: 100%;">No wallpapers found.</div>';
+      if (!categories || categories.length === 0) {
+        const msg = document.createElement('div');
+        msg.className = 'wallpapers-loading';
+        msg.textContent = 'No wallpapers found.';
+        wallpapersList.appendChild(msg);
         return;
       }
       
-      wallpapers.forEach(wallpaper => {
-        const wallpaperItem = document.createElement('div');
-        wallpaperItem.style.cssText = 'position: relative; cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: all 0.2s ease; aspect-ratio: 16/9;';
-        
-        const wallpaperImg = document.createElement('img');
-        
-        wallpaperImg.src = wallpaper.path;
-        wallpaperImg.alt = wallpaper.name;
-        wallpaperImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
-        
-        wallpaperItem.appendChild(wallpaperImg);
-        
-        wallpaperItem.addEventListener('click', async () => {
-          try {
-            await window.electronAPI.setWallpaper(wallpaper.path);
-            
-            initWallpaperPage();
-            
-            // Actualizează tint-ul automat cu noul wallpaper dacă este activat
-            if (globalTintEnabled && window.electronAPI && window.electronAPI.getWindowPosition && window.electronAPI.getWallpaperColorAtPosition) {
-              setTimeout(() => {
-                updateGlobalTint();
-              }, 300); // Așteaptă puțin pentru ca wallpaper-ul să se încarce complet
-            }
-          } catch (error) {
-            console.error('Error setting wallpaper:', error);
-            alert('Could not set wallpaper. Please check your system permissions.');
+      const thumbBatchSize = 4;
+      const allItemsWithImg = [];
+
+      categories.forEach(cat => {
+        const section = document.createElement('div');
+        section.className = 'wallpapers-category';
+        const header = document.createElement('div');
+        header.className = 'wallpapers-category-header';
+        const titleEl = document.createElement('span');
+        titleEl.className = 'wallpapers-category-title';
+        titleEl.textContent = cat.name;
+        header.appendChild(titleEl);
+        const showAllBtn = document.createElement('button');
+        showAllBtn.type = 'button';
+        showAllBtn.className = 'wallpapers-show-all-btn';
+        const count = (cat.wallpapers || []).length;
+        showAllBtn.textContent = `Show All (${count})`;
+        const row = document.createElement('div');
+        row.className = 'wallpapers-category-row';
+        showAllBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          row.classList.toggle('wallpapers-category-row-expanded');
+          const expanded = row.classList.contains('wallpapers-category-row-expanded');
+          showAllBtn.textContent = expanded ? 'Show Less' : `Show All (${count})`;
+        });
+        header.appendChild(showAllBtn);
+        section.appendChild(header);
+        (cat.wallpapers || []).forEach(wallpaper => {
+          const wrap = document.createElement('div');
+          wrap.className = 'wallpaper-thumb-item';
+          const thumbWrap = document.createElement('div');
+          thumbWrap.className = 'wallpaper-thumb-wrap';
+          const wallpaperImg = document.createElement('img');
+          wallpaperImg.alt = wallpaper.name;
+          wallpaperImg.loading = 'lazy';
+          if (window.__wallpaperThumbnailsCache && window.__wallpaperThumbnailsCache[wallpaper.path]) {
+            wallpaperImg.src = window.__wallpaperThumbnailsCache[wallpaper.path];
           }
+          allItemsWithImg.push({ img: wallpaperImg, path: wallpaper.path });
+          thumbWrap.appendChild(wallpaperImg);
+          wrap.appendChild(thumbWrap);
+          const label = document.createElement('span');
+          label.className = 'wallpaper-thumb-label';
+          const baseName = (wallpaper.name || wallpaper.path.split('/').pop() || '').replace(/\.[^.]+$/, '');
+          label.textContent = baseName.replace(/_/g, ' ');
+          wrap.appendChild(label);
+          wrap.addEventListener('click', async () => {
+            try {
+              await window.electronAPI.setWallpaper(wallpaper.path);
+              initWallpaperPage();
+              if (globalTintEnabled && window.electronAPI && window.electronAPI.getWindowPosition && window.electronAPI.getWallpaperColorAtPosition) {
+                setTimeout(() => updateGlobalTint(), 300);
+              }
+            } catch (error) {
+              console.error('Error setting wallpaper:', error);
+              alert('Could not set wallpaper. Please check your system permissions.');
+            }
+          });
+          row.appendChild(wrap);
         });
-        
-        wallpaperItem.addEventListener('mouseenter', () => {
-          wallpaperItem.style.borderColor = '#007AFF';
-          wallpaperItem.style.transform = 'scale(1.05)';
-        });
-        
-        wallpaperItem.addEventListener('mouseleave', () => {
-          wallpaperItem.style.borderColor = 'transparent';
-          wallpaperItem.style.transform = 'scale(1)';
-        });
-        
-        wallpapersList.appendChild(wallpaperItem);
+        section.appendChild(row);
+        if (window.__wrapRubberBandInner && window.__enableRubberBand) {
+          window.__wrapRubberBandInner(row);
+          window.__enableRubberBand(row, { axis: 'x' });
+        }
+        wallpapersList.appendChild(section);
       });
+
+      async function loadThumbnailsInstant() {
+        const cache = window.__wallpaperThumbnailsCache || {};
+        const needLoad = allItemsWithImg.filter(({ img, path }) => !img.src || img.src === '' || img.src === path);
+        if (needLoad.length === 0) return;
+        if (!window.electronAPI) {
+          needLoad.forEach(({ img, path }) => { img.src = path; });
+          return;
+        }
+        if (window.electronAPI.getWallpaperThumbnailsBatch) {
+          const paths = needLoad.map(({ path }) => path);
+          const results = await window.electronAPI.getWallpaperThumbnailsBatch(paths, 'grid');
+          needLoad.forEach(({ img, path }, i) => {
+            const dataUrl = results[i] || path;
+            img.src = dataUrl;
+            if (dataUrl && dataUrl.startsWith('data:')) cache[path] = dataUrl;
+          });
+          return;
+        }
+        if (window.electronAPI.getWallpaperThumbnail) {
+          for (let i = 0; i < needLoad.length; i += thumbBatchSize) {
+            const batch = needLoad.slice(i, i + thumbBatchSize);
+            const results = await Promise.all(
+              batch.map(({ path }) => window.electronAPI.getWallpaperThumbnail(path, 'grid'))
+            );
+            batch.forEach(({ img, path }, j) => {
+              const dataUrl = results[j] || path;
+              img.src = dataUrl;
+              if (dataUrl && dataUrl.startsWith('data:')) cache[path] = dataUrl;
+            });
+            await new Promise(r => setTimeout(r, 0));
+          }
+          return;
+        }
+        needLoad.forEach(({ img, path }) => { img.src = path; });
+      }
+      loadThumbnailsInstant();
       
       
       if (fillModeSelect) {
@@ -8625,78 +9007,205 @@ async function initKeyboardPage() {
   }
 }
 
+let trackpadPageInitDone = false;
 async function initTrackpadPage() {
-  const tapToClickToggle = document.getElementById('tap-to-click-toggle');
-  const naturalScrollingToggle = document.getElementById('natural-scrolling-toggle');
-  const twoFingerScrollingToggle = document.getElementById('two-finger-scrolling-toggle');
-  const trackpadSpeedSelect = document.getElementById('trackpad-speed-select');
-  
-  if (!tapToClickToggle || !naturalScrollingToggle || !twoFingerScrollingToggle || !trackpadSpeedSelect || !window.electronAPI) return;
-  
-  try {
-    
-    const settings = await window.electronAPI.getTrackpadSettings();
-    
-    
-    tapToClickToggle.checked = settings.tapToClick;
-    naturalScrollingToggle.checked = settings.naturalScrolling;
-    twoFingerScrollingToggle.checked = settings.twoFingerScrolling;
-    
-    
-    const speed = settings.speed;
-    if (speed <= 0.75) {
-      trackpadSpeedSelect.value = '0.5';
-    } else if (speed <= 1.25) {
-      trackpadSpeedSelect.value = '1.0';
-    } else if (speed <= 1.75) {
-      trackpadSpeedSelect.value = '1.5';
-    } else {
-      trackpadSpeedSelect.value = '2.0';
-    }
-    
-    
-    tapToClickToggle.addEventListener('change', async (e) => {
-      try {
-        await window.electronAPI.setTapToClick(e.target.checked);
-      } catch (error) {
-        console.error('Error setting tap to click:', error);
-        alert(`Failed to set tap to click: ${error.message}`);
-        e.target.checked = !e.target.checked; 
-      }
-    });
-    
-    naturalScrollingToggle.addEventListener('change', async (e) => {
-      try {
-        await window.electronAPI.setNaturalScrolling(e.target.checked);
-      } catch (error) {
-        console.error('Error setting natural scrolling:', error);
-        alert(`Failed to set natural scrolling: ${error.message}`);
-        e.target.checked = !e.target.checked; 
-      }
-    });
-    
-    twoFingerScrollingToggle.addEventListener('change', async (e) => {
-      try {
-        await window.electronAPI.setTwoFingerScrolling(e.target.checked);
-      } catch (error) {
-        console.error('Error setting two-finger scrolling:', error);
-        alert(`Failed to set two-finger scrolling: ${error.message}`);
-        e.target.checked = !e.target.checked; 
-      }
-    });
-    
-    trackpadSpeedSelect.addEventListener('change', async (e) => {
-      try {
-        const speed = parseFloat(e.target.value);
-        await window.electronAPI.setTrackpadSpeed(speed);
-      } catch (error) {
-        console.error('Error setting trackpad speed:', error);
-        alert(`Failed to set trackpad speed: ${error.message}`);
-      }
-    });
-  } catch (error) {
-    console.error('Error loading trackpad settings:', error);
+  const page = document.getElementById('trackpad-page');
+  if (!page || !window.electronAPI || !window.electronAPI.getTouchpadConfig || !window.electronAPI.setTouchpadConfig) return;
+  if (trackpadPageInitDone) return;
+  trackpadPageInitDone = true;
+
+  const ids = {
+    enabled: 'tp-enabled',
+    tapToClick: 'tp-tap-to-click',
+    clickMethod: 'tp-click-method',
+    leftHanded: 'tp-left-handed',
+    ptrAccel: 'tp-ptr-accel',
+    ptrAccelVal: 'tp-ptr-accel-val',
+    accelProfile: 'tp-accel-profile',
+    naturalScroll: 'tp-natural-scroll',
+    scrollMethod: 'tp-scroll-method',
+    scrollFactor: 'tp-scroll-factor',
+    disableWhileTyping: 'tp-disable-while-typing',
+    disableExtMouse: 'tp-disable-ext-mouse',
+    tapAndDrag: 'tp-tap-and-drag',
+    tapDragLock: 'tp-tap-drag-lock',
+    middleEmulation: 'tp-middle-emulation',
+    lmrTapMap: 'tp-lmr-tap-map'
+  };
+
+  function getEl(id) { return document.getElementById(id); }
+
+  function configFromDOM() {
+    const accel = getEl(ids.ptrAccel);
+    const scrollFactor = getEl(ids.scrollFactor);
+    return {
+      Enabled: getEl(ids.enabled)?.checked ?? true,
+      TapToClick: getEl(ids.tapToClick)?.checked ?? true,
+      ClickMethod: parseInt(getEl(ids.clickMethod)?.value || '2', 10),
+      LeftHanded: getEl(ids.leftHanded)?.checked ?? false,
+      PointerAcceleration: accel ? parseFloat(accel.value) || 0 : 0,
+      PointerAccelerationProfile: parseInt(getEl(ids.accelProfile)?.value || '2', 10),
+      NaturalScroll: getEl(ids.naturalScroll)?.checked ?? true,
+      ScrollMethod: parseInt(getEl(ids.scrollMethod)?.value || '1', 10),
+      ScrollFactor: scrollFactor ? parseFloat(scrollFactor.value) || 1 : 1,
+      DisableWhileTyping: getEl(ids.disableWhileTyping)?.checked ?? true,
+      DisableEventsOnExternalMouse: getEl(ids.disableExtMouse)?.checked ?? false,
+      TapAndDrag: getEl(ids.tapAndDrag)?.checked ?? true,
+      TapDragLock: getEl(ids.tapDragLock)?.checked ?? false,
+      MiddleEmulation: getEl(ids.middleEmulation)?.checked ?? false,
+      LmrTapButtonMap: getEl(ids.lmrTapMap)?.checked ?? false
+    };
   }
+
+  function applyConfigToDOM(c) {
+    if (!c) return;
+    const set = (id, fn) => { const el = getEl(id); if (el) fn(el); };
+    set(ids.enabled, el => { el.checked = !!c.Enabled; });
+    set(ids.tapToClick, el => { el.checked = !!c.TapToClick; });
+    set(ids.clickMethod, el => { el.value = String(c.ClickMethod === 1 ? 1 : 2); });
+    set(ids.leftHanded, el => { el.checked = !!c.LeftHanded; });
+    set(ids.ptrAccel, el => { el.value = String(parseFloat(c.PointerAcceleration) || 0); });
+    set(ids.ptrAccelVal, el => { el.textContent = (parseFloat(c.PointerAcceleration) || 0).toFixed(1); });
+    set(ids.accelProfile, el => { el.value = String(c.PointerAccelerationProfile === 1 ? 1 : 2); });
+    set(ids.naturalScroll, el => { el.checked = !!c.NaturalScroll; });
+    set(ids.scrollMethod, el => { el.value = String(c.ScrollMethod === 2 ? 2 : 1); });
+    set(ids.scrollFactor, el => { el.value = String(parseFloat(c.ScrollFactor) || 1); });
+    set(ids.disableWhileTyping, el => { el.checked = !!c.DisableWhileTyping; });
+    set(ids.disableExtMouse, el => { el.checked = !!c.DisableEventsOnExternalMouse; });
+    set(ids.tapAndDrag, el => { el.checked = !!c.TapAndDrag; });
+    set(ids.tapDragLock, el => { el.checked = !!c.TapDragLock; });
+    set(ids.middleEmulation, el => { el.checked = !!c.MiddleEmulation; });
+    set(ids.lmrTapMap, el => { el.checked = !!c.LmrTapButtonMap; });
+  }
+
+  function initTrackpadLiquidSlider(opts) {
+    const { container, progress, thumb, valueElement, rangeInput, min, max, step, formatValue, onChange } = opts;
+    if (!container || !progress || !thumb || !rangeInput) return null;
+    let isDragging = false;
+    const range = max - min;
+    const valueToPercent = (v) => Math.max(0, Math.min(100, ((v - min) / range) * 100));
+    const percentToValue = (p) => {
+      const v = min + (p / 100) * range;
+      if (step) return Math.round(v / step) * step;
+      return v;
+    };
+    const updateUI = (value) => {
+      value = Math.max(min, Math.min(max, value));
+      const percent = valueToPercent(value);
+      const sliderRect = container.getBoundingClientRect();
+      const px = (percent / 100) * sliderRect.width;
+      progress.style.width = percent + '%';
+      thumb.style.left = px + 'px';
+      rangeInput.value = String(value);
+      if (valueElement) valueElement.textContent = formatValue ? formatValue(value) : value;
+      return value;
+    };
+    const getPercentFromClientX = (clientX) => {
+      const sliderRect = container.getBoundingClientRect();
+      const offsetX = clientX - sliderRect.left;
+      return Math.max(0, Math.min(100, (offsetX / sliderRect.width) * 100));
+    };
+    const onMove = (clientX) => {
+      const value = percentToValue(getPercentFromClientX(clientX));
+      updateUI(value);
+      if (onChange) onChange(value);
+    };
+    const onMouseDown = (e) => { isDragging = true; onMove(e.clientX); thumb.classList.add('active'); };
+    const onTouchStart = (e) => { isDragging = true; onMove(e.touches[0].clientX); thumb.classList.add('active'); };
+    const stopDrag = () => { isDragging = false; thumb.classList.remove('active'); };
+    container.addEventListener('mousedown', onMouseDown);
+    container.addEventListener('touchstart', onTouchStart, { passive: true });
+    thumb.addEventListener('mousedown', onMouseDown);
+    thumb.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('mousemove', (e) => { if (isDragging) onMove(e.clientX); });
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', (e) => { if (isDragging) { e.preventDefault(); onMove(e.touches[0].clientX); } }, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+    return { updateUI };
+  }
+
+  async function saveConfig() {
+    try {
+      await window.electronAPI.setTouchpadConfig(configFromDOM());
+    } catch (err) {
+      console.error('Trackpad config save error:', err);
+      alert('Failed to save: ' + (err.message || 'Unknown error'));
+    }
+  }
+
+  try {
+    const config = await window.electronAPI.getTouchpadConfig();
+    applyConfigToDOM(config);
+  } catch (err) {
+    console.error('Trackpad config load error:', err);
+  }
+
+  const ptrAccelContainer = getEl('tp-ptr-accel-slider-container');
+  const ptrAccelProgress = getEl('tp-ptr-accel-progress');
+  const ptrAccelThumb = getEl('tp-ptr-accel-thumb');
+  const ptrAccelInput = getEl(ids.ptrAccel);
+  const ptrAccelVal = getEl(ids.ptrAccelVal);
+  const scrollFactorContainer = getEl('tp-scroll-factor-slider-container');
+  const scrollFactorProgress = getEl('tp-scroll-factor-progress');
+  const scrollFactorThumb = getEl('tp-scroll-factor-thumb');
+  const scrollFactorInput = getEl(ids.scrollFactor);
+  const scrollFactorVal = getEl('tp-scroll-factor-val');
+
+  const ptrAccelSlider = initTrackpadLiquidSlider({
+    container: ptrAccelContainer,
+    progress: ptrAccelProgress,
+    thumb: ptrAccelThumb,
+    valueElement: ptrAccelVal,
+    rangeInput: ptrAccelInput,
+    min: -1,
+    max: 1,
+    step: 0.1,
+    formatValue: (v) => v.toFixed(1),
+    onChange: () => saveConfig()
+  });
+  const scrollFactorSlider = initTrackpadLiquidSlider({
+    container: scrollFactorContainer,
+    progress: scrollFactorProgress,
+    thumb: scrollFactorThumb,
+    valueElement: scrollFactorVal,
+    rangeInput: scrollFactorInput,
+    min: 0.5,
+    max: 5,
+    step: 0.1,
+    formatValue: (v) => v.toFixed(1),
+    onChange: () => saveConfig()
+  });
+  if (ptrAccelSlider && ptrAccelInput) ptrAccelSlider.updateUI(parseFloat(ptrAccelInput.value) || 0);
+  if (scrollFactorSlider && scrollFactorInput) scrollFactorSlider.updateUI(parseFloat(scrollFactorInput.value) || 1);
+
+  page.querySelectorAll('.trackpad-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const name = tab.getAttribute('data-tab');
+      page.querySelectorAll('.trackpad-tab').forEach(t => t.classList.remove('active'));
+      page.querySelectorAll('.trackpad-tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const panel = document.getElementById('trackpad-tab-' + name.replace(/&/g, '').replace(/\s+/g, '-'));
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  const inputs = [
+    ids.enabled, ids.tapToClick, ids.clickMethod, ids.leftHanded, ids.accelProfile,
+    ids.naturalScroll, ids.scrollMethod, ids.disableWhileTyping, ids.disableExtMouse,
+    ids.tapAndDrag, ids.tapDragLock, ids.middleEmulation, ids.lmrTapMap
+  ];
+  inputs.forEach(id => {
+    const el = getEl(id);
+    if (!el) return;
+    const event = el.type === 'checkbox' ? 'change' : (el.tagName === 'SELECT' ? 'change' : 'input');
+    el.addEventListener(event, () => {
+      if (id === ids.ptrAccel) {
+        const v = getEl(ids.ptrAccelVal);
+        if (v) v.textContent = (parseFloat(el.value) || 0).toFixed(1);
+      }
+      saveConfig();
+    });
+  });
 }
 
   async function initTouchIdPasswordPage() {

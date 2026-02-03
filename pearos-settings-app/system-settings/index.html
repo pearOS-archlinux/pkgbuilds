@@ -68,7 +68,7 @@
             </div>
           </div>
           <div class="item">
-            <div class="content"><img src="./assets/cs-power.svg" class="icon" alt="Battery"/><p class="name">Battey</p>
+            <div class="content"><img src="./assets/cs-power.svg" class="icon" alt="Battery"/><p class="name">Battery</p>
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@
             </div>
           </div>
           <div class="item">
-            <div class="content"><img src="./assets/preferences-other.svg" class="icon gray" alt="Pear Intelligence"/><p class="name">Pear Piri</p>
+            <div class="content"><img src="./assets/pear_intelligence.png" class="icon" alt="Pear Intelligence & Piri"/><p class="name">Pear Intelligence & Piri</p>
             </div>
           </div>
           <div class="item">
@@ -362,43 +362,55 @@
             </div>
           </div>
         </div>
-        <!-- Conținutul pentru Pear Intelligence and Piri -->
+        <!-- Conținutul pentru Pear Intelligence & Piri -->
         <div class="page-content" id="pear-piri-page" style="display: none;">
           <div class="settings-card">
             <div class="card-section-image">
-              <img src="./assets/preferences-other.svg" alt="Pear Piri" class="feature-image">
+              <img src="./assets/pear_intelligence.png" alt="Pear Intelligence & Piri" class="feature-image">
               <div class="feature-content">
-                <h3 class="feature-title">Pear Piri</h3>
-                <p class="feature-description">Pear Piri is an intelligent assistant that helps you get things done. It can answer questions, provide information, and assist with various tasks.</p>
+                <h3 class="feature-title">Pear Intelligence & Piri</h3>
+                <p class="feature-description">Pear Intelligence & Piri is an intelligent assistant that helps you get things done. It can answer questions, provide information, and assist with various tasks.</p>
               </div>
             </div>
             <hr class="card-divider">
             <div class="card-section">
-              <h4 class="color-title">Piri Intelligence</h4>
+              <h4 class="color-title">Pear Intelligence</h4>
               <label class="switch">
-                <input type="checkbox">
+                <input type="checkbox" disabled>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section card-section-piri">
+              <div class="piri-enable-block">
+                <div class="piri-enable-header">
+                  <h4 class="color-title">Downloaded model size: 2.3 GB</h4>
+                  <button type="button" class="select-button" id="enable-piri-btn">Enable Piri</button>
+                  <button type="button" class="select-button piri-disable-btn" id="piri-disable-btn" style="display: none;">Stop &amp; Disable Piri</button>
+                </div>
+                <div id="piri-progress-container" class="piri-progress-container" style="display: none;">
+                  <div class="piri-progress-stage" id="piri-progress-stage">Preparing...</div>
+                  <div class="piri-progress-bar-row">
+                    <div class="piri-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                      <div class="piri-progress-bar-fill" id="piri-progress-bar-fill"></div>
+                    </div>
+                    <button type="button" class="select-button piri-stop-btn" id="piri-stop-btn" style="display: none;">Stop</button>
+                  </div>
+                  <div id="piri-progress-error" class="piri-progress-error" style="display: none;"></div>
+                </div>
+              </div>
+            </div>
+            <hr class="card-divider">
+            <div class="card-section">
+              <h4 class="color-title">Show Piri in Menu Bar</h4>
+              <label class="switch">
+                <input type="checkbox" id="piri-show-icon-toggle">
                 <span class="slider"></span>
               </label>
             </div>
           </div>
           <h3 class="section-title">Piri Requests</h3>
           <div class="settings-card">
-            <div class="card-section">
-              <h4 class="color-title">Piri</h4>
-              <label class="switch">
-                <input type="checkbox">
-                <span class="slider"></span>
-              </label>
-            </div>
-            <hr class="card-divider">
-            <div class="card-section">
-              <h4 class="color-title">Listen for</h4>
-              <select class="size-dropdown">
-                <option value="on">On</option>
-                <option value="off" selected>Off</option>
-              </select>
-            </div>
-            <hr class="card-divider">
             <div class="card-section">
               <h4 class="color-title">Keyboard shortcut</h4>
               <select class="size-dropdown">
@@ -419,20 +431,6 @@
                 <span class="voice-text">Default voice</span>
                 <button class="select-button">Select...</button>
               </div>
-            </div>
-            <hr class="card-divider">
-            <div class="card-section">
-              <h4 class="color-title">Piri history</h4>
-              <button class="delete-button">Delete Piri History...</button>
-            </div>
-            <hr class="card-divider">
-            <div class="card-section">
-              <h4 class="color-title">Piri responses</h4>
-              <select class="size-dropdown">
-                <option value="prefer-spoken">Prefer spoken responses</option>
-                <option value="automatic" selected>Automatic</option>
-                <option value="prefer-silent">Prefer silent responses</option>
-              </select>
             </div>
             <hr class="card-divider">
             <div class="card-section-info">
@@ -1258,20 +1256,16 @@
           </div>
         </div>
         <!-- Pagina Wallpaper -->
-        <div class="page-content" id="wallpaper-page" style="display: none;">
-          <div class="settings-card">
-            <div class="card-section" style="display: flex; align-items: center; gap: 20px;">
-              <div style="flex: 1;">
-                <img id="current-wallpaper-preview" src="" alt="Current Wallpaper" style="width: 100%; max-width: 400px; height: auto; border-radius: 8px; object-fit: cover;">
+        <div class="page-content wallpaper-page-layout" id="wallpaper-page" style="display: none;">
+          <div class="wallpaper-sticky-header">
+            <div class="wallpaper-current-row">
+              <div class="current-wallpaper-preview-wrap">
+                <img id="current-wallpaper-preview" src="" alt="Current Wallpaper">
               </div>
-              <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
-                <div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Current Wallpaper</div>
-                  <div id="current-wallpaper-name" style="font-size: 14px; color: var(--text-primary); word-break: break-all;">Loading...</div>
-                </div>
-                <div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 5px;">Fill Mode</div>
-                  <select id="wallpaper-fill-mode" class="timezone-select" style="width: 100%;">
+              <div class="settings-card wallpaper-current-card">
+                <div class="wallpaper-current-card-row card-section">
+                  <span id="current-wallpaper-name" class="wallpaper-current-name">Loading...</span>
+                  <select id="wallpaper-fill-mode" class="timezone-select wallpaper-fill-mode-select">
                     <option value="Fill screen">Fill screen</option>
                     <option value="Fit to screen">Fit to screen</option>
                     <option value="Stretch to Fill Screen">Stretch to Fill Screen</option>
@@ -1279,19 +1273,18 @@
                     <option value="Tile">Tile</option>
                   </select>
                 </div>
+                <hr class="card-divider">
+                <div class="wallpaper-load-custom-row card-section">
+                  <span class="wallpaper-current-name">Load Wallpaper</span>
+                  <button id="browse-wallpaper-btn" class="modal-button">Browse...</button>
+                </div>
               </div>
             </div>
+            <hr class="wallpaper-section-divider">
           </div>
-          <div class="settings-card" style="margin-top: 20px;">
-            <div class="card-section" style="display: flex; justify-content: space-between; align-items: center;">
-              <h4 class="color-title">Available Wallpapers</h4>
-              <button id="browse-wallpaper-btn" class="modal-button">Browse...</button>
-            </div>
-            <hr class="card-divider">
-            <div id="wallpapers-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 15px;">
-              <div style="text-align: center; padding: 20px; color: var(--text-secondary); grid-column: 1 / -1;">
-                Loading wallpapers...
-              </div>
+          <div class="settings-card wallpapers-section-card wallpaper-list-section">
+            <div id="wallpapers-list" class="wallpapers-by-category">
+              <div class="wallpapers-loading">Loading wallpapers...</div>
             </div>
           </div>
         </div>
@@ -1729,7 +1722,7 @@
                   <img src="./assets/preferences-desktop-online-accounts.svg" alt="Pear Cloud" class="general-menu-icon">
                   <div style="display: flex; flex-direction: column;">
                     <span class="general-menu-label">Pear Cloud</span>
-                    <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-top: 2px;">Pear Drive, Contacts, Calendars, Pafari, Reminders, Notes, and Piri</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-top: 2px;">Pear Drive, Contacts, Calendars, Pafari, Reminders, Notes, and Pear Intelligence & Piri</span>
                   </div>
                 </div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right general-menu-arrow"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -1845,54 +1838,133 @@
         </div>
         <!-- Pagina Trackpad -->
         <div class="page-content" id="trackpad-page" style="display: none;">
-          <div class="settings-card" style="max-width: 450px;">
-            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="flex: 1;">
-                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Tap to Click</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Tap the trackpad to click</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="tap-to-click-toggle">
-                <span class="slider"></span>
-              </label>
+          <!-- Secțiune GIF-uri deasupra taburilor -->
+          <div class="settings-card trackpad-gifs-section">
+            <div class="trackpad-gif-container">
+              <img src="./assets/touch.gif" alt="" class="trackpad-gif trackpad-gif-left">
+            </div>
+            <div class="trackpad-gif-container">
+              <img src="./assets/touch1.gif" alt="" class="trackpad-gif trackpad-gif-right">
             </div>
           </div>
-          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
-            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="flex: 1;">
-                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Natural Scrolling</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Content scrolls in the direction of finger movement</div>
-              </div>
-              <label class="switch">
-                <input type="checkbox" id="natural-scrolling-toggle">
-                <span class="slider"></span>
-              </label>
+          <!-- Secțiune separată: doar butoanele de taburi -->
+          <div class="settings-card trackpad-tabs-section">
+            <div class="trackpad-tabs">
+              <button type="button" class="trackpad-tab active" data-tab="point-click">Point &amp; Click</button>
+              <button type="button" class="trackpad-tab" data-tab="scroll-zoom">Scroll &amp; Zoom</button>
+              <button type="button" class="trackpad-tab" data-tab="more-gestures">More Gestures</button>
             </div>
           </div>
-          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
-            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="flex: 1;">
-                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Two-Finger Scrolling</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Use two fingers to scroll</div>
+          <!-- Secțiunea de setări (conținutul taburilor) -->
+          <div class="settings-card trackpad-card">
+            <div id="trackpad-tab-point-click" class="trackpad-tab-panel active">
+              <div class="card-section">
+                <h4 class="color-title">Enable Touchpad</h4>
+                <label class="switch"><input type="checkbox" id="tp-enabled"><span class="slider"></span></label>
               </div>
-              <label class="switch">
-                <input type="checkbox" id="two-finger-scrolling-toggle">
-                <span class="slider"></span>
-              </label>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Tap to Click</h4>
+                <label class="switch"><input type="checkbox" id="tp-tap-to-click"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Click Method</h4>
+                <select id="tp-click-method" class="size-dropdown">
+                  <option value="1">Button Areas (Mechanical)</option>
+                  <option value="2">Clickfinger (Modern)</option>
+                </select>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Left Handed</h4>
+                <label class="switch"><input type="checkbox" id="tp-left-handed"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section" style="display: flex; flex-direction: column; gap: 15px;">
+                <h4 class="color-title">Pointer Acceleration</h4>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <input type="range" id="tp-ptr-accel" class="brightness-slider" min="-1" max="1" step="0.1" value="0">
+                  <div class="slider-container" id="tp-ptr-accel-slider-container" style="flex: 1;">
+                    <div class="slider-progress" id="tp-ptr-accel-progress"></div>
+                    <div class="slider-thumb-glass" id="tp-ptr-accel-thumb">
+                      <div class="slider-thumb-glass-filter"></div>
+                      <div class="slider-thumb-glass-overlay"></div>
+                      <div class="slider-thumb-glass-specular"></div>
+                    </div>
+                  </div>
+                  <span class="brightness-value" id="tp-ptr-accel-val">0</span>
+                </div>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Acceleration Profile</h4>
+                <select id="tp-accel-profile" class="size-dropdown">
+                  <option value="1">Flat (No acceleration)</option>
+                  <option value="2">Adaptive (Standard)</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div class="settings-card" style="max-width: 450px; margin-top: 20px;">
-            <div class="card-section" style="display: flex; align-items: center; justify-content: space-between;">
-              <div style="flex: 1;">
-                <div style="font-size: 14px; color: var(--text-primary); font-weight: 500;">Trackpad Speed</div>
-                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Adjust the speed of the pointer</div>
+            <div id="trackpad-tab-scroll-zoom" class="trackpad-tab-panel">
+              <div class="card-section">
+                <h4 class="color-title">Natural Scrolling</h4>
+                <label class="switch"><input type="checkbox" id="tp-natural-scroll"><span class="slider"></span></label>
               </div>
-              <select id="trackpad-speed-select" class="timezone-select" style="min-width: 120px;">
-                <option value="0.5">Slow</option>
-                <option value="1.0" selected>Normal</option>
-                <option value="1.5">Fast</option>
-                <option value="2.0">Very Fast</option>
-              </select>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Scroll Method</h4>
+                <select id="tp-scroll-method" class="size-dropdown">
+                  <option value="1">Two-Finger (Standard)</option>
+                  <option value="2">Edge (Margin)</option>
+                </select>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section" style="display: flex; flex-direction: column; gap: 15px;">
+                <h4 class="color-title">Scroll Factor (Speed)</h4>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <input type="range" id="tp-scroll-factor" class="brightness-slider" min="0.5" max="5" step="0.1" value="1.0">
+                  <div class="slider-container" id="tp-scroll-factor-slider-container" style="flex: 1;">
+                    <div class="slider-progress" id="tp-scroll-factor-progress"></div>
+                    <div class="slider-thumb-glass" id="tp-scroll-factor-thumb">
+                      <div class="slider-thumb-glass-filter"></div>
+                      <div class="slider-thumb-glass-overlay"></div>
+                      <div class="slider-thumb-glass-specular"></div>
+                    </div>
+                  </div>
+                  <span class="brightness-value" id="tp-scroll-factor-val">1.0</span>
+                </div>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Disable While Typing</h4>
+                <label class="switch"><input type="checkbox" id="tp-disable-while-typing"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Disable When External Mouse Present</h4>
+                <label class="switch"><input type="checkbox" id="tp-disable-ext-mouse"><span class="slider"></span></label>
+              </div>
+            </div>
+            <div id="trackpad-tab-more-gestures" class="trackpad-tab-panel">
+              <div class="card-section">
+                <h4 class="color-title">Tap and Drag</h4>
+                <label class="switch"><input type="checkbox" id="tp-tap-and-drag"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Tap Drag Lock</h4>
+                <label class="switch"><input type="checkbox" id="tp-tap-drag-lock"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">Middle Emulation (3 fingers = Paste)</h4>
+                <label class="switch"><input type="checkbox" id="tp-middle-emulation"><span class="slider"></span></label>
+              </div>
+              <hr class="card-divider">
+              <div class="card-section">
+                <h4 class="color-title">LMR Tap Button Map</h4>
+                <label class="switch"><input type="checkbox" id="tp-lmr-tap-map"><span class="slider"></span></label>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,7 @@
-const { app, BrowserWindow, ipcMain, dialog, shell, screen, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell, screen, nativeImage, nativeTheme } = require('electron');
 const path = require('path');
+const http = require('http');
+const https = require('https');
 const { exec, spawn } = require('child_process');
 const fs = require('fs');
 
@@ -2799,26 +2801,31 @@ ipcMain.handle('backup-theme-settings', async () => {
     return { success: true, message: 'No theme settings files to backup' };
   }
   
+  const os = require('os');
+  const runEnv = { ...process.env, HOME: process.env.HOME || os.homedir(), USER: process.env.USER || os.userInfo().username };
   const backupPromises = filesToBackup.map(file => {
-    return new Promise((resolve, reject) => {
-      exec(`bash "${backupScriptPath}" "${file.path}"`, (error, stdout, stderr) => {
+    return new Promise((resolve) => {
+      exec(`bash "${backupScriptPath}" "${file.path}"`, { env: runEnv }, (error, stdout, stderr) => {
         if (error) {
-          reject(new Error(`Error backing up ${file.name}: ${error.message}`));
+          const msg = (stderr || stdout || error.message || '').toString().trim() || error.message;
+          resolve({ file: file.name, success: false, error: msg });
         } else {
           resolve({ file: file.name, success: true });
         }
       });
     });
   });
-  
-  try {
-    const results = await Promise.all(backupPromises);
-    return { success: true, backedUp: results.length };
-  } catch (error) {
-    // Dacă unul dintre backup-uri eșuează, încă returnăm success parțial
-    // sau putem arunca eroarea dacă vrem să o gestionăm în frontend
-    throw error;
+
+  const results = await Promise.all(backupPromises);
+  const backedUp = results.filter(r => r.success);
+  const failed = results.filter(r => !r.success);
+  if (failed.length === 0) {
+    return { success: true, backedUp: backedUp.length };
   }
+  if (backedUp.length === 0) {
+    return { success: false, error: failed[0].error, backedUp: 0 };
+  }
+  return { success: true, backedUp: backedUp.length, partialFailure: true, failed: failed.map(f => f.file) };
 });
 
 ipcMain.handle('sign-out', async (event, password) => {
@@ -3752,25 +3759,31 @@ ipcMain.handle('get-current-wallpaper', async () => {
 //  });
 //});
 
+const WALLPAPERS_BASE = '/usr/share/extras/wallpapers';
+
 ipcMain.handle('get-wallpapers', async () => {
   return new Promise((resolve) => {
-    exec('find /usr/share/extras/wallpapers -type f \\( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.bmp" \\) 2>/dev/null', (error, stdout) => {
+    exec(`find ${WALLPAPERS_BASE} -type f \\( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.bmp" \\) 2>/dev/null`, (error, stdout) => {
       if (error || !stdout) {
-        resolve([]);
+        resolve({ categories: [] });
         return;
       }
-      
-      const wallpapers = stdout.trim().split('\n')
-        .filter(path => path.trim())
-        .map(path => {
-          const fullPath = path.trim();
-          return {
-            path: fullPath,
-            name: fullPath.split('/').pop()
-          };
-        });
-      
-      resolve(wallpapers);
+      const byCategory = Object.create(null);
+      stdout.trim().split('\n').forEach(line => {
+        const fullPath = line.trim();
+        if (!fullPath) return;
+        const relative = path.relative(WALLPAPERS_BASE, fullPath);
+        const parts = relative.split(path.sep).filter(Boolean);
+        const categoryName = parts.length > 1 ? parts[0] : 'General';
+        if (!byCategory[categoryName]) byCategory[categoryName] = [];
+        byCategory[categoryName].push({ path: fullPath, name: path.basename(fullPath) });
+      });
+      const categories = Object.keys(byCategory).sort().map(name => ({
+        name,
+        wallpapers: byCategory[name],
+        folderPath: name === 'General' ? WALLPAPERS_BASE : path.join(WALLPAPERS_BASE, name)
+      }));
+      resolve({ categories });
     });
   });
 });
@@ -3787,24 +3800,90 @@ ipcMain.handle('set-wallpaper', async (event, wallpaperPath) => {
   });
 });
 
-ipcMain.handle('browse-wallpaper', async () => {
-  const { dialog } = require('electron');
-  const homedir = require('os').homedir();
-  
-  const result = await dialog.showOpenDialog(mainWindow, {
-    title: 'Select Wallpaper',
-    defaultPath: homedir,
-    filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp', 'webp'] }
-    ],
-    properties: ['openFile']
-  });
-  
-  if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
+/** Dimensiuni maxime pentru thumbnails (evită încărcarea imaginilor la rezoluție mare). */
+const WALLPAPER_THUMB_PREVIEW_MAX = 480;
+const WALLPAPER_THUMB_GRID_MAX = 120;
+const WALLPAPER_THUMB_JPEG_QUALITY = 72;
+const WALLPAPER_THUMB_BATCH_CONCURRENCY = 8;
+
+function makeWallpaperThumbnail(filePath, sizePx) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const img = nativeImage.createFromPath(filePath);
+    if (!img || img.isEmpty()) return null;
+    const { width, height } = img.getSize();
+    if (!width || !height) return null;
+    const scale = Math.min(1, sizePx / Math.max(width, height));
+    const w = Math.max(1, Math.round(width * scale));
+    const h = Math.max(1, Math.round(height * scale));
+    const resized = img.resize({ width: w, height: h, quality: 'good' });
+    const buf = resized.toJPEG(WALLPAPER_THUMB_JPEG_QUALITY);
+    return 'data:image/jpeg;base64,' + buf.toString('base64');
+  } catch (err) {
     return null;
   }
-  
-  return result.filePaths[0];
+}
+
+ipcMain.handle('get-wallpaper-thumbnail', async (event, imagePath, size = 'grid') => {
+  if (!imagePath || typeof imagePath !== 'string') return null;
+  const filePath = imagePath.startsWith('file://') ? imagePath.slice(7) : imagePath;
+  const sizePx = size === 'preview' ? WALLPAPER_THUMB_PREVIEW_MAX : WALLPAPER_THUMB_GRID_MAX;
+  return makeWallpaperThumbnail(filePath, sizePx);
+});
+
+ipcMain.handle('get-wallpaper-thumbnails-batch', async (event, paths, size = 'grid') => {
+  if (!Array.isArray(paths) || paths.length === 0) return [];
+  const sizePx = size === 'preview' ? WALLPAPER_THUMB_PREVIEW_MAX : WALLPAPER_THUMB_GRID_MAX;
+  const n = paths.length;
+  const results = new Array(n);
+  const concurrency = 2;
+  for (let i = 0; i < n; i += concurrency) {
+    const chunk = paths.slice(i, i + concurrency);
+    const chunkResults = await Promise.all(
+      chunk.map(p => {
+        const filePath = typeof p === 'string' && p.startsWith('file://') ? p.slice(7) : p;
+        return Promise.resolve(makeWallpaperThumbnail(filePath, sizePx));
+      })
+    );
+    for (let j = 0; j < chunkResults.length; j++) results[i + j] = chunkResults[j];
+    await new Promise(r => setImmediate(r));
+  }
+  return results;
+});
+
+ipcMain.handle('open-wallpaper-folder', async (event, folderPath) => {
+  if (!folderPath || typeof folderPath !== 'string') return { error: 'Invalid path' };
+  try {
+    const err = await shell.openPath(folderPath);
+    return err ? { error: err } : {};
+  } catch (e) {
+    return { error: e.message || 'Failed to open folder' };
+  }
+});
+
+ipcMain.handle('browse-wallpaper', async (event, theme) => {
+  const { dialog } = require('electron');
+  const homedir = require('os').homedir();
+  const prev = nativeTheme.themeSource;
+  if (theme === 'dark' || theme === 'light') {
+    nativeTheme.themeSource = theme;
+  }
+  try {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      title: 'Select Wallpaper',
+      defaultPath: homedir,
+      filters: [
+        { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'bmp', 'webp'] }
+      ],
+      properties: ['openFile']
+    });
+    if (result.canceled || !result.filePaths || result.filePaths.length === 0) {
+      return null;
+    }
+    return result.filePaths[0];
+  } finally {
+    nativeTheme.themeSource = prev;
+  }
 });
 
 ipcMain.handle('set-wallpaper-fill-mode', async (event, fillMode) => {
@@ -4988,6 +5067,53 @@ ipcMain.handle('set-keyboard-layout', async (event, layout) => {
   });
 });
 
+const TOUCHPAD_JSON = '/usr/share/extras/settings/touchpad/config.json';
+const TOUCHPAD_SCRIPT = path.join(__dirname, 'inputs', 'touchpad.sh');
+
+const TOUCHPAD_DEFAULTS = {
+  Enabled: true,
+  NaturalScroll: true,
+  TapToClick: true,
+  DisableWhileTyping: true,
+  DisableEventsOnExternalMouse: false,
+  LeftHanded: false,
+  MiddleEmulation: false,
+  LmrTapButtonMap: false,
+  TapAndDrag: true,
+  TapDragLock: false,
+  PointerAcceleration: 0,
+  PointerAccelerationProfile: 2,
+  ScrollFactor: 1.0,
+  ClickMethod: 2,
+  ScrollMethod: 1
+};
+
+ipcMain.handle('get-touchpad-config', async () => {
+  try {
+    if (!fs.existsSync(TOUCHPAD_JSON)) return TOUCHPAD_DEFAULTS;
+    const raw = fs.readFileSync(TOUCHPAD_JSON, 'utf8');
+    const data = JSON.parse(raw);
+    return { ...TOUCHPAD_DEFAULTS, ...data };
+  } catch (_) {
+    return TOUCHPAD_DEFAULTS;
+  }
+});
+
+ipcMain.handle('set-touchpad-config', async (event, config) => {
+  try {
+    const dir = path.dirname(TOUCHPAD_JSON);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    const merged = { ...TOUCHPAD_DEFAULTS, ...config };
+    fs.writeFileSync(TOUCHPAD_JSON, JSON.stringify(merged, null, 2), 'utf8');
+    if (fs.existsSync(TOUCHPAD_SCRIPT)) {
+      exec(`bash ${JSON.stringify(TOUCHPAD_SCRIPT)}`, { timeout: 10000 }, () => {});
+    }
+    return { success: true };
+  } catch (err) {
+    throw new Error(err.message || 'Failed to save touchpad settings');
+  }
+});
+
 ipcMain.handle('get-trackpad-settings', async () => {
   return new Promise((resolve) => {
     
@@ -5284,6 +5410,174 @@ ipcMain.handle('module-read-file', async (event, moduleId, filePath) => {
       }
       resolve({ content: data });
     });
+  });
+});
+
+const PIRI_MODEL_URL = 'https://alphacephei.com/vosk/models/vosk-model-en-us-0.42-gigaspeech.zip';
+//const PIRI_MODEL_URL = 'https://cdn.pearos.xyz/test.zip';
+
+const PIRI_MODEL_DIR = '/usr/share/extras/piri/model';
+const PIRI_ZIP_TMP = '/tmp/piri-model.zip';
+const PIRI_EXTRACT_TMP = '/tmp/piri-extract';
+
+let piriAbortController = null;
+
+ipcMain.handle('piri-model-exists', async () => {
+  try {
+    if (!fs.existsSync(PIRI_MODEL_DIR)) return false;
+    const entries = fs.readdirSync(PIRI_MODEL_DIR);
+    return entries.length > 0;
+  } catch (_) {
+    return false;
+  }
+});
+
+ipcMain.handle('piri-model-remove', async () => {
+  return new Promise((resolve, reject) => {
+    const script = `rm -rf "${PIRI_MODEL_DIR}"/*`;
+    exec(script, { timeout: 30000 }, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error((stderr || stdout || error.message || 'Failed to remove model').trim()));
+        return;
+      }
+      resolve({ success: true });
+    });
+  });
+});
+
+const PIRI_SHOW_ICON_FILE = '/usr/share/extras/piri/show_icon';
+
+ipcMain.handle('piri-get-show-icon', async () => {
+  try {
+    if (!fs.existsSync(PIRI_SHOW_ICON_FILE)) return { showIcon: false };
+    const content = fs.readFileSync(PIRI_SHOW_ICON_FILE, 'utf8').trim().toLowerCase();
+    return { showIcon: content === 'true' };
+  } catch (_) {
+    return { showIcon: false };
+  }
+});
+
+ipcMain.handle('piri-set-show-icon', async (event, value) => {
+  try {
+    const dir = path.dirname(PIRI_SHOW_ICON_FILE);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(PIRI_SHOW_ICON_FILE, value ? 'true' : 'false', 'utf8');
+    return { success: true };
+  } catch (err) {
+    throw new Error(err.message || 'Failed to save setting');
+  }
+});
+
+ipcMain.handle('cancel-piri-download', async () => {
+  if (piriAbortController) {
+    piriAbortController.abort();
+    piriAbortController = null;
+  }
+  return { cancelled: true };
+});
+
+ipcMain.handle('download-piri-model', async (event) => {
+  const controller = new AbortController();
+  piriAbortController = controller;
+
+  const sendProgress = (percent, status) => {
+    try {
+      event.sender.send('piri-download-progress', { percent, status });
+    } catch (_) {}
+  };
+
+  const cleanup = () => {
+    piriAbortController = null;
+  };
+
+  return new Promise((resolve, reject) => {
+    const rejectWith = (err) => {
+      cleanup();
+      reject(err);
+    };
+
+    let redirectCount = 0;
+    const maxRedirects = 5;
+    const downloadFile = (url) => {
+      const targetUrl = url || PIRI_MODEL_URL;
+      sendProgress(0, 'downloading');
+      const file = fs.createWriteStream(PIRI_ZIP_TMP, { flags: 'w' });
+      const protocol = targetUrl.startsWith('https') ? https : http;
+      const req = protocol.get(targetUrl, { signal: piriAbortController.signal }, (response) => {
+        const status = response.statusCode || 0;
+        if (status >= 300 && status < 400 && response.headers.location && redirectCount < maxRedirects) {
+          file.destroy();
+          req.destroy();
+          redirectCount += 1;
+          const nextUrl = response.headers.location.startsWith('http') ? response.headers.location : new URL(response.headers.location, targetUrl).href;
+          return downloadFile(nextUrl);
+        }
+        if (status !== 200) {
+          file.destroy();
+          fs.unlink(PIRI_ZIP_TMP, () => {});
+          rejectWith(new Error('Download failed: server returned ' + status));
+          return;
+        }
+        redirectCount = 0;
+        const total = parseInt(response.headers['content-length'], 10) || 0;
+        let loaded = 0;
+        response.on('data', (chunk) => {
+          loaded += chunk.length;
+          const percent = total ? Math.min(99, Math.round((loaded / total) * 100)) : 0;
+          sendProgress(percent, 'downloading');
+        });
+        response.pipe(file);
+        file.on('finish', () => {
+          file.close(() => {
+            try {
+              const stat = fs.statSync(PIRI_ZIP_TMP);
+              if (!stat || stat.size < 1000) {
+                rejectWith(new Error('Download incomplete or empty (got ' + (stat ? stat.size : 0) + ' bytes)'));
+                return;
+              }
+            } catch (e) {
+              rejectWith(new Error('Download failed: file not found after write'));
+              return;
+            }
+            sendProgress(100, 'extracting');
+            extractAndInstall()
+              .then(() => {
+                try { fs.unlinkSync(PIRI_ZIP_TMP); } catch (_) {}
+                sendProgress(100, 'done');
+                cleanup();
+                resolve({ success: true });
+              })
+              .catch((err) => rejectWith(err));
+          });
+        });
+      });
+      req.on('error', (err) => {
+        file.destroy();
+        if (err.name === 'AbortError') {
+          try { fs.unlinkSync(PIRI_ZIP_TMP); } catch (_) {}
+          rejectWith(new Error('Download cancelled'));
+        } else {
+          rejectWith(new Error('Download failed: ' + (err.message || 'Unknown error')));
+        }
+      });
+    };
+
+    const extractAndInstall = () => {
+      return new Promise((res, rej) => {
+        const script = `mkdir -p "${PIRI_MODEL_DIR}" "${PIRI_EXTRACT_TMP}" && ( (command -v unzip >/dev/null 2>&1 && unzip -o "${PIRI_ZIP_TMP}" -d "${PIRI_EXTRACT_TMP}") || (command -v bsdtar >/dev/null 2>&1 && bsdtar -xf "${PIRI_ZIP_TMP}" -C "${PIRI_EXTRACT_TMP}") || (echo "Install unzip or bsdtar (libarchive) to extract the model"; exit 1) ) && ( count=$(ls -1d "${PIRI_EXTRACT_TMP}"/*/ 2>/dev/null | wc -l); if [ "$count" -eq 1 ]; then cp -r "${PIRI_EXTRACT_TMP}"/*/. "${PIRI_MODEL_DIR}/"; else cp -r "${PIRI_EXTRACT_TMP}"/* "${PIRI_MODEL_DIR}/"; fi ) && rm -rf "${PIRI_EXTRACT_TMP}"`;
+        exec(script, { timeout: 600000 }, (error, stdout, stderr) => {
+          if (error) {
+            rej(new Error((stderr || stdout || error.message || 'Extract failed').trim()));
+            return;
+          }
+          res();
+        });
+      });
+    };
+
+    downloadFile(null);
   });
 });
 
