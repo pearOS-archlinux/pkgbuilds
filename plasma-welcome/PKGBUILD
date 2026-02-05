@@ -1,47 +1,43 @@
-# Maintainer : Alexandru Balan <alex@pear-software.com>
+# Maintainer: Alexandru Balan <alex@pear-software.com>
 
 pkgname=plasma-welcome
 _realname=plasma-welcome
-pkgdesc="pearOS NiceC0re Welcome application"
-pkgver=25.12.12
+pkgdesc="pearOS NiceC0re Welcome application (C++/Qt6)"
+pkgver=26.02.04
 pkgrel=1
 arch=('x86_64')
-depends=('python' 'pyside6')
-# makedepends=('python-pip' 'python-pyinstaller')
+depends=('qt6-base' 'qt6-webengine' 'qt6-network')
+makedepends=('cmake')
 url="https://pear-software.com"
 license=('MIT')
 
 prepare() {
-  # Copy contents of current directory to build directory
-  mkdir -p ${srcdir}/${_realname}
-  rsync -a --exclude='src' --exclude='pkg' --exclude='*.pkg.tar.*' --exclude='.git' --exclude='build' ${startdir}/ ${srcdir}/${_realname}/
-  
-  # Copy the already-built executable from dist/
-  mkdir -p ${srcdir}/${_realname}/dist
-  cp ${startdir}/dist/pearos-welcome ${srcdir}/${_realname}/dist/pearos-welcome
+  mkdir -p "${srcdir}/${_realname}"
+  rsync -a --exclude='src' --exclude='pkg' --exclude='*.pkg.tar.*' --exclude='.git' --exclude='build' --exclude='dist' "${startdir}/" "${srcdir}/${_realname}/"
 }
 
 build() {
-  # No build needed - executable is already built by 'make build'
-  # Just verify it exists
-  if [ ! -f "${startdir}/dist/pearos-welcome" ]; then
-    echo "ERROR: Executable not found. Run 'make build' first."
-    exit 1
-  fi
+  cd "${srcdir}/${_realname}"
+  mkdir -p build
+  cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  make -j$(nproc)
 }
 
 package() {
-  cd ${srcdir}/${_realname}
+  cd "${srcdir}/${_realname}"
 
-  # Install executable from dist/
-  install -Dm755 ${srcdir}/${_realname}/dist/pearos-welcome \
-    ${pkgdir}/usr/bin/pearos-welcome
-  
-  # Install desktop file
-  install -Dm644 ${srcdir}/${_realname}/assets/welcome.desktop \
-    ${pkgdir}/usr/share/applications/welcome.desktop
-  
-  # Install icon
-  install -Dm644 ${srcdir}/${_realname}/assets/welcome.png \
-    ${pkgdir}/usr/share/pixmaps/welcome.png
+  install -Dm755 build/pearos-welcome "${pkgdir}/usr/bin/pearos-welcome"
+  install -Dm644 assets/welcome.desktop "${pkgdir}/usr/share/applications/welcome.desktop"
+  install -Dm644 assets/welcome.png "${pkgdir}/usr/share/pixmaps/welcome.png"
+
+  install -Dm644 styles.qss "${pkgdir}/usr/share/pearos-welcome/styles.qss"
+  install -Dm644 assets/welcome.png "${pkgdir}/usr/share/pearos-welcome/assets/welcome.png"
+  install -Dm644 assets/1welcome.png "${pkgdir}/usr/share/pearos-welcome/assets/1welcome.png"
+  install -Dm644 assets/discord.svg "${pkgdir}/usr/share/pearos-welcome/assets/discord.svg"
+  install -Dm644 assets/github.svg "${pkgdir}/usr/share/pearos-welcome/assets/github.svg"
+  install -Dm644 assets/patreon.png "${pkgdir}/usr/share/pearos-welcome/assets/patreon.png"
+  install -Dm644 assets/paypal.svg "${pkgdir}/usr/share/pearos-welcome/assets/paypal.svg"
+  install -Dm644 assets/youtube.svg "${pkgdir}/usr/share/pearos-welcome/assets/youtube.svg"
+  install -Dm644 list_windows.js "${pkgdir}/usr/share/pearos-welcome/list_windows.js"
 }
