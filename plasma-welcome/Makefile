@@ -54,7 +54,7 @@ uninstall:
 
 clean:
 	@echo "Cleaning build files and packages..."
-	rm -rf build/ dist/
+	rm -rf build/ dist/ src/
 	rm -f *.pkg.tar.zst *.pkg.tar.xz *.pkg.tar.zst.sig *.pkg.tar.xz.sig
 	rm -rf ./pkg
 	@echo "Clean complete!"
