@@ -1,0 +1,5 @@
+/home/alxb421/Desktop/pkgbuilds/plasma-welcome/build/CMakeFiles/pearos-welcome.dir
+/home/alxb421/Desktop/pkgbuilds/plasma-welcome/build/CMakeFiles/edit_cache.dir
+/home/alxb421/Desktop/pkgbuilds/plasma-welcome/build/CMakeFiles/rebuild_cache.dir
+/home/alxb421/Desktop/pkgbuilds/plasma-welcome/build/CMakeFiles/pearos-welcome_autogen_timestamp_deps.dir
+/home/alxb421/Desktop/pkgbuilds/plasma-welcome/build/CMakeFiles/pearos-welcome_autogen.dir

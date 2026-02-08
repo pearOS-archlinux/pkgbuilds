@@ -1,0 +1,203 @@
+/****************************************************************************
+** Meta object code from reading C++ file 'welcome.cpp'
+**
+** Created by: The Qt Meta Object Compiler version 69 (Qt 6.10.1)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#include <QtCore/qmetatype.h>
+
+#include <QtCore/qtmochelpers.h>
+
+#include <memory>
+
+
+#include <QtCore/qxptype_traits.h>
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#error "The header file 'welcome.cpp' doesn't include <QObject>."
+#elif Q_MOC_OUTPUT_REVISION != 69
+#error "This file was generated using the moc from 6.10.1. It"
+#error "cannot be used with the include files from this version of Qt."
+#error "(The moc has changed too much.)"
+#endif
+
+#ifndef Q_CONSTINIT
+#define Q_CONSTINIT
+#endif
+
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
+QT_WARNING_DISABLE_GCC("-Wuseless-cast")
+namespace {
+struct qt_meta_tag_ZN15QuickUpdatePageE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto QuickUpdatePage::qt_create_metaobjectdata<qt_meta_tag_ZN15QuickUpdatePageE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "QuickUpdatePage"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<QuickUpdatePage, qt_meta_tag_ZN15QuickUpdatePageE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject QuickUpdatePage::staticMetaObject = { {
+    QMetaObject::SuperData::link<QWebEnginePage::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN15QuickUpdatePageE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN15QuickUpdatePageE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN15QuickUpdatePageE_t>.metaTypes,
+    nullptr
+} };
+
+void QuickUpdatePage::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<QuickUpdatePage *>(_o);
+    (void)_t;
+    (void)_c;
+    (void)_id;
+    (void)_a;
+}
+
+const QMetaObject *QuickUpdatePage::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *QuickUpdatePage::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN15QuickUpdatePageE_t>.strings))
+        return static_cast<void*>(this);
+    return QWebEnginePage::qt_metacast(_clname);
+}
+
+int QuickUpdatePage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QWebEnginePage::qt_metacall(_c, _id, _a);
+    return _id;
+}
+namespace {
+struct qt_meta_tag_ZN14WhatsNewWindowE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto WhatsNewWindow::qt_create_metaobjectdata<qt_meta_tag_ZN14WhatsNewWindowE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "WhatsNewWindow"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<WhatsNewWindow, qt_meta_tag_ZN14WhatsNewWindowE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject WhatsNewWindow::staticMetaObject = { {
+    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN14WhatsNewWindowE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN14WhatsNewWindowE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN14WhatsNewWindowE_t>.metaTypes,
+    nullptr
+} };
+
+void WhatsNewWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<WhatsNewWindow *>(_o);
+    (void)_t;
+    (void)_c;
+    (void)_id;
+    (void)_a;
+}
+
+const QMetaObject *WhatsNewWindow::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *WhatsNewWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN14WhatsNewWindowE_t>.strings))
+        return static_cast<void*>(this);
+    return QWidget::qt_metacast(_clname);
+}
+
+int WhatsNewWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QWidget::qt_metacall(_c, _id, _a);
+    return _id;
+}
+namespace {
+struct qt_meta_tag_ZN13WelcomeWindowE_t {};
+} // unnamed namespace
+
+template <> constexpr inline auto WelcomeWindow::qt_create_metaobjectdata<qt_meta_tag_ZN13WelcomeWindowE_t>()
+{
+    namespace QMC = QtMocConstants;
+    QtMocHelpers::StringRefStorage qt_stringData {
+        "WelcomeWindow"
+    };
+
+    QtMocHelpers::UintData qt_methods {
+    };
+    QtMocHelpers::UintData qt_properties {
+    };
+    QtMocHelpers::UintData qt_enums {
+    };
+    return QtMocHelpers::metaObjectData<WelcomeWindow, qt_meta_tag_ZN13WelcomeWindowE_t>(QMC::MetaObjectFlag{}, qt_stringData,
+            qt_methods, qt_properties, qt_enums);
+}
+Q_CONSTINIT const QMetaObject WelcomeWindow::staticMetaObject = { {
+    QMetaObject::SuperData::link<QMainWindow::staticMetaObject>(),
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13WelcomeWindowE_t>.stringdata,
+    qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13WelcomeWindowE_t>.data,
+    qt_static_metacall,
+    nullptr,
+    qt_staticMetaObjectRelocatingContent<qt_meta_tag_ZN13WelcomeWindowE_t>.metaTypes,
+    nullptr
+} };
+
+void WelcomeWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    auto *_t = static_cast<WelcomeWindow *>(_o);
+    (void)_t;
+    (void)_c;
+    (void)_id;
+    (void)_a;
+}
+
+const QMetaObject *WelcomeWindow::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *WelcomeWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return nullptr;
+    if (!strcmp(_clname, qt_staticMetaObjectStaticContent<qt_meta_tag_ZN13WelcomeWindowE_t>.strings))
+        return static_cast<void*>(this);
+    return QMainWindow::qt_metacast(_clname);
+}
+
+int WelcomeWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QMainWindow::qt_metacall(_c, _id, _a);
+    return _id;
+}
+QT_WARNING_POP

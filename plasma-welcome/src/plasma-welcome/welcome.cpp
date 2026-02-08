@@ -141,32 +141,6 @@ static bool is_online() {
     return online;
 }
 
-/** Read VERSION or IMAGE_VERSION from /etc/os-release. */
-static QString get_os_version() {
-    QFile f(QStringLiteral("/etc/os-release"));
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
-        return QString();
-    QString version, imageVersion;
-    while (!f.atEnd()) {
-        QByteArray line = f.readLine().trimmed();
-        QByteArray val;
-        if (line.startsWith("VERSION="))
-            val = line.mid(8);
-        else if (line.startsWith("IMAGE_VERSION="))
-            val = line.mid(14);
-        if (!val.isEmpty()) {
-            if (val.startsWith('"') && val.endsWith('"'))
-                val = val.mid(1, val.size() - 2);
-            QString v = QString::fromUtf8(val);
-            if (line.startsWith("VERSION="))
-                version = v;
-            else
-                imageVersion = v;
-        }
-    }
-    return !version.isEmpty() ? version : imageVersion;
-}
-
 /** Base path for assets/styles: next to executable, or INSTALL_PREFIX when installed. */
 static QString get_base_path() {
     QString base = QCoreApplication::applicationDirPath();
@@ -233,10 +207,20 @@ static void toggle_theme(bool dark) {
     QProcess::startDetached("bash", QStringList() << script << flag);
 }
 
-static void screen_resolution(const QString &) {
-    QProcess::startDetached("electron", QStringList()
-        << QStringLiteral("/usr/share/extras/system-settings")
-        << QStringLiteral("--page=displays"));
+static void screen_resolution(const QString &desktop) {
+    if (desktop == "xfce")
+        QProcess::startDetached("bash", QStringList() << "-c" << "xfce4-display-settings");
+    else if (desktop == "gnome")
+        QProcess::startDetached("gnome-control-center", QStringList() << "display");
+    else if (desktop == "kde") {
+        QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+        env.remove("LD_LIBRARY_PATH");
+        QProcess p;
+        p.setProcessEnvironment(env);
+        p.setProgram("kcmshell6");
+        p.setArguments(QStringList() << "kcm_kscreen");
+        p.startDetached();
+    }
 }
 
 static void update_system(const QString &desktop) {
@@ -294,8 +278,7 @@ public:
         appName->setTextFormat(Qt::RichText);
         layout->addWidget(appName);
 
-        QString ver = get_os_version();
-        QLabel *version = new QLabel(ver.isEmpty() ? tr("Version") : QStringLiteral("Version %1").arg(ver));
+        QLabel *version = new QLabel("Version 26.2");
         version->setAlignment(Qt::AlignCenter);
         layout->addWidget(version);
 
@@ -500,7 +483,7 @@ public:
             logoLabel->setPixmap(pix.scaled(LOGO_SIZE, LOGO_SIZE, Qt::KeepAspectRatio, Qt::SmoothTransformation));
             headerLayout->addWidget(logoLabel);
         }
-        QLabel *welcomeLabel = new QLabel(QStringLiteral("Welcome to pearOS NiceC0re %1").arg(get_os_version()));
+        QLabel *welcomeLabel = new QLabel("Welcome to pearOS NiceC0re 26.2");
         welcomeLabel->setObjectName("header");
         welcomeLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         headerLayout->addWidget(welcomeLabel, 1);
