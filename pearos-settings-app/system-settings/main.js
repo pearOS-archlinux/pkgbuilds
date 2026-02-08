@@ -2056,6 +2056,26 @@ function isCacheValid(cache) {
   return diffInDays < 1;
 }
 
+/** Copiază poza de profil PearID în /usr/share/extras/.face.icon și în ~/.face.icon (fără sudo; extras e owned by $USER). */
+function copyAvatarToFaceIcon(avatarPath) {
+  if (!avatarPath || !fs.existsSync(avatarPath)) return;
+  const extrasDir = '/usr/share/extras';
+  const homeDir = process.env.HOME || process.env.USERPROFILE;
+  const homeFacePath = homeDir ? path.join(homeDir, '.face.icon') : null;
+  try {
+    if (fs.existsSync(extrasDir)) {
+      fs.copyFileSync(avatarPath, path.join(extrasDir, '.face.icon'));
+      console.log('Profile picture copied to /usr/share/extras/.face.icon');
+    }
+    if (homeFacePath) {
+      fs.copyFileSync(avatarPath, homeFacePath);
+      console.log('Profile picture copied to ~/.face.icon');
+    }
+  } catch (err) {
+    console.error('Could not copy avatar to .face.icon:', err);
+  }
+}
+
 ipcMain.handle('check-pearid-state', async () => {
   return new Promise((resolve, reject) => {
     const stateScriptPath = path.join(__dirname, 'pearID', 'state.sh');
@@ -2139,6 +2159,7 @@ ipcMain.handle('get-user-avatar', async () => {
     if (cache && isCacheValid(cache) && fs.existsSync(avatarPath)) {
       // Verifică dacă cache-ul are email (pentru a se asigura că este pentru contul corect)
       if (cache.email) {
+        copyAvatarToFaceIcon(avatarPath);
         resolve({ avatarPath: avatarPath });
         return;
       } else {
@@ -2171,7 +2192,7 @@ ipcMain.handle('get-user-avatar', async () => {
           // Actualizează cache-ul pentru a marca că avatarul a fost descărcat
           const currentCache = readCache() || {};
           writeCache({ ...currentCache, avatarDownloaded: true });
-          
+          copyAvatarToFaceIcon(avatarPath);
           resolve({ avatarPath: avatarPath });
         }
       });
@@ -3788,13 +3809,37 @@ ipcMain.handle('get-wallpapers', async () => {
   });
 });
 
+const EXTRAS_BACKGROUND_PATH = '/usr/share/extras/background.jpg';
+const EXTRAS_DIR = '/usr/share/extras';
+const WALLPAPER_JPEG_QUALITY = 92;
+
+/** Convertește imaginea sursă în JPG și o copiază în /usr/share/extras/background.jpg (fără sudo; directorul e owned by $USER). */
+function copyWallpaperToExtrasAsJpg(sourcePath) {
+  if (!sourcePath || !fs.existsSync(sourcePath)) return;
+  if (!fs.existsSync(EXTRAS_DIR)) return;
+  try {
+    const img = nativeImage.createFromPath(sourcePath);
+    if (!img || img.isEmpty()) return;
+    const jpegBuf = img.toJPEG(WALLPAPER_JPEG_QUALITY);
+    if (jpegBuf && jpegBuf.length > 0) {
+      fs.writeFileSync(EXTRAS_BACKGROUND_PATH, jpegBuf);
+      console.log('Wallpaper copied as JPG to /usr/share/extras/background.jpg');
+    }
+  } catch (err) {
+    console.error('Could not copy wallpaper to extras as JPG:', err);
+  }
+}
+
 ipcMain.handle('set-wallpaper', async (event, wallpaperPath) => {
   return new Promise((resolve, reject) => {
-    exec(`plasma-apply-wallpaperimage "${wallpaperPath}"`, (error, stdout, stderr) => {
+    const filePath = (wallpaperPath && typeof wallpaperPath === 'string' && wallpaperPath.startsWith('file://'))
+      ? wallpaperPath.slice(7) : wallpaperPath;
+    exec(`plasma-apply-wallpaperimage "${filePath}"`, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(`Error setting wallpaper: ${error.message || stderr}`));
         return;
       }
+      copyWallpaperToExtrasAsJpg(filePath);
       resolve({ success: true });
     });
   });
@@ -5413,8 +5458,7 @@ ipcMain.handle('module-read-file', async (event, moduleId, filePath) => {
   });
 });
 
-const PIRI_MODEL_URL = 'https://alphacephei.com/vosk/models/vosk-model-en-us-0.42-gigaspeech.zip';
-//const PIRI_MODEL_URL = 'https://cdn.pearos.xyz/test.zip';
+const PIRI_MODEL_URL = 'https://cdn.pearos.xyz/vosk-model-en-us-0.42-gigaspeech.zip';
 
 const PIRI_MODEL_DIR = '/usr/share/extras/piri/model';
 const PIRI_ZIP_TMP = '/tmp/piri-model.zip';
