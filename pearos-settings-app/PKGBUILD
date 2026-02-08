@@ -3,7 +3,7 @@
 pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS NiceC0re System Settings application"
-pkgver=26.2
+pkgver=26.3
 pkgrel=1
 arch=('any')
 depends=('imagemagick' 'net-tools' 'fprintd' 'power-profiles-daemon' 'jq' 'electron' 'piri-base' 'pafari')
