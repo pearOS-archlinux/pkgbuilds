@@ -1261,6 +1261,13 @@
             <div class="wallpaper-current-row">
               <div class="current-wallpaper-preview-wrap">
                 <img id="current-wallpaper-preview" src="" alt="Current Wallpaper">
+                <div id="wallpaper-preview-lockscreen-overlay" class="wallpaper-preview-lockscreen-overlay" style="display: none;" aria-hidden="true">
+                  <div class="wallpaper-preview-lockscreen-clock" id="wallpaper-preview-lockscreen-clock">12:00</div>
+                  <div class="wallpaper-preview-lockscreen-bottom">
+                    <img class="wallpaper-preview-lockscreen-face" id="wallpaper-preview-lockscreen-face" alt="" />
+                    <span class="wallpaper-preview-lockscreen-username" id="wallpaper-preview-lockscreen-username">User</span>
+                  </div>
+                </div>
               </div>
               <div class="settings-card wallpaper-current-card">
                 <div class="wallpaper-current-card-row card-section">
@@ -1277,6 +1284,38 @@
                 <div class="wallpaper-load-custom-row card-section">
                   <span class="wallpaper-current-name">Load Wallpaper</span>
                   <button id="browse-wallpaper-btn" class="modal-button">Browse...</button>
+                </div>
+                <hr class="card-divider">
+                <div class="wallpaper-load-custom-row card-section">
+                  <span class="wallpaper-current-name">Clock Appearance</span>
+                  <button type="button" id="clock-appearance-btn" class="modal-button">Clock Appearance...</button>
+                </div>
+                <div id="clock-appearance-modal" class="clock-appearance-modal" style="display: none;" aria-hidden="true">
+                  <div class="clock-appearance-modal-inner">
+                    <div class="clock-appearance-options">
+                      <div class="clock-appearance-option" data-font="sf-pro-semibold" data-weight="600"><span class="clock-preview-text">12</span></div>
+                      <div class="clock-appearance-option" data-font="sf-pro-semibold-soft" data-weight="600"><span class="clock-preview-text">12</span></div>
+                      <div class="clock-appearance-option" data-font="sf-pro-stencil" data-weight="600"><span class="clock-preview-text">12</span></div>
+                      <div class="clock-appearance-option" data-font="new-york-semibold" data-weight="600"><span class="clock-preview-text">12</span></div>
+                      <div class="clock-appearance-option" data-font="new-york-heavy" data-weight="800"><span class="clock-preview-text">12</span></div>
+                      <div class="clock-appearance-option" data-font="sf-pro-semibold-rails" data-weight="600"><span class="clock-preview-text">12</span></div>
+                    </div>
+                    <div class="clock-appearance-weight-row">
+                      <label class="clock-appearance-weight-label">Weight</label>
+                      <div class="clock-appearance-slider-wrap">
+                        <input type="range" id="clock-appearance-weight-slider" class="brightness-slider" min="100" max="900" value="600" step="1">
+                        <div class="slider-container" id="clock-appearance-slider-container" style="flex: 1; width: auto;">
+                          <div class="slider-progress" id="clock-appearance-progress"></div>
+                          <div class="slider-thumb-glass" id="clock-appearance-thumb">
+                            <div class="slider-thumb-glass-filter"></div>
+                            <div class="slider-thumb-glass-overlay"></div>
+                            <div class="slider-thumb-glass-specular"></div>
+                          </div>
+                        </div>
+                        <span id="clock-appearance-weight-value" class="clock-appearance-weight-value">600</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

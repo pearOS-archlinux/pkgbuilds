@@ -3968,6 +3968,61 @@ ipcMain.handle('set-wallpaper-fill-mode', async (event, fillMode) => {
   });
 });
 
+// Lockscreen style: citește ~/.config/extras/lockscreen/style.json (doar obiectul lockscreen)
+const LOCKSCREEN_STYLE_DIR = path.join(require('os').homedir(), '.config', 'extras', 'lockscreen');
+const LOCKSCREEN_STYLE_PATH = path.join(LOCKSCREEN_STYLE_DIR, 'style.json');
+
+ipcMain.handle('get-lockscreen-style', async () => {
+  try {
+    if (!fs.existsSync(LOCKSCREEN_STYLE_PATH)) return null;
+    const raw = fs.readFileSync(LOCKSCREEN_STYLE_PATH, 'utf8');
+    const data = JSON.parse(raw);
+    return data.lockscreen || null;
+  } catch (e) {
+    console.error('get-lockscreen-style:', e);
+    return null;
+  }
+});
+
+ipcMain.handle('save-lockscreen-style', async (event, lockscreenObj) => {
+  try {
+    if (!lockscreenObj || typeof lockscreenObj !== 'object') return { ok: false, error: 'Invalid object' };
+    fs.mkdirSync(LOCKSCREEN_STYLE_DIR, { recursive: true });
+    const payload = { lockscreen: lockscreenObj };
+    fs.writeFileSync(LOCKSCREEN_STYLE_PATH, JSON.stringify(payload, null, 2), 'utf8');
+    return { ok: true };
+  } catch (e) {
+    console.error('save-lockscreen-style:', e);
+    return { ok: false, error: (e && e.message) ? String(e.message) : String(e) };
+  }
+});
+
+ipcMain.handle('get-lockscreen-user-info', async () => {
+  try {
+    const os = require('os');
+    const username = os.userInfo().username || process.env.USER || '';
+    let faceDataUrl = null;
+    const homedir = os.homedir();
+    const facePaths = [
+      path.join(homedir, '.face.icon'),
+      path.join(homedir, '.face')
+    ];
+    for (const facePath of facePaths) {
+      if (fs.existsSync(facePath)) {
+        const buf = fs.readFileSync(facePath);
+        const ext = path.extname(facePath).toLowerCase();
+        const mime = (ext === '.png') ? 'image/png' : (ext === '.jpg' || ext === '.jpeg') ? 'image/jpeg' : 'image/png';
+        faceDataUrl = 'data:' + mime + ';base64,' + buf.toString('base64');
+        break;
+      }
+    }
+    return { username, faceDataUrl };
+  } catch (e) {
+    console.error('get-lockscreen-user-info:', e);
+    return { username: process.env.USER || '', faceDataUrl: null };
+  }
+});
+
 // Handler pentru extragerea culorii din wallpaper la o anumită poziție
 ipcMain.handle('get-wallpaper-color-at-position', async (event, windowX, windowY, windowWidth, windowHeight) => {
   return new Promise((resolve, reject) => {

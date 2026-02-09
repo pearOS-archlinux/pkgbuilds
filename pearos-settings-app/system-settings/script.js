@@ -1,5 +1,343 @@
 feather.replace();
 
+// Clock Appearance: listener pe document; sliderul folosește același stil Liquid Glass ca restul app
+// Salvare în ~/.config/extras/lockscreen/style.json (path creat dacă lipsește)
+(function() {
+  var clockWeightSliderInited = false;
+  var FONT_TO_LOCKSCREEN = {
+    'sf-pro-semibold':       { fontFamily: 'SF Pro', fontWeight: 'Semibold', fontStyle: '' },
+    'sf-pro-semibold-soft':  { fontFamily: 'SF Pro', fontWeight: 'Semibold', fontStyle: 'Soft' },
+    'sf-pro-stencil':        { fontFamily: 'SF Pro', fontWeight: 'Semibold', fontStyle: 'Stencil' },
+    'new-york-semibold':     { fontFamily: 'New York', fontWeight: 'Semibold', fontStyle: '' },
+    'new-york-heavy':        { fontFamily: 'New York', fontWeight: 'Heavy', fontStyle: '' },
+    'sf-pro-semibold-rails': { fontFamily: 'SF Pro', fontWeight: 'Semibold', fontStyle: 'Rails' }
+  };
+  function dataFontFromLockscreen(ls) {
+    if (!ls) return null;
+    var f = (ls.fontFamily || '').trim();
+    var w = (ls.fontWeight || '').trim();
+    var s = (ls.fontStyle != null ? String(ls.fontStyle) : '').trim();
+    for (var key in FONT_TO_LOCKSCREEN) {
+      var m = FONT_TO_LOCKSCREEN[key];
+      if (m.fontFamily === f && m.fontWeight === w && m.fontStyle === s) return key;
+    }
+    return null;
+  }
+  function saveClockLockscreenStyle() {
+    if (!window.electronAPI || !window.electronAPI.saveLockscreenStyle) return;
+    var sel = document.querySelector('.clock-appearance-option.selected');
+    var opts = document.querySelectorAll('.clock-appearance-option');
+    var option = sel || (opts.length ? opts[0] : null);
+    var input = document.getElementById('clock-appearance-weight-slider');
+    var weight = (input && parseInt(input.value, 10)) || 600;
+    weight = Math.max(100, Math.min(900, weight));
+    var dataFont = option ? (option.getAttribute('data-font') || 'sf-pro-semibold') : 'sf-pro-semibold';
+    var mapping = FONT_TO_LOCKSCREEN[dataFont] || FONT_TO_LOCKSCREEN['sf-pro-semibold'];
+    var lockscreen = {
+      fontFamily: mapping.fontFamily,
+      fontWeight: mapping.fontWeight,
+      fontStyle: mapping.fontStyle,
+      'font-weight': weight
+    };
+    window.electronAPI.saveLockscreenStyle(lockscreen).catch(function(e) { console.error('saveLockscreenStyle', e); });
+  }
+  window.__saveClockLockscreenStyle = saveClockLockscreenStyle;
+
+  var DATA_FONT_TO_CSS_FAMILY = {
+    'sf-pro-semibold': 'SF Pro Semibold',
+    'sf-pro-semibold-soft': 'SF Pro Semibold Soft',
+    'sf-pro-stencil': 'SF Pro Semibold Stencil',
+    'new-york-semibold': 'New York Semibold',
+    'new-york-heavy': 'New York Heavy',
+    'sf-pro-semibold-rails': 'SF Pro Semibold Rails'
+  };
+  var clockPreviewInterval = null;
+
+  function updatePreviewLockscreenClock() {
+    var overlay = document.getElementById('wallpaper-preview-lockscreen-overlay');
+    var clockEl = document.getElementById('wallpaper-preview-lockscreen-clock');
+    if (!clockEl) return;
+    var sel = document.querySelector('.clock-appearance-option.selected');
+    var opts = document.querySelectorAll('.clock-appearance-option');
+    var option = sel || (opts.length ? opts[0] : null);
+    var dataFont = option ? (option.getAttribute('data-font') || 'sf-pro-semibold') : 'sf-pro-semibold';
+    var input = document.getElementById('clock-appearance-weight-slider');
+    var weight = (input && parseInt(input.value, 10)) || 600;
+    weight = Math.max(100, Math.min(900, weight));
+    var family = DATA_FONT_TO_CSS_FAMILY[dataFont] || 'SF Pro Semibold';
+    clockEl.style.setProperty('font-family', "'" + family + "', sans-serif", 'important');
+    clockEl.style.setProperty('font-weight', String(weight), 'important');
+    clockEl.style.fontWeight = String(weight);
+    if (overlay && overlay.style.display !== 'none') {
+      var now = new Date();
+      var h = now.getHours();
+      var m = now.getMinutes();
+      clockEl.textContent = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+    }
+  }
+
+  function showLockscreenPreviewOverlay() {
+    var overlay = document.getElementById('wallpaper-preview-lockscreen-overlay');
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+    overlay.setAttribute('aria-hidden', 'false');
+    updatePreviewLockscreenClock();
+    if (clockPreviewInterval) clearInterval(clockPreviewInterval);
+    clockPreviewInterval = setInterval(updatePreviewLockscreenClock, 1000);
+    if (window.electronAPI && window.electronAPI.getLockscreenUserInfo) {
+      window.electronAPI.getLockscreenUserInfo().then(function(info) {
+        var usernameEl = document.getElementById('wallpaper-preview-lockscreen-username');
+        var faceEl = document.getElementById('wallpaper-preview-lockscreen-face');
+        if (usernameEl) usernameEl.textContent = info.username || 'User';
+        if (faceEl && info.faceDataUrl) { faceEl.src = info.faceDataUrl; faceEl.style.display = ''; } else if (faceEl) { faceEl.style.display = 'none'; }
+      }).catch(function() {});
+    }
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        overlay.classList.add('is-visible');
+      });
+    });
+  }
+
+  function hideLockscreenPreviewOverlay() {
+    var overlay = document.getElementById('wallpaper-preview-lockscreen-overlay');
+    if (clockPreviewInterval) {
+      clearInterval(clockPreviewInterval);
+      clockPreviewInterval = null;
+    }
+    if (!overlay) return;
+    overlay.classList.remove('is-visible');
+    overlay.setAttribute('aria-hidden', 'true');
+    var done = false;
+    function onFadeOutEnd() {
+      if (done) return;
+      done = true;
+      overlay.removeEventListener('transitionend', onFadeOutEnd);
+      overlay.style.display = 'none';
+    }
+    overlay.addEventListener('transitionend', onFadeOutEnd);
+    setTimeout(onFadeOutEnd, 350);
+  }
+
+  function initClockWeightLiquidSlider() {
+    var container = document.getElementById('clock-appearance-slider-container');
+    var progress = document.getElementById('clock-appearance-progress');
+    var thumb = document.getElementById('clock-appearance-thumb');
+    var input = document.getElementById('clock-appearance-weight-slider');
+    var valueEl = document.getElementById('clock-appearance-weight-value');
+    if (!container || !progress || !thumb || !input) return;
+    var isDragging = false;
+    var minVal = 100;
+    var maxVal = 900;
+    function valueToPercent(v) { return ((v - minVal) / (maxVal - minVal)) * 100; }
+    function percentToValue(p) { return Math.round(minVal + (p / 100) * (maxVal - minVal)); }
+    function updatePreview(weight) {
+      var w = Math.max(1, Math.min(1000, Number(weight)));
+      var opts = document.querySelectorAll('.clock-appearance-option');
+      for (var i = 0; i < opts.length; i++) {
+        var text = opts[i].querySelector('.clock-preview-text');
+        if (text) text.style.setProperty('font-weight', String(w), 'important');
+      }
+    }
+    function updateThumbAndProgress(value) {
+      value = Math.max(minVal, Math.min(maxVal, value));
+      input.value = value;
+      if (valueEl) valueEl.textContent = value;
+      var percent = valueToPercent(value);
+      var rect = container.getBoundingClientRect();
+      var px = (percent / 100) * rect.width;
+      progress.style.width = percent + '%';
+      thumb.style.left = px + 'px';
+      updatePreview(value);
+      saveClockLockscreenStyle();
+      updatePreviewLockscreenClock();
+      return value;
+    }
+    function getPercentFromClientX(clientX) {
+      var rect = container.getBoundingClientRect();
+      var offsetX = clientX - rect.left;
+      return (offsetX / rect.width) * 100;
+    }
+    function onMove(clientX) {
+      var percent = Math.max(0, Math.min(100, getPercentFromClientX(clientX)));
+      updateThumbAndProgress(percentToValue(percent));
+    }
+    function onPointerDown(e) {
+      var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      isDragging = true;
+      onMove(clientX);
+      thumb.classList.add('active');
+    }
+    function stopDrag() {
+      isDragging = false;
+      thumb.classList.remove('active');
+    }
+    thumb.addEventListener('mousedown', function(e) { e.preventDefault(); onPointerDown(e); });
+    thumb.addEventListener('touchstart', function(e) { onPointerDown(e); }, { passive: true });
+    container.addEventListener('mousedown', function(e) { e.preventDefault(); onPointerDown(e); });
+    container.addEventListener('touchstart', function(e) { onPointerDown(e); }, { passive: true });
+    document.addEventListener('mousemove', function(e) { if (isDragging) onMove(e.clientX); });
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', function(e) { if (isDragging) { e.preventDefault(); onMove(e.touches[0].clientX); } }, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+    updateThumbAndProgress(parseInt(input.value, 10));
+  }
+  function openClockAppearanceModal(btn, modal) {
+    if (modal.parentNode !== document.body) {
+      document.body.appendChild(modal);
+    }
+    modal.style.display = 'block';
+    var rect = btn.getBoundingClientRect();
+    var pad = 4;
+    var left = rect.left;
+    var top = rect.bottom + pad;
+    var w = modal.offsetWidth;
+    var h = modal.offsetHeight;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    if (left + w > vw) left = vw - w;
+    if (left < 0) left = 0;
+    if (top + h > vh) top = Math.max(0, rect.top - h - pad);
+    if (top < 0) top = 0;
+    modal.style.left = left + 'px';
+    modal.style.top = top + 'px';
+    modal.classList.remove('clock-appearance-modal--closing');
+    modal.classList.add('clock-appearance-modal--open');
+    modal.setAttribute('aria-hidden', 'false');
+    showLockscreenPreviewOverlay();
+    if (!clockWeightSliderInited) {
+      clockWeightSliderInited = true;
+      initClockWeightLiquidSlider();
+    } else {
+      var input = document.getElementById('clock-appearance-weight-slider');
+      var valueEl = document.getElementById('clock-appearance-weight-value');
+      var opts = document.querySelectorAll('.clock-appearance-option');
+      if (input) {
+        var weight = parseInt(input.value, 10);
+        if (valueEl) valueEl.textContent = weight;
+        for (var i = 0; i < opts.length; i++) {
+          var text = opts[i].querySelector('.clock-preview-text');
+          if (text) text.style.setProperty('font-weight', String(weight), 'important');
+        }
+        var container = document.getElementById('clock-appearance-slider-container');
+        var progressEl = document.getElementById('clock-appearance-progress');
+        var thumbEl = document.getElementById('clock-appearance-thumb');
+        if (container && progressEl && thumbEl) {
+          var percent = ((weight - 100) / 800) * 100;
+          var r = container.getBoundingClientRect();
+          progressEl.style.width = percent + '%';
+          thumbEl.style.left = (percent / 100) * r.width + 'px';
+        }
+      }
+    }
+    if (window.electronAPI && window.electronAPI.getLockscreenStyle) {
+      window.electronAPI.getLockscreenStyle().then(function(ls) {
+        if (!ls) return;
+        var w = Math.max(100, Math.min(900, parseInt(ls['font-weight'], 10) || 600));
+        var inputEl = document.getElementById('clock-appearance-weight-slider');
+        var valueEl = document.getElementById('clock-appearance-weight-value');
+        var opts = document.querySelectorAll('.clock-appearance-option');
+        if (inputEl) {
+          inputEl.value = w;
+          if (valueEl) valueEl.textContent = w;
+          for (var i = 0; i < opts.length; i++) {
+            var text = opts[i].querySelector('.clock-preview-text');
+            if (text) text.style.setProperty('font-weight', String(w), 'important');
+          }
+          var container = document.getElementById('clock-appearance-slider-container');
+          var progressEl = document.getElementById('clock-appearance-progress');
+          var thumbEl = document.getElementById('clock-appearance-thumb');
+          if (container && progressEl && thumbEl) {
+            var percent = ((w - 100) / 800) * 100;
+            var r = container.getBoundingClientRect();
+            progressEl.style.width = percent + '%';
+            thumbEl.style.left = (percent / 100) * r.width + 'px';
+          }
+        }
+        var dataFont = dataFontFromLockscreen(ls);
+        if (dataFont) {
+          opts.forEach(function(o) { o.classList.remove('selected'); });
+          var sel = document.querySelector('.clock-appearance-option[data-font="' + dataFont + '"]');
+          if (sel) sel.classList.add('selected');
+        }
+      }).catch(function() {}).then(function() {
+        var allOpts = document.querySelectorAll('.clock-appearance-option');
+        if (!document.querySelector('.clock-appearance-option.selected') && allOpts.length) allOpts[0].classList.add('selected');
+      });
+    } else {
+      var optsElse = document.querySelectorAll('.clock-appearance-option');
+      if (!document.querySelector('.clock-appearance-option.selected') && optsElse.length) optsElse[0].classList.add('selected');
+    }
+    var closeModalDone = false;
+    function runCloseModal() {
+      if (closeModalDone) return;
+      closeModalDone = true;
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      modal.classList.remove('clock-appearance-modal--open', 'clock-appearance-modal--closing');
+      hideLockscreenPreviewOverlay();
+      document.removeEventListener('click', closeModal);
+    }
+    function closeModal(ev) {
+      if (!modal.contains(ev.target) && ev.target !== btn && !btn.contains(ev.target)) {
+        modal.classList.remove('clock-appearance-modal--open');
+        modal.classList.add('clock-appearance-modal--closing');
+        hideLockscreenPreviewOverlay();
+        document.removeEventListener('click', closeModal);
+        modal.addEventListener('animationend', function onEnd() {
+          modal.removeEventListener('animationend', onEnd);
+          runCloseModal();
+        });
+        setTimeout(runCloseModal, 220);
+      }
+    }
+    setTimeout(function() { document.addEventListener('click', closeModal); }, 0);
+  }
+  document.addEventListener('click', function(e) {
+    var btn = e.target.id === 'clock-appearance-btn' ? e.target : (e.target.closest ? e.target.closest('#clock-appearance-btn') : null);
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var modal = document.getElementById('clock-appearance-modal');
+    if (!modal) return;
+    var isHidden = modal.style.display === 'none' || modal.style.display === '';
+    if (isHidden) {
+      openClockAppearanceModal(btn, modal);
+    } else {
+      var closeDone = false;
+      function finishClose() {
+        if (closeDone) return;
+        closeDone = true;
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        modal.classList.remove('clock-appearance-modal--open', 'clock-appearance-modal--closing');
+      }
+      modal.classList.remove('clock-appearance-modal--open');
+      modal.classList.add('clock-appearance-modal--closing');
+      hideLockscreenPreviewOverlay();
+      modal.addEventListener('animationend', function onEnd() {
+        modal.removeEventListener('animationend', onEnd);
+        finishClose();
+      });
+      setTimeout(finishClose, 220);
+    }
+  }, true);
+  window.__updatePreviewLockscreenClock = updatePreviewLockscreenClock;
+
+  document.addEventListener('input', function(e) {
+    if (e.target.id !== 'clock-appearance-weight-slider') return;
+    var w = Math.max(100, Math.min(900, parseInt(e.target.value, 10) || 600));
+    var valueEl = document.getElementById('clock-appearance-weight-value');
+    if (valueEl) valueEl.textContent = w;
+    var opts = document.querySelectorAll('.clock-appearance-option');
+    for (var i = 0; i < opts.length; i++) {
+      var text = opts[i].querySelector('.clock-preview-text');
+      if (text) text.style.setProperty('font-weight', String(w), 'important');
+    }
+    updatePreviewLockscreenClock();
+  });
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   // —— Rubber band scrolling (efect macOS) ——
   function wrapRubberBandInner(container) {
@@ -2687,6 +3025,70 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   
+  // Clock Appearance: delegare pe document ca modalul să se deschidă mereu la click pe buton
+  (function setupClockAppearanceModal() {
+    document.addEventListener('click', function clockAppearanceClick(e) {
+      const btn = e.target.id === 'clock-appearance-btn' ? e.target : (e.target.closest && e.target.closest('#clock-appearance-btn'));
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const modal = document.getElementById('clock-appearance-modal');
+      if (!modal) return;
+      const isHidden = modal.style.display === 'none' || !modal.style.display;
+      if (isHidden) {
+        const rect = btn.getBoundingClientRect();
+        modal.style.left = rect.left + 'px';
+        modal.style.top = (rect.bottom + 4) + 'px';
+        modal.style.display = 'block';
+        modal.setAttribute('aria-hidden', 'false');
+        const slider = document.getElementById('clock-appearance-weight-slider');
+        const valueEl = document.getElementById('clock-appearance-weight-value');
+        const opts = document.querySelectorAll('.clock-appearance-option');
+        if (slider) {
+          const weight = parseInt(slider.value, 10);
+          if (valueEl) valueEl.textContent = weight;
+          opts.forEach(opt => {
+            const text = opt.querySelector('.clock-preview-text');
+            if (text) text.style.setProperty('font-weight', String(weight), 'important');
+          });
+        }
+        function closeModal(ev) {
+          if (!modal.contains(ev.target) && ev.target !== btn && !btn.contains(ev.target)) {
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+            document.removeEventListener('click', closeModal);
+          }
+        }
+        setTimeout(function() { document.addEventListener('click', closeModal); }, 0);
+      } else {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+    const slider = document.getElementById('clock-appearance-weight-slider');
+    const valueEl = document.getElementById('clock-appearance-weight-value');
+    const opts = document.querySelectorAll('.clock-appearance-option');
+    if (slider && valueEl && opts.length) {
+      slider.addEventListener('input', function() {
+        const w = parseInt(slider.value, 10);
+        valueEl.textContent = w;
+        opts.forEach(opt => {
+          const text = opt.querySelector('.clock-preview-text');
+          if (text) text.style.setProperty('font-weight', String(w), 'important');
+        });
+      });
+    }
+    opts.forEach(opt => {
+      opt.addEventListener('click', function(e) {
+        e.stopPropagation();
+        opts.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        if (typeof window.__saveClockLockscreenStyle === 'function') window.__saveClockLockscreenStyle();
+        if (typeof window.__updatePreviewLockscreenClock === 'function') window.__updatePreviewLockscreenClock();
+      });
+    });
+  })();
+
   const sidenav = document.querySelector('.sidenav');
   if (sidenav) {
     let sidenavScrollTimeout;
@@ -8261,9 +8663,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const wallpapersList = document.getElementById('wallpapers-list');
     const fillModeSelect = document.getElementById('wallpaper-fill-mode');
     const browseBtn = document.getElementById('browse-wallpaper-btn');
-    
     if (!currentWallpaperPreview || !currentWallpaperName || !wallpapersList || !window.electronAPI) return;
-    
+
     // Browse button handler
     if (browseBtn && window.electronAPI.browseWallpaper) {
       browseBtn.onclick = async () => {
@@ -8287,7 +8688,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       };
     }
-    
+
     try {
       
       const currentWallpaper = await window.electronAPI.getCurrentWallpaper();

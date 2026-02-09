@@ -134,6 +134,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   switchAccent: (colorName) => ipcRenderer.invoke('switch-accent', colorName),
   getAccent: () => ipcRenderer.invoke('get-accent'),
   getWallpaperColorAtPosition: (windowX, windowY, windowWidth, windowHeight) => ipcRenderer.invoke('get-wallpaper-color-at-position', windowX, windowY, windowWidth, windowHeight),
+  getLockscreenStyle: () => ipcRenderer.invoke('get-lockscreen-style'),
+  saveLockscreenStyle: (lockscreenObj) => ipcRenderer.invoke('save-lockscreen-style', lockscreenObj),
+  getLockscreenUserInfo: () => ipcRenderer.invoke('get-lockscreen-user-info'),
   getWindowPosition: () => ipcRenderer.invoke('get-window-position'),
   onWindowMoved: (callback) => {
     ipcRenderer.on('window-moved', (event, data) => callback(data));
