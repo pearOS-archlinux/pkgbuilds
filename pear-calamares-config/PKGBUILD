@@ -1,9 +1,8 @@
 # Maintainer: Alexandru Balan
 pkgname=pear-calamares-config
-destname="/etc"
-pkgver=22.02
+pkgver=26.1
 pkgrel=1
-pkgdesc="Calamares Confog files for pearOS and NiceC0re based Systems"
+pkgdesc="Calamares config files for pearOS and NiceC0re based Systems"
 arch=('any')
 url="https://github.com/pearOS-archlinux"
 license=('custom')
@@ -12,10 +11,21 @@ depends=()
 conflicts=()
 provides=("${pkgname}")
 options=(!strip !emptydirs)
-source=(${pkgname}::"git+${url}/${pkgname}")
+source=("${pkgname}::git+${url}/${pkgname}")
 sha256sums=('SKIP')
+
 package() {
-	install -dm755 ${pkgdir}${destname}
-	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
-    chmod 755 ${pkgdir}/etc/calamares/launch.sh
+	_src="${srcdir}/${pkgname}"
+	# /etc (calamares modules, scripts)
+	if [ -d "${_src}/etc" ]; then
+		cp -r "${_src}/etc" "${pkgdir}/"
+	fi
+	# /usr (branding, settings, qml)
+	if [ -d "${_src}/usr" ]; then
+		cp -r "${_src}/usr" "${pkgdir}/"
+	fi
+	# scripturi executabile
+	if [ -d "${pkgdir}/etc/calamares/scripts" ]; then
+		find "${pkgdir}/etc/calamares/scripts" -type f -exec chmod 755 {} \;
+	fi
 }

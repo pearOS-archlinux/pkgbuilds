@@ -1,5 +1,5 @@
 build:
-	makepkg -sr --sign
+	makepkg -sr --nosign
 clean:
 	rm -rvf pkg/
 	rm -rvf src/
