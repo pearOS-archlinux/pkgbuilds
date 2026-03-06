@@ -1,0 +1,31 @@
+# Maintainer: Your Name <you@example.com>
+pkgname=pear-calculator
+pkgver=26.0
+pkgrel=1
+pkgdesc="Calculator with RPN and normal mode, thousands separator, Wayland support"
+arch=('x86_64')
+install=pear-calculator.install
+url="https://github.com/yourusername/pear-calculator"
+license=('custom')
+depends=('qt6-base')
+makedepends=('cmake' 'qt6-tools')
+source=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=('SKIP')
+
+prepare() {
+  :
+}
+
+build() {
+  cd "${srcdir}/${pkgname}-${pkgver}"
+  cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build
+}
+
+package() {
+  cd "${srcdir}/${pkgname}-${pkgver}/build"
+  DESTDIR="${pkgdir}" cmake --install .
+  # Permisiuni corecte: lumea poate citi; la instalare chown la user (vezi install script)
+  chmod -R a+rX "${pkgdir}/usr/share/extras/calculator"
+  find "${pkgdir}/usr/share/extras/calculator" -type f -exec chmod 644 {} \;
+}
