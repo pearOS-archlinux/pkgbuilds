@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=26.3
+Name=Notch
+Comment=Notch
+Exec=pearos-notch
+Icon=pearos-notch
+Terminal=false
+StartupNotify=false
+Categories=Utility;

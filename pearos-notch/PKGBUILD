@@ -1,0 +1,35 @@
+pkgname=pearos-notch
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Notch for your screen"
+arch=('x86_64')
+url="https://pearos.xyz/"
+license=('custom')
+depends=('cairo' 'librsvg' 'gdk-pixbuf2' 'glib2' 'libpulse' 'libx11')
+makedepends=('gcc' 'pkgconf' 'make')
+install=pearos-notch.install
+source=('main.cpp' 'notch.svg' 'prev.svg' 'next.svg' 'play.svg' 'pause.svg' 'settings.svg' 'pearos-notch.desktop' 'pearos-notch.png' 'pearos-notch.install')
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+build() {
+  cd "${srcdir}"
+  g++ -std=c++17 -O2 -Wall -Wextra -o pearos-notch main.cpp \
+    $(pkg-config --cflags --libs x11 cairo librsvg-2.0 gdk-pixbuf-2.0 gio-2.0 glib-2.0 libpulse)
+}
+
+package() {
+  cd "${srcdir}"
+  install -Dm755 pearos-notch "${pkgdir}/usr/bin/pearos-notch"
+  install -Dm644 pearos-notch.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/pearos-notch.png"
+  install -Dm644 pearos-notch.desktop "${pkgdir}/usr/share/applications/pearos-notch.desktop"
+}
+
