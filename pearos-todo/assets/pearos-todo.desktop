@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=pearOS ToDo
+GenericName=To-Do List
+Keywords=todo;tasks;checklist;productivity;
+Encoding=UTF-8
+Terminal=false
+Exec=pearos-todo
+Icon=org.gnome.Todo
+Comment=Manage your personal to-do lists
+Categories=Utility;Office;
+StartupNotify=true
+
