@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=pearOS Notes
+GenericName=Notes
+Keywords=notes;notebook;journal;productivity;
+Encoding=UTF-8
+Terminal=false
+Exec=pearos-notes
+Icon=pearos-notes
+Comment=Create and manage your personal notes
+Categories=Utility;Office;
+StartupNotify=true
+

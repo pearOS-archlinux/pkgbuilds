@@ -1,0 +1,32 @@
+pkgname=pearos-notes
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="pearOS Notes - modern Qt6 notes application for pearOS"
+arch=('x86_64')
+url="https://github.com/arch-linux-gui/pearos-notes"
+license=('MIT')
+depends=('qt6-base')
+makedepends=('cmake' 'qt6-base')
+source=()
+sha256sums=()
+
+build() {
+  # PKGBUILD is expected to live in the CMake build directory.
+  # The real source tree is one level up from startdir.
+  local srcroot="${startdir}/.."
+
+  mkdir -p "${startdir}/cmake-pkg"
+  cd "${startdir}/cmake-pkg"
+
+  cmake "${srcroot}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build . -- -j"$(nproc)"
+}
+
+package() {
+  cd "${startdir}/cmake-pkg"
+  make DESTDIR="${pkgdir}" install
+}
+
