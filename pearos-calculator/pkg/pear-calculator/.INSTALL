@@ -1,0 +1,14 @@
+# Script rulat la instalare/upgrade – face chown la userul care instalează
+# astfel încât aplicația să poată scrie în /usr/share/extras/calculator dacă e nevoie.
+
+post_install() {
+  if [ -n "$SUDO_UID" ] && [ -n "$SUDO_GID" ]; then
+    chown -R $SUDO_UID:$SUDO_GID /usr/share/extras/calculator
+  elif [ -n "$SUDO_USER" ]; then
+    chown -R "$SUDO_USER:$SUDO_USER" /usr/share/extras/calculator
+  fi
+}
+
+post_upgrade() {
+  post_install
+}

@@ -1,0 +1,41 @@
+# Build
+build/
+
+# Packaging
+pear-calculator-*.tar.gz
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Qt / MOC
+*_autogen/
+*.moc
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Compiled
+*.o
+*.a
+*.so
+*.dylib
+calculator
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*~
+
+# macOS
+.DS_Store
+
+# Local settings (optional, dacă nu vrei să versionați)
+# settings.json
