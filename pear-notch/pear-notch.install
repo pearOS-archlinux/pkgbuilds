@@ -1,0 +1,27 @@
+post_install() {
+  local user home
+
+  # Determină userul real care a rulat pacman (nu root)
+  if [[ -n "${SUDO_USER}" && "${SUDO_USER}" != "root" ]]; then
+    user="${SUDO_USER}"
+  else
+    # fallback: dacă e instalat cu makepkg -i fără sudo,
+    # HOME va fi deja al userului corect
+    user="$(id -un)"
+  fi
+
+  home="$(getent passwd "${user}" | cut -d: -f6)"
+  if [[ -z "${home}" ]]; then
+    return 0
+  fi
+
+  local autostart_dir="${home}/.config/autostart"
+  install -d -m 755 "${autostart_dir}"
+
+  # Copiază .desktop în autostart-ul userului, dacă nu există deja
+  if [[ ! -f "${autostart_dir}/pearos-notch.desktop" ]]; then
+    install -m 644 "/usr/share/applications/pearos-notch.desktop" \
+      "${autostart_dir}/pearos-notch.desktop"
+  fi
+}
+
