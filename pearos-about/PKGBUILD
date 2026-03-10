@@ -2,29 +2,39 @@
 
 pkgname=system-overview
 _realname=pearos-about
-pkgdesc="pearOS NiceC0re System Overview application"
-pkgver=25.12.04
+pkgdesc="pearOS NiceC0re System Overview application (Qt6 native)"
+pkgver=26.3
 pkgrel=1
-arch=('any')
+arch=('x86_64')
 url="https://pearos.xyz"
 license=('GPLv3')
+depends=('qt6-base' 'qt6-svg')
+makedepends=('cmake')
 source=("file://${startdir}/license.txt")
 sha256sums=('SKIP')
+
 prepare() {
-  cp -r ${startdir}/${_realname} ${srcdir}/
+  cp -r "${startdir}/${_realname}" "${srcdir}/"
 }
+
 build() {
-  cd ${srcdir}/${_realname}
+  cd "${srcdir}/${_realname}"
+  mkdir -p build
+  cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release
+  make -j"$(nproc)"
 }
 
 package() {
-  cd ${srcdir}/${_realname}
+  cd "${srcdir}/${_realname}"
 
-  install -d ${pkgdir}/usr/share/extras
-  cp -r ${srcdir}/${_realname} ${pkgdir}/usr/share/extras/
-  
-  install -d ${pkgdir}/usr/bin
-  install -m755 launch.sh ${pkgdir}/usr/bin/system-overview
-  
-  install -Dm644 ${srcdir}/license.txt ${pkgdir}/usr/share/licenses/system-overview/license.txt
+  install -d "${pkgdir}/usr/bin"
+  install -Dm755 "build/pearos-about-qt" "${pkgdir}/usr/bin/system-overview"
+
+  # Assets SVG pentru icon-ul de laptop/computer
+  install -d "${pkgdir}/usr/share/extras/pearos-about/assets"
+  install -m644 assets/*.svg "${pkgdir}/usr/share/extras/pearos-about/assets/"
+
+  install -Dm644 "${srcdir}/license.txt" \
+    "${pkgdir}/usr/share/licenses/system-overview/license.txt"
 }
