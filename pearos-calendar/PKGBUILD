@@ -1,0 +1,35 @@
+pkgname=pearos-calendar
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="pearOS Calendar - modern Qt6 calendar application for pearOS"
+arch=('x86_64')
+url="https://github.com/arch-linux-gui/pearos-calendar"
+license=('MIT')
+depends=('qt6-base')
+makedepends=('cmake' 'qt6-base')
+source=()
+sha256sums=()
+
+build() {
+  # PKGBUILD is expected to live in the CMake build directory.
+  # The real source tree is one level up from startdir.
+  local srcroot="${startdir}/.."
+
+  mkdir -p "${startdir}/cmake-pkg"
+  cd "${startdir}/cmake-pkg"
+
+  cmake "${srcroot}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build . -- -j"$(nproc)"
+}
+
+package() {
+  cd "${startdir}/cmake-pkg"
+  make DESTDIR="${pkgdir}" install
+
+  # Asigură permisiuni de scriere pentru user în /usr/share/extras/pearos-calendar
+  install -d -m1777 "${pkgdir}/usr/share/extras/pearos-calendar"
+}
+

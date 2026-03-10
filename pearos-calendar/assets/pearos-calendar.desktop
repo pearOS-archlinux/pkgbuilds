@@ -1,0 +1,14 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=pearOS Calendar
+GenericName=Calendar
+Keywords=calendar;agenda;events;productivity;
+Encoding=UTF-8
+Terminal=false
+Exec=pear-calendar
+Icon=org.gnome.Calendar
+Comment=Manage your events and schedule
+Categories=Utility;Office;
+StartupNotify=true
+
