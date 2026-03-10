@@ -1,11 +1,11 @@
-# Maintainer: Your Name <you@example.com>
+# Maintainer: Alexandru Balan <alex@pear-software.com>
 pkgname=pear-calculator
 pkgver=26.0
 pkgrel=1
-pkgdesc="Calculator with RPN and normal mode, thousands separator, Wayland support"
+pkgdesc="pearOS Calculator"
 arch=('x86_64')
 install=pear-calculator.install
-url="https://github.com/yourusername/pear-calculator"
+url="https://pearos.xyz"
 license=('custom')
 depends=('qt6-base')
 makedepends=('cmake' 'qt6-tools')

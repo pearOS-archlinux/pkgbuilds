@@ -29,6 +29,8 @@
 #include <QStandardPaths>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDebug>
+#include <QWindow>
 
 namespace {
 
@@ -137,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupTrafficLights();
 
     QWidget *titleBar = new QWidget(m_calculatorPanel);
+    titleBar->setObjectName(QStringLiteral("titleBar"));
     titleBar->setFixedHeight(44);
     titleBar->setStyleSheet("background: transparent;");
     QHBoxLayout *titleLayout = new QHBoxLayout(titleBar);
@@ -209,6 +212,7 @@ MainWindow::MainWindow(QWidget *parent)
         "QMenu::item:disabled { color: #6e6e72; } "
         "QMenu::separator { height: 1px; background: #48484a; } "
     );
+    menuBar->installEventFilter(this);
     QMenu *editMenu = menuBar->addMenu(tr("Edit"));
     setActionShortcutDisplay(this, editMenu->addAction(QString()), tr("Undo"), QKeySequence::Undo);
     setActionShortcutDisplay(this, editMenu->addAction(QString()), tr("Redo"), QKeySequence::Redo);
@@ -379,6 +383,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_calculatorPanel->setMouseTracking(true);
     m_calculatorPanel->installEventFilter(this);
+    titleBar->installEventFilter(this);
+    m_btnAppIcon->installEventFilter(this);
     setTrafficLightsActive(true);
 
     setWindowTitle(QStringLiteral("Calculator"));
@@ -406,6 +412,31 @@ void MainWindow::changeEvent(QEvent *event)
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
+    // Drag doar pe bara cu traffic lights și zona din dreapta, nu pe butoane.
+    if (event->type() == QEvent::MouseButtonPress) {
+        QWidget *w = qobject_cast<QWidget *>(watched);
+        if (w && w->objectName() == QStringLiteral("titleBar")) {
+            QMouseEvent *me = static_cast<QMouseEvent *>(event);
+            if (me->button() == Qt::LeftButton) {
+                QWidget *childAtPos = w->childAt(me->pos());
+                // Nu permitem drag dacă se apasă direct pe traffic lights sau pe icon.
+                if (childAtPos == m_trafficContainer ||
+                    childAtPos == m_btnClose ||
+                    childAtPos == m_btnMinimize ||
+                    childAtPos == m_btnMaximize ||
+                    childAtPos == m_btnAppIcon) {
+                    return false;
+                }
+                if (QWindow *win = windowHandle()) {
+                    qDebug() << "[MainWindow::eventFilter] startSystemMove from titleBar, local"
+                             << me->pos() << "global" << me->globalPosition();
+                    win->startSystemMove();
+                    return true;
+                }
+            }
+        }
+    }
+
     if (event->type() == QEvent::Enter &&
         (watched == m_btnClose || watched == m_btnMinimize || watched == m_btnMaximize)) {
         m_btnClose->setText(QString::fromUtf8("×"));
