@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=26.1
+Name=AppStore
+GenericName=App Store
+Keywords=app;store;software;install;system;
+Encoding=UTF-8
+Terminal=false
+Exec=pearos-appstore
+Icon=pearos-appstore
+Comment=Install all your favourite apps
+Categories=System;Apps;
+StartupNotify=true

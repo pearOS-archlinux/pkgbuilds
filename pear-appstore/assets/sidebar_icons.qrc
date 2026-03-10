@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>sidebar_icons/discover.png</file>
+        <file>sidebar_icons/arcade.png</file>
+        <file>sidebar_icons/work.png</file>
+        <file>sidebar_icons/play.png</file>
+        <file>sidebar_icons/develop.png</file>
+        <file>sidebar_icons/categories.png</file>
+        <file>sidebar_icons/updates.png</file>
+    </qresource>
+</RCC>

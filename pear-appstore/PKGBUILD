@@ -1,0 +1,32 @@
+pkgname=pearos-appstore
+pkgver=0.2.28
+pkgrel=1
+pkgdesc="PearOS AppStore - modern Qt6 app store for Arch-based systems"
+arch=('x86_64')
+url="https://github.com/arch-linux-gui/pearos-appstore"
+license=('MIT')
+depends=('qt6-base' 'pacman')
+makedepends=('cmake' 'qt6-base' 'pkgconf')
+source=()
+sha256sums=()
+
+build() {
+  # PKGBUILD is expected to live in the CMake build directory.
+  # The real source tree is one level up from startdir.
+  local srcroot="${startdir}/.."
+
+  mkdir -p "${startdir}/cmake-pkg"
+  cd "${startdir}/cmake-pkg"
+
+  cmake "${srcroot}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+
+  cmake --build . -- -j"$(nproc)"
+}
+
+package() {
+  cd "${startdir}/cmake-pkg"
+  make DESTDIR="${pkgdir}" install
+}
+
