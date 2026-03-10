@@ -486,31 +486,32 @@ void MainWindow::setupContent() {
     refreshSidebarLists();
 
     connect(m_notesWidget, &NotesWidget::contentChanged, this, [this](const QString& html) {
-        const QString trimmedHtml = html.trimmed();
-        if (trimmedHtml.isEmpty())
-            return;
-
-        // Obținem textul simplu din HTML (ignorând stiluri/css) pentru titlu
+        // Obținem textul simplu din HTML (ignorând stiluri/css) pentru titlu / logică
         QTextDocument doc;
         doc.setHtml(html);
-        QString plain = doc.toPlainText().simplified();
-        if (plain.isEmpty())
-            return;
+        QString plain = doc.toPlainText();
 
         // Împărțim după orice spațiu (spațiu, newline etc.)
-        QStringList words = plain.split(QRegularExpression(QStringLiteral("\\s+")),
-                                        Qt::SkipEmptyParts);
+        QStringList words = plain.simplified().split(QRegularExpression(QStringLiteral("\\s+")),
+                                                     Qt::SkipEmptyParts);
 
         // Dacă ultimul caracter nu e spațiu/newline, considerăm ultimul cuvânt "în curs de tastare"
         if (!plain.isEmpty() && !plain.at(plain.size() - 1).isSpace() && !words.isEmpty()) {
             words.removeLast();
         }
 
+        const bool hasExistingNote =
+            !m_notes.isEmpty() &&
+            m_currentListIndex >= 0 &&
+            m_currentListIndex < m_notes.size();
+
         // Dacă nu avem încă nicio notă:
         // - creăm una nouă doar când avem cel puțin un cuvânt complet (urmat de spațiu/Enter)
-        if (m_notes.isEmpty() || m_currentListIndex < 0 || m_currentListIndex >= m_notes.size()) {
-            if (words.isEmpty())
+        if (!hasExistingNote) {
+            if (words.isEmpty()) {
+                // Text gol sau doar "cuvânt în curs" -> nu creăm încă o notă
                 return;
+            }
 
             const int count = qMin(4, words.size());
             QStringList firstWords;
@@ -531,7 +532,8 @@ void MainWindow::setupContent() {
             return;
         }
 
-        // Avem deja o notă selectată; doar îi actualizăm conținutul
+        // Avem deja o notă selectată; actualizăm conținutul
+        // inclusiv cazul când textul este complet șters (gol).
         NoteDocument& note = m_notes[m_currentListIndex];
         note.content = html;
         saveNotes();
@@ -552,9 +554,12 @@ void MainWindow::loadNotes() {
 }
 
 void MainWindow::saveNotes() const {
-    if (m_notes.isEmpty()) return;
+    // Salvează întotdeauna starea actuală, chiar dacă lista e goală,
+    // ca să persiste ștergerea ultimei notițe.
     if (!NotesStorage::save(m_notes)) {
         Logger::warning(QStringLiteral("Failed to save notes"));
+    } else {
+        Logger::info(QStringLiteral("Notes saved from MainWindow::saveNotes"));
     }
 }
 

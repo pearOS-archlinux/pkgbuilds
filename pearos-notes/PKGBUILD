@@ -28,5 +28,8 @@ build() {
 package() {
   cd "${startdir}/cmake-pkg"
   make DESTDIR="${pkgdir}" install
+
+  # Asigură permisiuni de scriere pentru user în /usr/share/extras/pearos-notes
+  install -d -m1777 "${pkgdir}/usr/share/extras/pearos-notes"
 }
 
