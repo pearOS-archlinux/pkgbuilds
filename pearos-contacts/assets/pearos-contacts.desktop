@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Contacts
+GenericName=Address Book
+Keywords=contacts;addressbook;phonebook;people;
+Encoding=UTF-8
+Terminal=false
+Exec=pearos-contacts
+Icon=address-book-new
+Comment=Manage your contacts and contact groups
+Categories=Utility;Office;
+StartupNotify=true
