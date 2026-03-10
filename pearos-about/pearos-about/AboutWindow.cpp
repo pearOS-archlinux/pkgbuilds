@@ -521,6 +521,12 @@ void AboutWindow::openSystemSettingsAbout()
 
 void AboutWindow::mousePressEvent(QMouseEvent *event)
 {
+    if (event->button() == Qt::LeftButton && windowHandle()) {
+        // Native Wayland/X11 window move (Qt6)
+        windowHandle()->startSystemMove();
+        event->accept();
+        return;
+    }
     QWidget::mousePressEvent(event);
 }
 
