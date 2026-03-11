@@ -155,17 +155,7 @@ sanitize_kdedefaults_kwinrc() {
   local kdedef_dir="$HOME/.config/kdedefaults"
   local kdedef_file="$kdedef_dir/kwinrc"
   mkdir -p "$kdedef_dir"
-  if [ -f "$kdedef_file" ]; then
-    # Clean WhiteSur/Aurorae leftovers; do not set theme here (handled in apply_components)
-    sed -i 's/__aurorae__svg__WhiteSur[^[:space:]]*/__aurorae__svg__pearOS/gI' "$kdedef_file" || true
-  else
-    cat > "$kdedef_file" <<EOF
-[org.kde.kdecoration2]
-Library=org.kde.kwin.aurorae
-Theme=__aurorae__svg__pearOS
-BorderSize=Normal
-EOF
-  fi
+  return 0
 }
 
 read_sddm_current() {
@@ -445,31 +435,32 @@ apply_components() {
     msg "kwriteconfig6 unavailable (skip Application Style)"
   fi
 
-  msg "Normalize kdedefaults/kwinrc and apply Aurorae for Window Decorations"
-  sanitize_kdedefaults_kwinrc
-  # Write both uppercase and lowercase variants for compatibility
-  if have kwriteconfig6; then
-    cfg_write kwinrc org.kde.kdecoration2 Library "$KWIN_DECORATION_PLUGIN" || true
-   # cfg_write kwinrc org.kde.kdecoration2 Theme "$AUR_THEME" || true
-    cfg_write kwinrc org.kde.kdecoration2 library "$KWIN_DECORATION_PLUGIN" || true
-   #  cfg_write kwinrc org.kde.kdecoration2 theme "$AUR_THEME" || true
-    # macOS-like layout on the left
-    cfg_write kwinrc org.kde.kdecoration2 ButtonsOnLeft "XIA" || true
-    cfg_write kwinrc org.kde.kdecoration2 ButtonsOnRight "" || true
-  fi
-  # Update kdedefaults to current theme to avoid overrides at login
-  local kdedef_file="$HOME/.config/kdedefaults/kwinrc"
-  if [ -f "$kdedef_file" ]; then
-    sed -i 's/^[[:space:]]*[Ll]ibrary[[:space:]]*=.*/Library=org.kde.kwin.aurorae/I' "$kdedef_file" || true
-    sed -i "s/^[[:space:]]*[Tt]heme[[:space:]]*=.*/Theme=${AUR_THEME//\//\\/}/I" "$kdedef_file" || true
-  fi
-  # Confirmation
-  if have kreadconfig6; then
-    local set_lib set_theme
-    set_lib="$(cfg_read kwinrc org.kde.kdecoration2 Library 2>/dev/null || echo "")"
-    set_theme="$(cfg_read kwinrc org.kde.kdecoration2 Theme 2>/dev/null || echo "")"
-    msg "KWin decoration set: Library='$set_lib' Theme='${set_theme}'"
-  fi
+  # pearOS: nu mai forțăm Aurorae / kwin decoration din Theme Switcher;
+  # lăsăm utilizatorul sau alte unelte să decidă decorarea ferestrelor.
+  # sanitize_kdedefaults_kwinrc
+  # # Write both uppercase and lowercase variants for compatibility
+  # if have kwriteconfig6; then
+  #   cfg_write kwinrc org.kde.kdecoration2 Library "$KWIN_DECORATION_PLUGIN" || true
+  #  # cfg_write kwinrc org.kde.kdecoration2 Theme "$AUR_THEME" || true
+  #   cfg_write kwinrc org.kde.kdecoration2 library "$KWIN_DECORATION_PLUGIN" || true
+  #  #  cfg_write kwinrc org.kde.kdecoration2 theme "$AUR_THEME" || true
+  #   # macOS-like layout on the left
+  #   cfg_write kwinrc org.kde.kdecoration2 ButtonsOnLeft "XIA" || true
+  #   cfg_write kwinrc org.kde.kdecoration2 ButtonsOnRight "" || true
+  # fi
+  # # Update kdedefaults to current theme to avoid overrides at login
+  # local kdedef_file="$HOME/.config/kdedefaults/kwinrc"
+  # if [ -f "$kdedef_file" ]; then
+  #   sed -i 's/^[[:space:]]*[Ll]ibrary[[:space:]]*=.*/Library=org.kde.kwin.aurorae/I' "$kdedef_file" || true
+  #   sed -i "s/^[[:space:]]*[Tt]heme[[:space:]]*=.*/Theme=${AUR_THEME//\//\\/}/I" "$kdedef_file" || true
+  # fi
+  # # Confirmation
+  # if have kreadconfig6; then
+  #   local set_lib set_theme
+  #   set_lib="$(cfg_read kwinrc org.kde.kdecoration2 Library 2>/dev/null || echo "")"
+  #   set_theme="$(cfg_read kwinrc org.kde.kdecoration2 Theme 2>/dev/null || echo "")"
+  #   msg "KWin decoration set: Library='$set_lib' Theme='${set_theme}'"
+  # fi
 
   if [ -n "${KVT:-}" ]; then
     msg "Apply Kvantum: $KVT"
@@ -579,35 +570,37 @@ EOF
     fi
   fi
 
-  if [ -n "${SDDM:-}" ]; then
-    msg "Set SDDM theme: $SDDM"
-    local tmpfile
-    tmpfile="$(mktemp)"
-    cat > "$tmpfile" <<EOF
-[Theme]
-Current=$SDDM
-EOF
-    if have sudo && sudo -n true 2>/dev/null; then
-      sudo install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
-    # Comentat: pkexec cere parola la fiecare schimbare light/dark; nu folosim pkexec ca să nu ceară parola.
-    # Pentru a actualiza tema SDDM (ecran login), rulează manual cu sudo.
-    # elif have pkexec; then
-    #   pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
-    else
-      msg "Cannot write SDDM without privileges. Run manually:"
-      echo "  sudo install -Dm0644 \"$tmpfile\" /etc/sddm.conf.d/10-theme.conf"
-    fi
-    rm -f "$tmpfile"
-    local sddm_after
-    sddm_after="$(read_sddm_current 2>/dev/null || echo "")"
-    if [ "$sddm_after" = "$SDDM" ]; then
-      msg "SDDM confirmat: $sddm_after"
-    else
-      msg "WARNING: SDDM is still '$sddm_after' (likely missing privileges or overridden in other files under /etc/sddm.conf.d)"
-    fi
-  else
-    msg "SDDM not configured (skip)"
-  fi
+  # pearOS: nu mai setăm SDDM theme automat din Theme Switcher;
+  # lăsăm tema de login în pace, doar citim la nevoie.
+  # if [ -n "${SDDM:-}" ]; then
+  #   msg "Set SDDM theme: $SDDM"
+  #   local tmpfile
+  #   tmpfile="$(mktemp)"
+  #   cat > "$tmpfile" <<EOF
+  # [Theme]
+  # Current=$SDDM
+  # EOF
+  #   if have sudo && sudo -n true 2>/dev/null; then
+  #     sudo install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
+  #   # Comentat: pkexec cere parola la fiecare schimbare light/dark; nu folosim pkexec ca să nu ceară parola.
+  #   # Pentru a actualiza tema SDDM (ecran login), rulează manual cu sudo.
+  #   # elif have pkexec; then
+  #   #   pkexec install -Dm0644 "$tmpfile" /etc/sddm.conf.d/10-theme.conf || true
+  #   else
+  #     msg "Cannot write SDDM without privileges. Run manually:"
+  #     echo "  sudo install -Dm0644 \"$tmpfile\" /etc/sddm.conf.d/10-theme.conf"
+  #   fi
+  #   rm -f "$tmpfile"
+  #   local sddm_after
+  #   sddm_after="$(read_sddm_current 2>/dev/null || echo "")"
+  #   if [ "$sddm_after" = "$SDDM" ]; then
+  #     msg "SDDM confirmat: $sddm_after"
+  #   else
+  #     msg "WARNING: SDDM is still '$sddm_after' (likely missing privileges or overridden in other files under /etc/sddm.conf.d)"
+  #   fi
+  # else
+  #   msg "SDDM not configured (skip)"
+  # fi
 
   # Reconfigure KWin so changes to decorations take effect
   if have qdbus; then
