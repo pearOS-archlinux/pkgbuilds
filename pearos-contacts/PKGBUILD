@@ -1,5 +1,5 @@
 pkgname=pearos-contacts
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="pearOS Contacts - modern Qt6 contacts application for pearOS"
 arch=('x86_64')
