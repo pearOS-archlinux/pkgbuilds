@@ -647,6 +647,34 @@ void set_skip_taskbar_and_pager(Display* dpy, Window win) {
     XFlush(dpy);
 }
 
+// Încearcă să dezactiveze decorațiile ferestrei (borders/titlebar) la WM-uri care respectă _MOTIF_WM_HINTS.
+void disable_window_decorations(Display* dpy, Window win) {
+    struct MotifWmHints {
+        unsigned long flags;
+        unsigned long functions;
+        unsigned long decorations;
+        long          input_mode;
+        unsigned long status;
+    };
+
+    Atom hints_atom = XInternAtom(dpy, "_MOTIF_WM_HINTS", False);
+    if (!hints_atom) return;
+
+    MotifWmHints hints{};
+    const unsigned long MWM_HINTS_DECORATIONS = 1L << 1;
+    hints.flags = MWM_HINTS_DECORATIONS;
+    hints.decorations = 0;  // fără decorații
+
+    XChangeProperty(dpy,
+                    win,
+                    hints_atom,
+                    hints_atom,
+                    32,
+                    PropModeReplace,
+                    reinterpret_cast<const unsigned char*>(&hints),
+                    5);
+}
+
 #ifndef EXTRAS_DATADIR
 #define EXTRAS_DATADIR "/usr/share/extras/pearos-notch"
 #endif
@@ -971,8 +999,17 @@ int main() {
         &attrs
     );
 
-    // Fără titlu (no window name)
-    XStoreName(g_dpy, g_win, "");
+    // Nume fereastră clar pentru WM / instrumente
+    XStoreName(g_dpy, g_win, "pearOS Notch");
+
+    // WM_CLASS pentru potriviri în KWin scripts / reguli de fereastră
+    XClassHint class_hint;
+    class_hint.res_name  = const_cast<char*>("pearos-notch");
+    class_hint.res_class = const_cast<char*>("pearOS Notch");
+    XSetClassHint(g_dpy, g_win, &class_hint);
+
+    // Încearcă să elimine complet borders/titlebar la WM-urile care respectă _MOTIF_WM_HINTS.
+    disable_window_decorations(g_dpy, g_win);
 
     // Nu apărea în taskbar / Alt+Tab (pe lângă override_redirect)
     set_skip_taskbar_and_pager(g_dpy, g_win);
