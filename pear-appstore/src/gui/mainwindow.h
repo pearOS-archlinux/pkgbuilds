@@ -47,6 +47,7 @@ private:
     void setupSidebar();
     void setupContent();
     void finishContentSetup();
+    void runInitialSyncIfNeeded();
     void createMenuBar();
     void loadStyleSheet();
     QString themeOverlayFromPalette() const;

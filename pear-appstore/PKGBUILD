@@ -1,9 +1,9 @@
 pkgname=pearos-appstore
-pkgver=0.2.28
+pkgver=0.2.29
 pkgrel=1
-pkgdesc="PearOS AppStore - modern Qt6 app store for Arch-based systems"
+pkgdesc="pearOS AppStore - modern Qt6 app store for Arch-based systems"
 arch=('x86_64')
-url="https://github.com/arch-linux-gui/pearos-appstore"
+url="https://pearos.xyz"
 license=('MIT')
 depends=('qt6-base' 'pacman')
 makedepends=('cmake' 'qt6-base' 'pkgconf')

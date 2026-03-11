@@ -39,6 +39,7 @@
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QModelIndex>
+#include <QSettings>
 #ifdef HAVE_KWINDOW_EFFECTS
 #include <KWindowEffects>
 #endif
@@ -625,6 +626,19 @@ void MainWindow::finishContentSetup() {
     }
 }
 
+void MainWindow::runInitialSyncIfNeeded() {
+    QSettings settings;
+    const QString key = QStringLiteral("initialSyncDone");
+    const bool alreadyDone = settings.value(key, false).toBool();
+    if (alreadyDone)
+        return;
+
+    // Rulează o singură dată la prima lansare: pkexec pacman -Sy
+    QProcess::startDetached(QStringLiteral("pkexec"),
+                            {QStringLiteral("pacman"), QStringLiteral("-Sy")});
+    settings.setValue(key, true);
+}
+
 void MainWindow::setPage(int index) {
     if (!m_stackedWidget) return;
     // Dacă suntem pe pagina de detalii pachet și utilizatorul alege alt item din sidebar, închidem detaliile
@@ -875,6 +889,7 @@ void MainWindow::showEvent(QShowEvent* event) {
     QMainWindow::showEvent(event);
     if (!m_contentReady) {
         m_contentReady = true;
+        runInitialSyncIfNeeded();
         // Afișează UI imediat (Discover din cache); inițializarea repos în background
         finishContentSetup();
         (void)QtConcurrent::run([this]() {

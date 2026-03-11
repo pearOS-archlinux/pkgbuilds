@@ -100,6 +100,9 @@ private:
     QString m_currentOperation;
     int m_totalPackages = 0;
     int m_currentPackage = 0;
+
+    // Track whether an install operation is in progress for this dialog
+    bool m_isInstalling = false;
     
 private slots:
     void onDependenciesToggled();

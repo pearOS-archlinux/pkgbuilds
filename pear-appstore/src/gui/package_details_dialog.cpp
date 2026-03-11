@@ -430,6 +430,16 @@ void PackageDetailsDialog::checkInstallStatus() {
 }
 
 void PackageDetailsDialog::updateButtonStates() {
+    if (!m_launchButton)
+        return;
+
+    // Dacă instalarea este în curs, afișăm stare de „busy” în loc de Get/Open
+    if (m_isInstalling) {
+        m_launchButton->setText(tr("Installing..."));
+        m_launchButton->setEnabled(false);
+        return;
+    }
+
     QString desktopFile = findDesktopFile();
     if (m_isInstalled) {
         m_launchButton->setText(tr("Open"));
@@ -449,17 +459,16 @@ void PackageDetailsDialog::onActionClicked() {
 }
 
 void PackageDetailsDialog::onInstall() {
-    auto reply = QMessageBox::question(this, "Install Package",
-        QString("Are you sure you want to install %1?").arg(m_info.name),
-        QMessageBox::Yes | QMessageBox::No);
-    
-    if (reply == QMessageBox::Yes) {
-        Logger::info(QString("Installing package: %1").arg(m_info.name));
-        
-        m_launchButton->setEnabled(false);
+    Logger::info(QString("Installing package: %1").arg(m_info.name));
+
+    // Marchează dialogul ca fiind în curs de instalare și actualizează butonul (spinner/text)
+    m_isInstalling = true;
+    updateButtonStates();
+
+    if (m_closeButton)
         m_closeButton->setEnabled(false);
-        PackageManager::instance().installPackage(m_info.name, m_info.repository);
-    }
+
+    PackageManager::instance().installPackage(m_info.name, m_info.repository);
 }
 
 void PackageDetailsDialog::onUninstall() {
@@ -581,18 +590,14 @@ void PackageDetailsDialog::onOperationCompleted(bool success, const QString& mes
 
     // Update status and UI
     checkInstallStatus();
+    m_isInstalling = false;
     updateButtonStates();
 
     hideProgress();
 
     // Re-enable close button
-    m_closeButton->setEnabled(true);
-
-    if (success) {
-        QMessageBox::information(this, "Success", message);
-    } else {
-        QMessageBox::warning(this, "Operation Failed", message);
-    }
+    if (m_closeButton)
+        m_closeButton->setEnabled(true);
 }
 
 void PackageDetailsDialog::onOperationError(const QString& error) {
@@ -602,14 +607,14 @@ void PackageDetailsDialog::onOperationError(const QString& error) {
 
     // Update status and UI
     checkInstallStatus();
+    m_isInstalling = false;
     updateButtonStates();
 
     hideProgress();
 
     // Re-enable close button
-    m_closeButton->setEnabled(true);
-
-    QMessageBox::critical(this, "Error", error);
+    if (m_closeButton)
+        m_closeButton->setEnabled(true);
 }
 
 QString PackageDetailsDialog::findDesktopFile() const {
