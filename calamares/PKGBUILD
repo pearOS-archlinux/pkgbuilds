@@ -1,36 +1,44 @@
-#calamares PKGBUILD for pearOS NiceC0re
+# Maintainer: akash6222 <akashlinux0@gmail.com>
 
 pkgname=calamares
-pkgver=3.2.45
-pkgrel=1
+pkgver=3.4.0
+pkgrel=3
 pkgdesc='Distribution-independent installer framework'
 arch=('x86_64')
 license=(GPL)
-url="https://github.com/calamares/calamares/releases/download"
+url="https://github.com/pearOS-archlinux/"
 license=('LGPL')
 depends=('kconfig' 'kcoreaddons' 'kiconthemes' 'ki18n' 'kio' 'solid' 'yaml-cpp' 'kpmcore' 'mkinitcpio-openswap'
-         'boost-libs' 'ckbcomp' 'hwinfo' 'qt5-svg' 'polkit-qt5' 'gtk-update-icon-cache' 'plasma-framework'
-         'qt5-xmlpatterns' 'squashfs-tools' 'libpwquality' 'boost') # 'pythonqt>=3.2')
-makedepends=('extra-cmake-modules' 'qt5-tools' 'qt5-translations' 'git' 'boost')
+		 'ckbcomp' 'hwinfo' 'qt6-svg' 'polkit-qt6' 'gtk-update-icon-cache'
+		 'squashfs-tools' 'libpwquality' 'pybind11' 'python')
+		 #'boost-libs' 'pythonqt>=3.2')  'boost' #'plasma-framework5') #'qt5-xmlpatterns')
+makedepends=('extra-cmake-modules' 'qt6-tools' 'qt6-translations' 'git' 'boost')
 backup=('usr/share/calamares/modules/bootloader.conf'
         'usr/share/calamares/modules/displaymanager.conf'
         'usr/share/calamares/modules/initcpio.conf'
         'usr/share/calamares/modules/unpackfs.conf')
 
-source=("$pkgname-$pkgver-$pkgrel.tar.gz::$url/v$pkgver/calamares-$pkgver.tar.gz")
-sha256sums=('ba5ef9f57ad71e3d726f3fb181c9a4342063875c1670b374f8cadca64d2bbc0e')
+source=(${pkgname}::"git+${url}/${pkgname}#branch=main"
+	"https://gitlab.com/garuda-linux/pkgbuilds/-/raw/main/calamares-garuda/0001-bootloader-Correct-a-logic-error-preventing-installa.patch")
+sha256sums=('SKIP' 'SKIP')
 
 prepare() {
+	mkdir calamares-${pkgver}
+	mv calamares/* calamares-${pkgver}
 	cd ${srcdir}/calamares-${pkgver}
+
+	# Apply patch (ignore if already applied in source)
+	patch -Np1 -i "${srcdir}/0001-bootloader-Correct-a-logic-error-preventing-installa.patch" || [[ $? -eq 1 ]]
+
 	sed -i -e 's/"Install configuration files" OFF/"Install configuration files" ON/' CMakeLists.txt
 	sed -i -e 's/# DEBUG_FILESYSTEMS/DEBUG_FILESYSTEMS/' "$srcdir/${pkgname}-${pkgver}/CMakeLists.txt"
 
 	# modify desktop file
 	sed -i -e 's#Exec=sh.*#Exec=sh -c "/etc/calamares/launch.sh"#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
-	sed -i -e 's#Name=.*#Name=Install Arch Linux#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
-	sed -i -e 's#GenericName=.*#GenericName=Arch Linux Installer#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
-	sed -i -e 's#Icon=.*#Icon=archlinux-logo#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
-	sed -i -e 's#Comment=.*#Comment=Arch Linux Installer#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
+	sed -i -e 's#Name=.*#Name=Install ALG#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
+	sed -i -e 's#GenericName=.*#GenericName=ALG Installer#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
+	sed -i -e 's#Icon=.*#Icon=install-alg#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
+	sed -i -e 's#Comment=.*#Comment=ALG Installer#g' "$srcdir/${pkgname}-${pkgver}/calamares.desktop"
 
 
 	# patches here
@@ -54,6 +62,10 @@ build() {
               -DCMAKE_INSTALL_LIBDIR=lib \
               -DWITH_PYTHONQT:BOOL=ON \
               -DBoost_NO_BOOST_CMAKE=ON \
+              -DWITH_QT6=ON \
+              -DWITH_PYBIND11=ON \
+              -DWITH_APPSTREAM=OFF \
+              -DBUILD_TESTING=OFF \
               -DSKIP_MODULES="tracking webview interactiveterminal initramfs \
                               initramfscfg dracut dracutlukscfg \
                               dummyprocess dummypython dummycpp \
@@ -64,5 +76,6 @@ build() {
 package() {
 	cd ${srcdir}/calamares-${pkgver}/build
 	make DESTDIR="$pkgdir" install
-	
+
 }
+

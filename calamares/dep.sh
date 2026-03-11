@@ -1,15 +1,6 @@
-#  -> yaml-cpp
-#  -> kpmcore
-#  -> mkinitcpio-openswap
-#  -> ckbcomp
-#  -> hwinfo
-#  -> qt5-xmlpatterns
-#  -> libpwquality
-#==> Checking buildtime dependencies...
-#==> Missing dependencies:
-#  -> extra-cmake-modules
-#  -> qt5-translations
+# Installing calamares dependencies for ALG
 
+echo "Installing: kconfig kcoreaddons kiconthemes ki18n kio solid yaml-cpp kpmcore mkinitcpio-openswap ckbcomp hwinfo qt6-svg polkit-qt6 gtk-update-icon-cache squashfs-tools libpwquality pybind11 python extra-cmake-modules qt6-tools qt6-translations git"
 
-echo "Installing: yaml-cpp kpmcore mkinitcpio-openswap ckbcomp hwinfo qt5-xmlpatterns libpwquality qt5-translations extra-cmake-modules"
-sudo pacman -Sy yaml-cpp kpmcore mkinitcpio-openswap ckbcomp hwinfo qt5-xmlpatterns libpwquality qt5-translations extra-cmake-modules glibc gcc
+sudo pacman -Sy kconfig kcoreaddons kiconthemes ki18n kio solid yaml-cpp kpmcore mkinitcpio-openswap ckbcomp hwinfo qt6-svg polkit-qt6 gtk-update-icon-cache squashfs-tools libpwquality pybind11 python extra-cmake-modules qt6-tools qt6-translations git
+
