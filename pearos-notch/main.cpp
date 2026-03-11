@@ -320,6 +320,7 @@ static void mpris_album_art_thread_func() {
 }
 
 static void pa_sink_input_info_cb(pa_context* c, const pa_sink_input_info* info, int eol, void*) {
+    (void)c;
     static bool any_playing = false;
     if (eol == 0 && info != nullptr) {
         if (!info->corked)
@@ -646,9 +647,19 @@ void set_skip_taskbar_and_pager(Display* dpy, Window win) {
     XFlush(dpy);
 }
 
-// Caută notch.svg: mai întâi cwd, apoi lângă executabil, apoi parent.
+#ifndef EXTRAS_DATADIR
+#define EXTRAS_DATADIR "/usr/share/extras/pearos-notch"
+#endif
+
+// Caută notch.svg: mai întâi în datadir-ul de sistem, apoi cwd, apoi lângă executabil.
 bool find_notch_svg(char* out_path, size_t size) {
     if (size < 8) return false;
+    std::string sys_path = std::string(EXTRAS_DATADIR) + "/notch.svg";
+    if (access(sys_path.c_str(), R_OK) == 0) {
+        strncpy(out_path, sys_path.c_str(), size - 1);
+        out_path[size - 1] = '\0';
+        return true;
+    }
     if (access("notch.svg", R_OK) == 0) {
         strncpy(out_path, "notch.svg", size - 1);
         out_path[size - 1] = '\0';
@@ -908,17 +919,22 @@ int main() {
         return 1;
     }
 
-    // încarcă SVG-urile pentru controale (dacă există)
+    // încarcă SVG-urile pentru controale din /usr/share/extras/pearos-notch (sau cwd la develop)
+    std::string extras_dir(EXTRAS_DATADIR);
+    auto get_ctrl_svg_path = [&extras_dir](const char* name) -> std::string {
+        std::string p = extras_dir + "/" + name;
+        return (access(p.c_str(), R_OK) == 0) ? p : std::string(name);
+    };
     GError* err_ctrl = nullptr;
-    g_svg_prev = rsvg_handle_new_from_file("prev.svg", &err_ctrl);
+    g_svg_prev = rsvg_handle_new_from_file(get_ctrl_svg_path("prev.svg").c_str(), &err_ctrl);
     if (err_ctrl) { g_error_free(err_ctrl); err_ctrl = nullptr; }
-    g_svg_next = rsvg_handle_new_from_file("next.svg", &err_ctrl);
+    g_svg_next = rsvg_handle_new_from_file(get_ctrl_svg_path("next.svg").c_str(), &err_ctrl);
     if (err_ctrl) { g_error_free(err_ctrl); err_ctrl = nullptr; }
-    g_svg_play = rsvg_handle_new_from_file("play.svg", &err_ctrl);
+    g_svg_play = rsvg_handle_new_from_file(get_ctrl_svg_path("play.svg").c_str(), &err_ctrl);
     if (err_ctrl) { g_error_free(err_ctrl); err_ctrl = nullptr; }
-    g_svg_pause = rsvg_handle_new_from_file("pause.svg", &err_ctrl);
+    g_svg_pause = rsvg_handle_new_from_file(get_ctrl_svg_path("pause.svg").c_str(), &err_ctrl);
     if (err_ctrl) { g_error_free(err_ctrl); err_ctrl = nullptr; }
-    g_svg_settings = rsvg_handle_new_from_file("settings.svg", &err_ctrl);
+    g_svg_settings = rsvg_handle_new_from_file(get_ctrl_svg_path("settings.svg").c_str(), &err_ctrl);
     if (err_ctrl) { g_error_free(err_ctrl); err_ctrl = nullptr; }
 
     g_dpy = XOpenDisplay(nullptr);

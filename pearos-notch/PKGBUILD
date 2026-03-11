@@ -1,5 +1,5 @@
 pkgname=pearos-notch
-pkgver=1.0.0
+pkgver=1.0.2
 pkgrel=1
 pkgdesc="Notch for your screen"
 arch=('x86_64')
@@ -31,5 +31,7 @@ package() {
   install -Dm755 pearos-notch "${pkgdir}/usr/bin/pearos-notch"
   install -Dm644 pearos-notch.png "${pkgdir}/usr/share/icons/hicolor/256x256/apps/pearos-notch.png"
   install -Dm644 pearos-notch.desktop "${pkgdir}/usr/share/applications/pearos-notch.desktop"
+  install -d "${pkgdir}/usr/share/extras/pearos-notch"
+  install -m644 notch.svg prev.svg next.svg play.svg pause.svg settings.svg "${pkgdir}/usr/share/extras/pearos-notch/"
 }
 
