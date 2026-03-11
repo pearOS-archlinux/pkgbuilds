@@ -359,8 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!inner) return;
     const RESISTANCE = 0.07;
     const MAX_OVERSCROLL = 48;
-    const SPRING_K = 0.065;
-    const SPRING_DAMP = 0.82;
+    const SPRING_K = 0.22;
+    const SPRING_DAMP = 0.78;
     const getPullFactor = () => {
       const t = Math.abs(overscroll) / MAX_OVERSCROLL;
       return Math.max(0.02, RESISTANCE * (1 - 0.7 * t));
@@ -384,9 +384,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const acc = -overscroll * SPRING_K - v * SPRING_DAMP;
         v += acc;
         overscroll += v;
-        if (Math.abs(overscroll) < 0.5 && Math.abs(v) < 0.15) {
+        if (Math.abs(overscroll) < 0.3 && Math.abs(v) < 0.08) {
           overscroll = 0;
           setTransform(0);
+          animId = null;
           return;
         }
         setTransform(overscroll);
@@ -403,12 +404,24 @@ document.addEventListener('DOMContentLoaded', () => {
       if (releaseTimer) clearTimeout(releaseTimer);
       releaseTimer = setTimeout(onRelease, 180);
     };
+    const cancelSpring = () => {
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      overscroll = 0;
+      setTransform(0);
+    };
     const handleWheel = (e) => {
       const delta = isY ? e.deltaY : e.deltaX;
       const atStart = scrollPos() <= 0;
       const atEnd = scrollPos() >= scrollMax() - 1;
       const pullStart = atStart && (isY ? delta < 0 : delta < 0);
       const pullEnd = atEnd && (isY ? delta > 0 : delta > 0);
+      if (animId) {
+        cancelSpring();
+        if (!pullStart && !pullEnd) return;
+      }
       if (pullStart || pullEnd) {
         e.preventDefault();
         const sign = pullStart ? 1 : -1;
@@ -430,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
       touchStart = isY ? e.touches[0].clientY : e.touches[0].clientX;
     };
     const handleTouchMove = (e) => {
+      if (animId) cancelSpring();
       const now = isY ? e.touches[0].clientY : e.touches[0].clientX;
       const delta = now - touchStart;
       touchStart = now;

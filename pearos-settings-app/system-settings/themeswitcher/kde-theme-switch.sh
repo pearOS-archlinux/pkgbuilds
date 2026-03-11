@@ -450,9 +450,9 @@ apply_components() {
   # Write both uppercase and lowercase variants for compatibility
   if have kwriteconfig6; then
     cfg_write kwinrc org.kde.kdecoration2 Library "$KWIN_DECORATION_PLUGIN" || true
-    cfg_write kwinrc org.kde.kdecoration2 Theme "$AUR_THEME" || true
+   # cfg_write kwinrc org.kde.kdecoration2 Theme "$AUR_THEME" || true
     cfg_write kwinrc org.kde.kdecoration2 library "$KWIN_DECORATION_PLUGIN" || true
-    cfg_write kwinrc org.kde.kdecoration2 theme "$AUR_THEME" || true
+   #  cfg_write kwinrc org.kde.kdecoration2 theme "$AUR_THEME" || true
     # macOS-like layout on the left
     cfg_write kwinrc org.kde.kdecoration2 ButtonsOnLeft "XIA" || true
     cfg_write kwinrc org.kde.kdecoration2 ButtonsOnRight "" || true
