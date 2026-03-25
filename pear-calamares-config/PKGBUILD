@@ -1,6 +1,6 @@
 # Maintainer: Alexandru Balan
 pkgname=pear-calamares-config
-pkgver=26.2.5
+pkgver=26.3
 pkgrel=1
 pkgdesc="Calamares config files for pearOS and NiceC0re based Systems"
 arch=('any')
