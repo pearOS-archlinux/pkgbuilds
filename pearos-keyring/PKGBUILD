@@ -1,0 +1,23 @@
+pkgname=pearos-keyring
+pkgver=26.3
+pkgrel=1
+pkgdesc="GPG keys for the pearOS package repository"
+arch=('any')
+url="https://pearos.xyz" # Schimbă cu URL-ul tău real
+license=('GPL')
+install=$pkgname.install
+source=("pearos.gpg"
+        "pearos-trusted")
+sha256sums=('d1894ac3f50b7350439cb6adeca41d489a050a93f1af183fd4686904065236a5'
+            '0e29a071a436b5e0a8941c11046f67e2792ecceb0a25011599fe1af54c53ac45')
+
+package() {
+    # Creăm directoarele necesare
+    install -d "${pkgdir}/usr/share/pacman/keyrings/"
+
+    # Instalăm cheia publică
+    install -m644 "${srcdir}/pearos.gpg" "${pkgdir}/usr/share/pacman/keyrings/pearos.gpg"
+    
+    # Instalăm fișierul de trust (opțional, dar bun pentru evidență)
+    install -m644 "${srcdir}/pearos-trusted" "${pkgdir}/usr/share/pacman/keyrings/pearos-trusted"
+}

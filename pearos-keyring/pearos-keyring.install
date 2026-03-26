@@ -1,0 +1,11 @@
+post_install() {
+    if [ -x /usr/bin/pacman-key ]; then
+        pacman-key --init
+        pacman-key --add /usr/share/pacman/keyrings/pearos.gpg
+        pacman-key --lsign-key 4C1A9F3C131ACA95
+    fi
+}
+
+post_upgrade() {
+    post_install
+}
