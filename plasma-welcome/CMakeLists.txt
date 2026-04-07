@@ -23,11 +23,13 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/styles.qss")
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/assets" "$<TARGET_FILE_DIR:pearos-welcome>/assets"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/styles.qss" "$<TARGET_FILE_DIR:pearos-welcome>/styles.qss"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/list_windows.js" "$<TARGET_FILE_DIR:pearos-welcome>/list_windows.js"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/updater.sh" "$<TARGET_FILE_DIR:pearos-welcome>/updater.sh"
   )
 elseif(EXISTS "${CMAKE_SOURCE_DIR}/styles.qss")
   add_custom_command(TARGET pearos-welcome POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_SOURCE_DIR}/assets" "$<TARGET_FILE_DIR:pearos-welcome>/assets"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/styles.qss" "$<TARGET_FILE_DIR:pearos-welcome>/styles.qss"
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/list_windows.js" "$<TARGET_FILE_DIR:pearos-welcome>/list_windows.js"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/updater.sh" "$<TARGET_FILE_DIR:pearos-welcome>/updater.sh"
   )
 endif()

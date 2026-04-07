@@ -28,6 +28,7 @@
 #include <QNetworkReply>
 #include <QEventLoop>
 #include <QDirIterator>
+#include <QDateTime>
 
 #include <functional>
 #include <cstdio>
@@ -239,22 +240,72 @@ static void screen_resolution(const QString &) {
         << QStringLiteral("--page=displays"));
 }
 
-static void update_system(const QString &desktop) {
-    if (desktop == "xfce")
-        QProcess::startDetached("xfce4-terminal", QStringList() << "-x" << "pkexec" << "pacman" << "--noconfirm" << "-Syu");
-    else if (desktop == "gnome")
-        QProcess::startDetached("gnome-terminal", QStringList() << "--" << "sudo" << "pacman" << "--noconfirm" << "-Syu");
-    else if (desktop == "kde") {
+static QString bash_single_quoted(const QString &s) {
+    QString r = s;
+    r.replace(QLatin1Char('\''), QLatin1String("'\\''"));
+    return QLatin1Char('\'') + r + QLatin1Char('\'');
+}
+
+static QString escape_for_sh_double_quotes(const QString &s) {
+    QString e;
+    for (QChar c : s) {
+        if (c == QLatin1Char('\\') || c == QLatin1Char('"') || c == QLatin1Char('$') || c == QLatin1Char('`'))
+            e += QLatin1Char('\\');
+        e += c;
+    }
+    return e;
+}
+
+/** Shell command: pacman-key setup (root), updater.sh, reset plasma appletsrc, log cp, then full upgrade. */
+static QString update_system_prep_and_upgrade_cmd() {
+    const QString gpgPath = get_base_path() + QStringLiteral("/assets/pearos.gpg");
+    const QString updaterPath = get_base_path() + QStringLiteral("/updater.sh");
+    const QString logPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
+        + QStringLiteral("/update-")
+        + QDateTime::currentDateTime().toString(QStringLiteral("yyyyMMdd-HHmmss"))
+        + QStringLiteral(".log");
+
+    const QString inner = QStringLiteral("pacman-key --init && pacman-key --add %1 && pacman-key --lsign-key 4C1A9F3C131ACA95 && pacman-key --populate")
+        .arg(bash_single_quoted(gpgPath));
+    const QString rootKeyBlock = QStringLiteral("pkexec sh -c \"%1\"").arg(escape_for_sh_double_quotes(inner));
+
+    return QStringLiteral("%1 && bash %2 && rm -rf \"$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc\" && "
+        "cp -r /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc \"$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc\" >> %3 && "
+        "pkexec pacman --noconfirm -Syu")
+        .arg(rootKeyBlock)
+        .arg(bash_single_quoted(updaterPath))
+        .arg(bash_single_quoted(logPath));
+}
+
+static void run_shell_in_desktop_terminal(const QString &desktop, const QString &cmd) {
+    if (desktop == QLatin1String("xfce"))
+        QProcess::startDetached(QStringLiteral("xfce4-terminal"), QStringList()
+            << QStringLiteral("-x") << QStringLiteral("bash") << QStringLiteral("-lc") << cmd);
+    else if (desktop == QLatin1String("gnome"))
+        QProcess::startDetached(QStringLiteral("gnome-terminal"), QStringList()
+            << QStringLiteral("--") << QStringLiteral("bash") << QStringLiteral("-lc") << cmd);
+    else if (desktop == QLatin1String("kde")) {
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.remove("LD_LIBRARY_PATH");
-        env.remove("QT_PLUGIN_PATH");
-        env.remove("QT_QPA_PLATFORM_THEME");
+        env.remove(QStringLiteral("LD_LIBRARY_PATH"));
+        env.remove(QStringLiteral("QT_PLUGIN_PATH"));
+        env.remove(QStringLiteral("QT_QPA_PLATFORM_THEME"));
         QProcess p;
         p.setProcessEnvironment(env);
-        p.setProgram("konsole");
-        p.setArguments(QStringList() << "-e" << "pkexec" << "pacman" << "--noconfirm" << "-Syu");
+        p.setProgram(QStringLiteral("konsole"));
+        p.setArguments(QStringList() << QStringLiteral("-e") << QStringLiteral("bash") << QStringLiteral("-lc") << cmd);
         p.startDetached();
     }
+}
+
+static void update_system(const QString &desktop) {
+    run_shell_in_desktop_terminal(desktop, update_system_prep_and_upgrade_cmd());
+}
+
+/** Același flux ca Update System, apoi re-sincronizare pearos-liquidgel. */
+static void fix_liquid_gel_after_upgrade(const QString &desktop) {
+    const QString cmd = update_system_prep_and_upgrade_cmd()
+        + QStringLiteral(" && pkexec pacman -Sy pearos-liquidgel --noconfirm");
+    run_shell_in_desktop_terminal(desktop, cmd);
 }
 
 // Run bash bin_install in background (no calamares "running" check per your changes)
@@ -547,8 +598,8 @@ public:
         });
         grid1->addWidget(update_mirrorlist_button, row, col); if (++col == 2) { col = 0; row++; }
 
-        QPushButton *fixLiquidBtn = addButton("Fix Liquid Gel ", "view-refresh", false, []() {
-            QProcess::startDetached("pkexec", QStringList() << "pacman" << "-Sy" << "pearos-liquidgel" << "--noconfirm");
+        QPushButton *fixLiquidBtn = addButton("Fix Liquid Gel ", "view-refresh", false, [this]() {
+            fix_liquid_gel_after_upgrade(desktop_env);
         });
         grid1->addWidget(fixLiquidBtn, row, col); if (++col == 2) { col = 0; row++; }
 

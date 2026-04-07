@@ -3,7 +3,7 @@
 pkgname=plasma-welcome
 _realname=plasma-welcome
 pkgdesc="pearOS NiceC0re Welcome application (C++/Qt6)"
-pkgver=26.02.05
+pkgver=26.4.0
 pkgrel=1
 arch=('x86_64')
 depends=('qt6-base' 'qt6-webengine' 'pearos-liquidgel')
@@ -39,5 +39,7 @@ package() {
   install -Dm644 assets/patreon.png "${pkgdir}/usr/share/pearos-welcome/assets/patreon.png"
   install -Dm644 assets/paypal.svg "${pkgdir}/usr/share/pearos-welcome/assets/paypal.svg"
   install -Dm644 assets/youtube.svg "${pkgdir}/usr/share/pearos-welcome/assets/youtube.svg"
+  install -Dm644 assets/pearos.gpg "${pkgdir}/usr/share/pearos-welcome/assets/pearos.gpg"
+  install -Dm755 updater.sh "${pkgdir}/usr/share/pearos-welcome/updater.sh"
   install -Dm644 list_windows.js "${pkgdir}/usr/share/pearos-welcome/list_windows.js"
 }
