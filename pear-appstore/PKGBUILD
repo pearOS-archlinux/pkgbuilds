@@ -1,5 +1,5 @@
 pkgname=pearos-appstore
-pkgver=0.2.29
+pkgver=26.4.0
 pkgrel=1
 pkgdesc="pearOS AppStore - modern Qt6 app store for Arch-based systems"
 arch=('x86_64')
