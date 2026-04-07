@@ -256,8 +256,9 @@ static QString escape_for_sh_double_quotes(const QString &s) {
     return e;
 }
 
-/** Shell command: pacman-key setup (root), updater.sh, reset plasma appletsrc, log cp, then full upgrade. */
-static QString update_system_prep_and_upgrade_cmd() {
+/** Shell command: pacman-key setup (root), updater.sh, reset plasma appletsrc, log cp, then full upgrade.
+ *  @param alsoResyncLiquidGel dacă true, un singur pkexec pentru -Syu și pearos-liquidgel (mai puține prompturi). */
+static QString update_system_prep_and_upgrade_cmd(bool alsoResyncLiquidGel = false) {
     const QString gpgPath = get_base_path() + QStringLiteral("/assets/pearos.gpg");
     const QString updaterPath = get_base_path() + QStringLiteral("/updater.sh");
     const QString logPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)
@@ -269,12 +270,18 @@ static QString update_system_prep_and_upgrade_cmd() {
         .arg(bash_single_quoted(gpgPath));
     const QString rootKeyBlock = QStringLiteral("pkexec sh -c \"%1\"").arg(escape_for_sh_double_quotes(inner));
 
+    const QString pacmanTail = alsoResyncLiquidGel
+        ? QStringLiteral("pkexec sh -c \"%1\"").arg(escape_for_sh_double_quotes(
+            QStringLiteral("pacman --noconfirm -Syu && pacman -Sy pearos-liquidgel --noconfirm")))
+        : QStringLiteral("pkexec pacman --noconfirm -Syu");
+
     return QStringLiteral("%1 && bash %2 && rm -rf \"$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc\" && "
         "cp -r /etc/skel/.config/plasma-org.kde.plasma.desktop-appletsrc \"$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc\" >> %3 && "
-        "pkexec pacman --noconfirm -Syu")
+        "%4")
         .arg(rootKeyBlock)
         .arg(bash_single_quoted(updaterPath))
-        .arg(bash_single_quoted(logPath));
+        .arg(bash_single_quoted(logPath))
+        .arg(pacmanTail);
 }
 
 static void run_shell_in_desktop_terminal(const QString &desktop, const QString &cmd) {
@@ -301,11 +308,60 @@ static void update_system(const QString &desktop) {
     run_shell_in_desktop_terminal(desktop, update_system_prep_and_upgrade_cmd());
 }
 
-/** Același flux ca Update System, apoi re-sincronizare pearos-liquidgel. */
+/** Același flux ca Update System, apoi pearos-liquidgel în același pkexec cu -Syu (o singură parolă în plus față de chei). */
 static void fix_liquid_gel_after_upgrade(const QString &desktop) {
-    const QString cmd = update_system_prep_and_upgrade_cmd()
-        + QStringLiteral(" && pkexec pacman -Sy pearos-liquidgel --noconfirm");
-    run_shell_in_desktop_terminal(desktop, cmd);
+    run_shell_in_desktop_terminal(desktop, update_system_prep_and_upgrade_cmd(true));
+}
+
+static void send_pacman_keys_desktop_notification(const QString &message) {
+    QProcess::startDetached(QStringLiteral("notify-send"),
+        QStringList() << QStringLiteral("pearOS Welcome") << message);
+}
+
+/** Dacă /usr/share/extras/keys_set nu e 1, rulează (ca root) pacman-key; pune 1 doar dacă lsign reușește. */
+static void maybe_init_pacman_keys_on_startup() {
+    const QString keysPath = QStringLiteral("/usr/share/extras/keys_set");
+    QFile f(keysPath);
+    if (f.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        const QString v = QString::fromUtf8(f.readAll()).trimmed();
+        if (v == QStringLiteral("1")) {
+            send_pacman_keys_desktop_notification(QStringLiteral("Pacman Keys are OK"));
+            return;
+        }
+    }
+
+    send_pacman_keys_desktop_notification(QStringLiteral("Pacman Keys are updating..."));
+
+    static const char keysInitScript[] = R"EOS(
+KEYS=/usr/share/extras/keys_set
+v=$(tr -d '[:space:]' < "$KEYS" 2>/dev/null || true)
+[ "$v" = "1" ] && exit 0
+pacman-key --init
+pacman-key --populate
+pacman-key --recv-keys 4C1A9F3C131ACA95 --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key 4C1A9F3C131ACA95
+ex=$?
+[ "$ex" -eq 0 ] && echo 1 > "$KEYS"
+exit "$ex"
+)EOS";
+
+    QProcess *proc = new QProcess(qApp);
+    QObject::connect(proc, &QProcess::errorOccurred, proc, [proc](QProcess::ProcessError err) {
+        if (err == QProcess::FailedToStart) {
+            send_pacman_keys_desktop_notification(QStringLiteral("Error updating pacman-keys"));
+            proc->deleteLater();
+        }
+    });
+    QObject::connect(proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), proc,
+        [proc](int exitCode, QProcess::ExitStatus exitStatus) {
+            if (exitStatus != QProcess::NormalExit || exitCode != 0)
+                send_pacman_keys_desktop_notification(QStringLiteral("Error updating pacman-keys"));
+            else
+                send_pacman_keys_desktop_notification(QStringLiteral("Pacman Keys are OK"));
+            proc->deleteLater();
+        });
+    proc->start(QStringLiteral("pkexec"), QStringList()
+        << QStringLiteral("bash") << QStringLiteral("-c") << QString::fromUtf8(keysInitScript));
 }
 
 // Run bash bin_install in background (no calamares "running" check per your changes)
@@ -692,6 +748,7 @@ int main(int argc, char *argv[]) {
 
     WelcomeWindow w;
     w.show();
+    QTimer::singleShot(0, []() { maybe_init_pacman_keys_on_startup(); });
     QTimer::singleShot(0, &w, [&w]() { if (is_online()) w.openWhatsNew(); });
 
     return app.exec();

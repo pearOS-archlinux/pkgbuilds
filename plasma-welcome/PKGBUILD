@@ -3,7 +3,7 @@
 pkgname=plasma-welcome
 _realname=plasma-welcome
 pkgdesc="pearOS NiceC0re Welcome application (C++/Qt6)"
-pkgver=26.4.0
+pkgver=26.4.1
 pkgrel=1
 arch=('x86_64')
 depends=('qt6-base' 'qt6-webengine' 'pearos-liquidgel')
