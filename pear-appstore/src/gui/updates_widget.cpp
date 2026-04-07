@@ -71,7 +71,7 @@ public:
         updateButton->setObjectName("discoverDownloadButton");
         updateButton->setFixedSize(58, 28);
         connect(updateButton, &QPushButton::clicked, this, [this]() {
-            emit updateRequested(m_info.name);
+            emit updateRequested(m_info.name, m_info.repository);
         });
 
         auto* rowLayout = new QHBoxLayout();
@@ -92,7 +92,7 @@ public:
     }
 
 signals:
-    void updateRequested(const QString& packageName);
+    void updateRequested(const QString& packageName, const QString& repository);
 
 private:
     UpdateInfo m_info;
@@ -435,8 +435,8 @@ void UpdatesWidget::onUpdateAll() {
     PackageManager::instance().updateAllPackages();
 }
 
-void UpdatesWidget::onUpdateSingle(const QString& packageName) {
-    PackageManager::instance().updatePackage(packageName);
+void UpdatesWidget::onUpdateSingle(const QString& packageName, const QString& repository) {
+    PackageManager::instance().updatePackage(packageName, repository);
 }
 
 QString UpdatesWidget::formatSize(qint64 bytes) {

@@ -73,7 +73,7 @@ private:
     
 private slots:
     void onUpdateAll();
-    void onUpdateSingle(const QString& packageName);
+    void onUpdateSingle(const QString& packageName, const QString& repository);
     void onSearchTextChanged(const QString& text);
     void onOperationStarted(const QString& message);
     void onOperationOutput(const QString& output);

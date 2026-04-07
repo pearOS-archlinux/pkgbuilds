@@ -58,6 +58,7 @@ private:
     
     Helper m_helper = Helper::Pacman;
     std::unique_ptr<QProcess> m_process;
+    QString m_combinedOutputBuffer;
     mutable std::mutex m_mutex;
     
 private slots:

@@ -141,6 +141,7 @@ void PackageManager::executeCommand(const QString& command, const QStringList& a
     
     // Merge stdout and stderr so we capture all output
     m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_combinedOutputBuffer.clear();
     
     Logger::debug(QString("Executing: %1 %2").arg(command, args.join(" ")));
     
@@ -159,16 +160,23 @@ void PackageManager::executeCommand(const QString& command, const QStringList& a
 }
 
 void PackageManager::onProcessFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    QString output = m_process->readAllStandardOutput();
-    QString error = m_process->readAllStandardError();
+    QString remainingOutput = m_process->readAll();
+    if (!remainingOutput.isEmpty()) {
+        m_combinedOutputBuffer.append(remainingOutput);
+        emit operationOutput(remainingOutput);
+    }
+    const QString combinedOutput = m_combinedOutputBuffer.trimmed();
     
     if (exitStatus == QProcess::NormalExit && exitCode == 0) {
         Logger::info("Operation completed successfully");
         emit operationCompleted(true, "Operation completed successfully");
     } else {
         Logger::error(QString("Operation failed with exit code %1").arg(exitCode));
-        Logger::error(QString("Error output: %1").arg(error));
-        emit operationCompleted(false, QString("Operation failed: %1").arg(error));
+        Logger::error(QString("Command output: %1").arg(combinedOutput.isEmpty() ? "<empty>" : combinedOutput));
+        QString failureReason = combinedOutput.isEmpty()
+            ? QString("Operation failed with exit code %1. Check authentication and package state.").arg(exitCode)
+            : QString("Operation failed: %1").arg(combinedOutput);
+        emit operationCompleted(false, failureReason);
     }
 }
 
@@ -182,6 +190,7 @@ void PackageManager::onProcessOutput() {
     // Since we merged channels, only read stdout (which includes stderr)
     QString output = m_process->readAll();
     if (!output.isEmpty()) {
+        m_combinedOutputBuffer.append(output);
         Logger::debug(QString("Process output: %1").arg(output.trimmed()));
         emit operationOutput(output);
     }
