@@ -1,7 +1,7 @@
 pkgname=pearos-settings
 destname="/etc"
 destnameusr="/usr"
-pkgver=26.4.12
+pkgver=26.4.13
 pkgrel=1
 pkgdesc="Settings for pearOS NiceC0re"
 arch=('x86_64')
