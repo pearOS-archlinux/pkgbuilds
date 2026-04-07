@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
 #include <cairo/cairo-xlib.h>
 #include <cairo/cairo.h>
 #include <librsvg/rsvg.h>
@@ -26,7 +27,7 @@
 
 namespace {
 
-// Dimensiuni normale (hover = 1000ms pentru mărire)
+// Normal dimensions (hover = 1000ms for increase)
 const int NOTCH_WIDTH   = 170;
 const int NOTCH_HEIGHT  =  30;
 
@@ -44,12 +45,12 @@ const int BAR_MARGIN      =  4;
 const int VISUALIZER_SHIFT_LEFT = 10;
 const int ART_SIZE = 18;
 const int ART_OFFSET_RIGHT = 13;
-const int ART_OFFSET_RIGHT_HOVER = 12;   // la hover, album mai în dreapta (px extra)
-const double ART_SCALE_HOVER = 1.15;      // la hover, album puțin mai mare (factor)
+const int ART_OFFSET_RIGHT_HOVER = 12;   // at hover, album slightly to the right (px extra)
+const double ART_SCALE_HOVER = 1.15;      // at hover, album slightly larger (factor)
 const int VISUALIZER_EXTRA_LEFT_HOVER = 22;  // la hover, bare mai în stânga (px)
 const double ART_CORNER_RADIUS = 4.0;
 const double BAR_PHASE[4] = { 0, 1.57, 3.14, 4.71 };
-// Layout hover: titlu, artist, bară progres, butoane
+// Layout hover: title, artist, progress bar, buttons
 const int PROGRESS_BAR_W = 200;
 const int PROGRESS_BAR_H = 5;
 const int CTRL_BUTTON_W = 36;
@@ -60,7 +61,7 @@ const int ARTIST_FONT_SIZE = 9;
 const int MAX_TITLE_PX = 240;
 const int MAX_ARTIST_PX = 220;
 const double BAR_COLOR[4][3] = {
-    { 0.75, 0.75, 0.75 },  // gri deschis
+    { 0.75, 0.75, 0.75 },  // light gray
     { 0.85, 0.85, 0.85 },
     { 0.70, 0.70, 0.70 },
     { 0.80, 0.80, 0.80 },
@@ -372,7 +373,7 @@ static long time_ms() {
     return static_cast<long>(tv.tv_sec) * 1000 + static_cast<long>(tv.tv_usec) / 1000;
 }
 
-// Caută un visual 32-bit pentru transparență (compositor)
+// Find a 32-bit visual for transparency (compositor)
 bool find_argb_visual(Display* dpy, int screen, XVisualInfo* out_vinfo) {
     XVisualInfo templ;
     templ.screen = screen;
@@ -457,7 +458,7 @@ static void open_settings_window() {
 
     XStoreName(g_dpy, g_settings_win, "PearOS Notch Settings");
 
-    // tratează corect închiderea ferestrei de către WM
+    // handle window closing correctly by WM
     if (!g_wm_delete_settings)
         g_wm_delete_settings = XInternAtom(g_dpy, "WM_DELETE_WINDOW", False);
     if (g_wm_delete_settings)
@@ -647,7 +648,32 @@ void set_skip_taskbar_and_pager(Display* dpy, Window win) {
     XFlush(dpy);
 }
 
-// Încearcă să dezactiveze decorațiile ferestrei (borders/titlebar) la WM-uri care respectă _MOTIF_WM_HINTS.
+// Set hints to reduce/eliminate shadows and borders added by some WMs/compositors.
+void set_borderless_hints(Display* dpy, Window win) {
+    Atom wm_type = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", False);
+    Atom wm_type_dock = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_DOCK", False);
+    if (wm_type && wm_type_dock) {
+        Atom type = wm_type_dock;
+        XChangeProperty(dpy, win, wm_type, XA_ATOM, 32, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(&type), 1);
+    }
+
+    // Some WMs respect explicitly _KDE_NET_WM_SHADOW: empty list => no shadow.
+    Atom kde_shadow = XInternAtom(dpy, "_KDE_NET_WM_SHADOW", False);
+    if (kde_shadow) {
+        XChangeProperty(dpy, win, kde_shadow, XA_CARDINAL, 32, PropModeReplace, nullptr, 0);
+    }
+
+    // Picom/compton: 0 = disable shadow for the current window.
+    Atom compton_shadow = XInternAtom(dpy, "_COMPTON_SHADOW", False);
+    if (compton_shadow) {
+        unsigned long no_shadow = 0;
+        XChangeProperty(dpy, win, compton_shadow, XA_CARDINAL, 32, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(&no_shadow), 1);
+    }
+}
+
+// Try to disable the window decorations (borders/titlebar) on WMs that respect _MOTIF_WM_HINTS.
 void disable_window_decorations(Display* dpy, Window win) {
     struct MotifWmHints {
         unsigned long flags;
@@ -663,7 +689,7 @@ void disable_window_decorations(Display* dpy, Window win) {
     MotifWmHints hints{};
     const unsigned long MWM_HINTS_DECORATIONS = 1L << 1;
     hints.flags = MWM_HINTS_DECORATIONS;
-    hints.decorations = 0;  // fără decorații
+    hints.decorations = 0;  // without decorations
 
     XChangeProperty(dpy,
                     win,
@@ -721,7 +747,7 @@ void paint(Display* dpy, Window win, int w, int h, int notch_w, int notch_h) {
     cairo_set_source_rgba(cr, 0, 0, 0, 0);
     cairo_paint(cr);
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-    cairo_save(cr);  // stare „curată” pentru a restaura înainte de controale
+    cairo_save(cr);  // clean state for restoring before controls
 
     if (g_svg && notch_w > 0 && notch_h > 0) {
         double svg_w = 372, svg_h = 52;
@@ -795,9 +821,9 @@ void paint(Display* dpy, Window win, int w, int h, int notch_w, int notch_h) {
     }
 
         if (h > NOTCH_HEIGHT) {
-        cairo_restore(cr);  // înapoi la stare curată (fără clip/transform/sursă de la album art)
+        cairo_restore(cr);  // back to clean state (without clip/transform/album art source)
         cairo_save(cr);
-        cairo_reset_clip(cr);  // asigură că nu mai există niciun clip activ înainte de UI player
+        cairo_reset_clip(cr);  // ensure there is no active clip before UI player
         std::string title, artist;
         int64_t length_us = 0, position_us = 0;
         bool playing = false;
@@ -852,10 +878,10 @@ void paint(Display* dpy, Window win, int w, int h, int notch_w, int notch_h) {
         }
 
         if (playing) {
-            cairo_reset_clip(cr);  // siguranță: controalele nu sunt decupate de nimic
+            cairo_reset_clip(cr);  // safety: controls are not cut off by anything
             cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
-            // fundal semi-transparent pentru zona de player (pt. contrast peste album art)
+            // semi-transparent background for player area (for contrast over album art)
             double bg_top = artist_y - 4;
             double bg_height = (button_y + CTRL_BUTTON_H) - bg_top + 6;
             if (bg_top < 0) bg_top = 0;
@@ -886,7 +912,7 @@ void paint(Display* dpy, Window win, int w, int h, int notch_w, int notch_h) {
             for (int i = 0; i < 3; i++) {
                 double bx = btn_left + i * (CTRL_BUTTON_W + CTRL_BUTTON_GAP);
 
-                // spațiu interior pentru icon (lăsăm un mic padding)
+                // internal space for icon (leave a small padding)
                 double pad_x = 4.0;
                 double pad_y = 3.0;
                 double iw = CTRL_BUTTON_W - 2 * pad_x;
@@ -905,7 +931,7 @@ void paint(Display* dpy, Window win, int w, int h, int notch_w, int notch_h) {
                 }
             }
         }
-        // buton de setări (mereu vizibil la hover mare) - dreapta sus
+        // settings button (always visible at large hover) - top right
         if (g_svg_settings) {
             double icon_size = 14.0;
             double margin = 6.0;
@@ -947,7 +973,7 @@ int main() {
         return 1;
     }
 
-    // încarcă SVG-urile pentru controale din /usr/share/extras/pearos-notch (sau cwd la develop)
+    // load SVG files for controls from /usr/share/extras/pearos-notch (or cwd at develop)
     std::string extras_dir(EXTRAS_DATADIR);
     auto get_ctrl_svg_path = [&extras_dir](const char* name) -> std::string {
         std::string p = extras_dir + "/" + name;
@@ -999,19 +1025,16 @@ int main() {
         &attrs
     );
 
-    // Nume fereastră clar pentru WM / instrumente
     XStoreName(g_dpy, g_win, "pearOS Notch");
 
-    // WM_CLASS pentru potriviri în KWin scripts / reguli de fereastră
     XClassHint class_hint;
     class_hint.res_name  = const_cast<char*>("pearos-notch");
     class_hint.res_class = const_cast<char*>("pearOS Notch");
     XSetClassHint(g_dpy, g_win, &class_hint);
 
-    // Încearcă să elimine complet borders/titlebar la WM-urile care respectă _MOTIF_WM_HINTS.
     disable_window_decorations(g_dpy, g_win);
+    set_borderless_hints(g_dpy, g_win);
 
-    // Nu apărea în taskbar / Alt+Tab (pe lângă override_redirect)
     set_skip_taskbar_and_pager(g_dpy, g_win);
 
     XMapWindow(g_dpy, g_win);

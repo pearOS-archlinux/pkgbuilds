@@ -17,34 +17,32 @@ g++ -std=c++17 -O2 -Wall -Wextra -o "build/$OUT_BIN" "$SRC" \
 echo "Build completed: ./build/$OUT_BIN"
 
 cp PKGBUILD build/
-echo "PKGBUILD copiat în ./build/"
+echo "PKGBUILD copied in ./build/"
 
-# Copiem și fișierele sursă necesare de PKGBUILD în build/,
-# ca makepkg să le poată găsi ca surse locale.
 for f in main.cpp notch.svg prev.svg next.svg play.svg pause.svg settings.svg pearos-notch.desktop pearos-notch.png pearos-notch.install; do
   if [ -f "$f" ]; then
     cp "$f" build/
   fi
 done
-echo "Sursele necesare PKGBUILD au fost copiate în ./build/."
+echo "Required sources for PKGBUILD have been copied in ./build/."
 
 if [ -f build/Makefile ]; then
-  echo "Makefile deja există în ./build/."
+  echo "Makefile already exists in ./build/."
 elif [ -f Makefile ]; then
   cp Makefile build/
-  echo "Makefile copiat în ./build/."
+  echo "Makefile copied in ./build/."
 else
   cat > build/Makefile << 'EOF'
 .PHONY: pkg clean
 
 pkg:
-	@echo "Creare pachet Arch cu makepkg..."
+	@echo "Creating Arch package with makepkg..."
 	@makepkg -sf
 
 clean:
-	@echo "Șterg directorul build/..."
+	@echo "Deleting build/ directory..."
 	@cd .. && rm -rf build
 EOF
-  echo "Makefile generat în ./build/."
+  echo "Makefile generated in ./build/."
 fi
 
