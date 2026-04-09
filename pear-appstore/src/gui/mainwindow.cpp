@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
     setAttribute(Qt::WA_TranslucentBackground);
+    qApp->setOverrideCursor(Qt::ArrowCursor);
     setCursor(Qt::ArrowCursor);
 
     setupUi();
@@ -132,7 +133,7 @@ void MainWindow::setupHeader() {
     m_headerWidget = new QWidget(this);
     m_headerWidget->setObjectName("titleBarDrag");
     m_headerWidget->setFixedHeight(8);
-    m_headerWidget->setCursor(Qt::SizeAllCursor);
+    m_headerWidget->setCursor(Qt::ArrowCursor);
     m_headerWidget->setStyleSheet("QWidget#titleBarDrag { background: transparent; }");
 }
 
@@ -352,7 +353,7 @@ void MainWindow::setupSidebar() {
 
     m_sidebarSearch = new QLineEdit(this);
     m_sidebarSearch->setObjectName("sidebarSearch");
-    m_sidebarSearch->setCursor(Qt::IBeamCursor);
+    m_sidebarSearch->setCursor(Qt::ArrowCursor);
     m_sidebarSearch->setPlaceholderText("Search");
     m_sidebarSearch->setMinimumHeight(32);
     m_sidebarSearch->setClearButtonEnabled(true);
@@ -841,22 +842,10 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
             auto* me = static_cast<QMouseEvent*>(event);
             Qt::Edges edges = resizeEdgesAt(me->pos());
             if (edges != Qt::Edges()) {
-                if ((edges & Qt::LeftEdge) && (edges & Qt::TopEdge)) {
-                    m_centralWidget->setCursor(Qt::SizeFDiagCursor);
-                } else if ((edges & Qt::RightEdge) && (edges & Qt::TopEdge)) {
-                    m_centralWidget->setCursor(Qt::SizeBDiagCursor);
-                } else if ((edges & Qt::LeftEdge) && (edges & Qt::BottomEdge)) {
-                    m_centralWidget->setCursor(Qt::SizeBDiagCursor);
-                } else if ((edges & Qt::RightEdge) && (edges & Qt::BottomEdge)) {
-                    m_centralWidget->setCursor(Qt::SizeFDiagCursor);
-                } else if ((edges & Qt::LeftEdge) || (edges & Qt::RightEdge)) {
-                    m_centralWidget->setCursor(Qt::SizeHorCursor);
-                } else {
-                    m_centralWidget->setCursor(Qt::SizeVerCursor);
-                }
+                m_centralWidget->setCursor(Qt::ArrowCursor);
                 return false;
             }
-            m_centralWidget->unsetCursor();
+            m_centralWidget->setCursor(Qt::ArrowCursor);
         } else if (event->type() == QEvent::MouseButtonPress) {
             auto* me = static_cast<QMouseEvent*>(event);
             if (me->button() == Qt::LeftButton) {

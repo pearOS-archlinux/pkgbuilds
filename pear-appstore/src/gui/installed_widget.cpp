@@ -58,7 +58,7 @@ void InstalledWidget::setupUi() {
     mainLayout->addLayout(headerLayout);
     
     // Filter
-    m_filterInput->setCursor(Qt::IBeamCursor);
+    m_filterInput->setCursor(Qt::ArrowCursor);
     m_filterInput->setPlaceholderText("Filter installed packages...");
     m_filterInput->setMinimumHeight(35);
     m_filterInput->setClearButtonEnabled(true);

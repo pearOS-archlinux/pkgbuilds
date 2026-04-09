@@ -201,7 +201,7 @@ void UpdatesWidget::setupUi() {
     auto* contentLayout = new QVBoxLayout(contentPage);
     contentLayout->setContentsMargins(0, 0, 0, 0);
     
-    m_searchInput->setCursor(Qt::IBeamCursor);
+    m_searchInput->setCursor(Qt::ArrowCursor);
     m_searchInput->setPlaceholderText("Search updates...");
     m_searchInput->setMinimumHeight(35);
     m_searchInput->setClearButtonEnabled(true);
@@ -277,7 +277,7 @@ void UpdatesWidget::setupUi() {
     logLayout->setContentsMargins(20, 0, 20, 20);
     logLayout->setSpacing(8);
     
-    m_logViewer->setCursor(Qt::IBeamCursor);
+    m_logViewer->setCursor(Qt::ArrowCursor);
     m_logViewer->setReadOnly(true);
     m_logViewer->setMaximumHeight(200);
     m_logViewer->setStyleSheet(

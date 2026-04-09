@@ -59,7 +59,7 @@ PackageDetailsDialog::PackageDetailsDialog(const PackageInfo& info, QWidget* par
         setWindowFlags(Qt::Widget);
     }
     setupUi();
-    m_descriptionText->setCursor(Qt::IBeamCursor);
+    m_descriptionText->setCursor(Qt::ArrowCursor);
     loadAppStreamAsync();
     if (embedded && m_closeButton) {
         m_closeButton->hide();
@@ -239,7 +239,7 @@ void PackageDetailsDialog::setupUi() {
         m_dependenciesText->setReadOnly(true);
         m_dependenciesText->setStyleSheet("background: transparent; border: none; color: #a1a1aa; font-size: 12px;");
         m_dependenciesText->setMaximumHeight(200);
-        m_dependenciesText->setCursor(Qt::IBeamCursor);
+        m_dependenciesText->setCursor(Qt::ArrowCursor);
         depsLayout->addWidget(m_dependenciesText);
         mainLayout->addWidget(m_depsContent);
     }
@@ -378,7 +378,7 @@ void PackageDetailsDialog::setupUi() {
         "    color: #a1a1aa;"
         "}"
     );
-    m_logViewer->setCursor(Qt::IBeamCursor);
+    m_logViewer->setCursor(Qt::ArrowCursor);
     logLayout->addWidget(m_logViewer);
     
     m_logWidget->setStyleSheet("QWidget { background-color: #1e2123; }");
