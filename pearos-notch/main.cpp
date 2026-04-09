@@ -671,6 +671,25 @@ void set_borderless_hints(Display* dpy, Window win) {
         XChangeProperty(dpy, win, compton_shadow, XA_CARDINAL, 32, PropModeReplace,
                         reinterpret_cast<const unsigned char*>(&no_shadow), 1);
     }
+
+    // KWin: disable blur-behind and background contrast regions to avoid gray halo artifacts.
+    Atom kde_blur_region = XInternAtom(dpy, "_KDE_NET_WM_BLUR_BEHIND_REGION", False);
+    if (kde_blur_region) {
+        XChangeProperty(dpy, win, kde_blur_region, XA_CARDINAL, 32, PropModeReplace, nullptr, 0);
+    }
+
+    Atom kde_contrast_region = XInternAtom(dpy, "_KDE_NET_WM_BACKGROUND_CONTRAST_REGION", False);
+    if (kde_contrast_region) {
+        XChangeProperty(dpy, win, kde_contrast_region, XA_CARDINAL, 32, PropModeReplace, nullptr, 0);
+    }
+
+    // EWMH hint: asks compositor to bypass compositing optimizations for this overlay.
+    Atom bypass = XInternAtom(dpy, "_NET_WM_BYPASS_COMPOSITOR", False);
+    if (bypass) {
+        unsigned long always = 2;
+        XChangeProperty(dpy, win, bypass, XA_CARDINAL, 32, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(&always), 1);
+    }
 }
 
 // Try to disable the window decorations (borders/titlebar) on WMs that respect _MOTIF_WM_HINTS.
@@ -1008,7 +1027,8 @@ int main() {
     bool use_alpha = find_argb_visual(g_dpy, screen, &vinfo);
 
     XSetWindowAttributes attrs;
-    attrs.override_redirect = True;
+    // Managed window so KWin Window Rules can match it.
+    attrs.override_redirect = False;
     attrs.event_mask = ExposureMask | StructureNotifyMask | EnterWindowMask | LeaveWindowMask | ButtonPressMask;
     attrs.background_pixel = 0;
     attrs.border_pixel = 0;
@@ -1025,11 +1045,18 @@ int main() {
         &attrs
     );
 
-    XStoreName(g_dpy, g_win, "pearOS Notch");
+    XStoreName(g_dpy, g_win, "pearos-notch");
+    Atom utf8_string = XInternAtom(g_dpy, "UTF8_STRING", False);
+    Atom net_wm_name = XInternAtom(g_dpy, "_NET_WM_NAME", False);
+    if (utf8_string && net_wm_name) {
+        const char* wm_name = "pearos-notch";
+        XChangeProperty(g_dpy, g_win, net_wm_name, utf8_string, 8, PropModeReplace,
+                        reinterpret_cast<const unsigned char*>(wm_name), std::strlen(wm_name));
+    }
 
     XClassHint class_hint;
     class_hint.res_name  = const_cast<char*>("pearos-notch");
-    class_hint.res_class = const_cast<char*>("pearOS Notch");
+    class_hint.res_class = const_cast<char*>("pearos-notch");
     XSetClassHint(g_dpy, g_win, &class_hint);
 
     disable_window_decorations(g_dpy, g_win);

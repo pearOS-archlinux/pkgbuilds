@@ -1,5 +1,5 @@
 pkgname=pearos-notch
-pkgver=26.4.0
+pkgver=26.4.2
 pkgrel=1
 pkgdesc="Notch for your screen"
 arch=('x86_64')
