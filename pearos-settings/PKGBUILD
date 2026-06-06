@@ -1,7 +1,7 @@
 pkgname=pearos-settings
 destname="/etc"
 destnameusr="/usr"
-pkgver=26.4.13
+pkgver=26.5.2
 pkgrel=1
 pkgdesc="Settings for pearOS NiceC0re"
 arch=('x86_64')
@@ -9,7 +9,22 @@ url="https://github.com/pearOS-archlinux"
 license=('GPL3')
 makedepends=('git')
 
-depends=('konsole')
+depends=('konsole'
+         'pearos-notes'
+         'pearos-appstore'
+         'pearos-calendar'
+         'pearos-contacts'
+         'pearos-notch'
+         'pearos-todo'
+         'pearos-calculator'
+         'pearos-liquidgel'
+         'pearos-window-borders'
+         'pearos-livecd-desktop'
+         'pearos-icons'
+         'pearos-keyring'
+         'pearos-zshconfig'
+         'system-overview'
+         'kmail')
 
 optdepends=('paru: an AUR helper'
             'neofetch: screenfetch utility'
