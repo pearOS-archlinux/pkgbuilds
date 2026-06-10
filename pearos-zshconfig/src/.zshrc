@@ -1,0 +1,1 @@
+/home/alxb421/Desktop/pkgbuilds/pearos-zshconfig/.zshrc

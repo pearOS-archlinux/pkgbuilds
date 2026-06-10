@@ -1,0 +1,53 @@
+pkgname=pear-dock
+pkgver=26.6
+pkgrel=1
+pkgdesc="macOS Tahoe-style dock for KDE Plasma 6"
+arch=('x86_64')
+url="https://github.com/alxb421/pear-dock"
+license=('GPL-2.0-or-later')
+depends=(
+    'plasma-workspace'
+    'qt6-base'
+    'qt6-declarative'
+    'ki18n'
+    'kservice'
+    'kwindowsystem'
+    'kwin'
+    'plasma-activities'
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'gcc'
+    'qt6-base'
+    'ki18n'
+    'kservice'
+    'kwindowsystem'
+    'kconfig'
+    'kconfigwidgets'
+    'kcoreaddons'
+    'kitemmodels'
+    'plasma-workspace'
+    'kwin'
+    'plasma-activities'
+)
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SHA256SUM_PLACEHOLDER')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr
+    make -C build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make -C build DESTDIR="$pkgdir" install
+
+    local skinsrc="$srcdir/$pkgname-$pkgver/package/contents/skins"
+    local skindst="$pkgdir/usr/share/plasma/plasmoids/PearDock/contents/skins"
+    install -dm755 "$skindst"
+    cp -r "$skinsrc"/. "$skindst/"
+}

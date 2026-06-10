@@ -1,6 +1,6 @@
 pkgname=pearos-icons
 destnameusr="/usr"
-pkgver=26.4.0
+pkgver=26.5.0
 pkgrel=1
 pkgdesc="Icons for pearOS"
 arch=('x86_64')

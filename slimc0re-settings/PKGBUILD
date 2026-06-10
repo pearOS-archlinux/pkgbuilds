@@ -1,0 +1,30 @@
+pkgname=slimc0re-settings
+destname="/etc"
+#destnameusr="/usr"
+pkgver=26.4.0
+pkgrel=1
+pkgdesc="Settings for pearOS SlimC0re"
+arch=('x86_64')
+url="https://github.com/pearOS-archlinux"
+license=('GPL3')
+makedepends=('git')
+
+depends=('konsole')
+
+optdepends=('paru: an AUR helper'
+            'neofetch: screenfetch utility'
+            'cups: printing support'
+            'system-config-printer: CUPS status applet'
+            'bluemdevil: bluetooth manager')
+conflicts=()
+provides=("${pkgname}")
+options=(!strip !emptydirs)
+source=(${pkgname}::"git+${url}/${pkgname}")
+sha256sums=('SKIP')
+
+package() {
+	install -dm755 ${pkgdir}${destname}
+	install -dm755 ${pkgdir}${destnameusr}
+	cp -r ${srcdir}/${pkgname}${destname}/* ${pkgdir}${destname}
+	cp -r ${srcdir}/${pkgname}${destnameusr}/* ${pkgdir}${destnameusr}
+}
