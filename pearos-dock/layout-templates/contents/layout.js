@@ -23,7 +23,6 @@ for (var i = 0; i < currentWidgets.length; i++) {
     currentWidgets[i].remove();
 }
 
-// Añadimos solo el gestor de tareas (IconTasks)
 panel.addWidget("PearDock");
 
 // --- FORZADO DE RECARGA ---

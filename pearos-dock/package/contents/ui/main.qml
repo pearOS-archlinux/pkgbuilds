@@ -159,6 +159,10 @@ PlasmoidItem {
           return true;
       }
 
+      if (taskList.pearLauncherItem && taskList.pearLauncherItem.zoomFactor > 1.01) {
+          return true;
+      }
+
       for (let i = 0; i < taskRepeater.count; ++i) {
           let item = taskRepeater.itemAt(i);
           if (item && item.zoomFactor > 1.01) {
@@ -180,6 +184,16 @@ PlasmoidItem {
     Plasmoid.onUserConfiguringChanged: {
         if (Plasmoid.userConfiguring && groupDialog !== null) {
             groupDialog.visible = false;
+        }
+    }
+
+    // Global keyboard shortcut (set in Configure > Keyboard shortcut) opens launcher in search mode
+    Connections {
+        target: Plasmoid
+        function onActivated() {
+            if (taskList.pearLauncherItem) {
+                taskList.pearLauncherItem.openSearch()
+            }
         }
     }
 
@@ -555,6 +569,9 @@ PlasmoidItem {
         // --- CUSTOM SKIN ---
         Component {
             id: customSkin
+            Item {
+                anchors.fill: parent
+
             BorderImage {
                 id: dockBackground
                 cache: true
@@ -562,6 +579,18 @@ PlasmoidItem {
                 asynchronous: true
                 visible: source.toString() !== ""
                 opacity: 1.0
+
+                layer.enabled: tasks.skinParams.liquidGelEffect === true
+                layer.effect: ShaderEffect {
+                    property real cornerRadius:       tasks.skinParams.blurRadius || 24
+                    property real edgeSize:           (tasks.skinParams.blurRadius || 24) * 1.5
+                    property real refractionStrength: tasks.skinParams.refractionStrength || 8.0
+                    property real rgbFringing:        tasks.skinParams.rgbFringing || 2.0
+                    property real itemWidth:          width
+                    property real itemHeight:         height
+                    vertexShader:   Qt.resolvedUrl("shaders/dock_prism.vert.qsb")
+                    fragmentShader: Qt.resolvedUrl("shaders/dock_prism.frag.qsb")
+                }
                 readonly property real spacing: Kirigami.Units.largeSpacing
                 readonly property real topMarginSkin: tasks.containmentItem.height - 76
                 readonly property real leftMarginSkin: tasks.containmentItem.width - 76
@@ -771,6 +800,8 @@ PlasmoidItem {
                     }
                 }
             }
+
+            } // end Item wrapper
         }
 
         TriangleMouseFilter {
@@ -815,11 +846,12 @@ PlasmoidItem {
                 readonly property real _sigma: _baseSize * Plasmoid.configuration.amplitud
 
                 property Item pearFinderItem: pearFinder
+                property Item pearLauncherItem: pearLauncher
                 property Item pearSeparatorItem: dockSeparator
                 property Item pearFolderArcItem: pearFolderArc
                 property Item pearTrashItem: pearTrash
 
-                readonly property int dockLauncherCount: pearFinderItem ? 1 : 0
+                readonly property int dockLauncherCount: (pearFinderItem ? 1 : 0) + (pearLauncherItem ? 1 : 0)
                 readonly property int afterTasksCount: (pearFolderArcItem ? 1 : 0) + (pearTrashItem ? 1 : 0)
                 readonly property int totalDockItems: dockLauncherCount + taskRepeater.count + afterTasksCount
                 readonly property real totalWidth: totalDockItems * _baseSize
@@ -841,6 +873,13 @@ PlasmoidItem {
                        total += tasks.vertical
                        ? pearFinderItem.height
                        : pearFinderItem.width;
+                   }
+
+                   if (pearLauncherItem) {
+                       if (total > 0) total += spacing;
+                       total += tasks.vertical
+                       ? pearLauncherItem.height
+                       : pearLauncherItem.width;
                    }
 
                    for (let i = 0; i < taskRepeater.count; ++i) {
@@ -879,6 +918,9 @@ PlasmoidItem {
                    let pos = centerOffset;
                    if (pearFinderItem) {
                        pos += (tasks.vertical ? pearFinderItem.height : pearFinderItem.width) + spacing;
+                   }
+                   if (pearLauncherItem) {
+                       pos += (tasks.vertical ? pearLauncherItem.height : pearLauncherItem.width) + spacing;
                    }
                    for (let i = 0; i < taskRepeater.count; ++i) {
                        let item = taskRepeater.itemAt(i);
@@ -994,6 +1036,13 @@ PlasmoidItem {
                     dockIndex: 0
                 }
 
+                DockIntegrations.PearLauncher {
+                    id: pearLauncher
+                    tasksRoot: tasks
+                    dockRef: taskList
+                    dockIndex: 1
+                }
+
                 Repeater {
                     id: taskRepeater
                     model: tasksModel
@@ -1030,6 +1079,12 @@ PlasmoidItem {
                                 pos += (tasks.vertical
                                     ? taskList.pearFinderItem.height
                                     : taskList.pearFinderItem.width) + taskList.spacing;
+                            }
+
+                            if (taskList.pearLauncherItem) {
+                                pos += (tasks.vertical
+                                    ? taskList.pearLauncherItem.height
+                                    : taskList.pearLauncherItem.width) + taskList.spacing;
                             }
 
                             for (let i = 0; i < index; ++i) {

@@ -1,9 +1,9 @@
-pkgname=pear-dock
+pkgname=pearos-dock
 pkgver=26.6
 pkgrel=1
 pkgdesc="macOS Tahoe-style dock for KDE Plasma 6"
 arch=('x86_64')
-url="https://github.com/alxb421/pear-dock"
+url="https://github.com/pearOS-ArchLinux/pearos-dock"
 license=('GPL-2.0-or-later')
 depends=(
     'plasma-workspace'

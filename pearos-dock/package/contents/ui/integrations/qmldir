@@ -1,4 +1,5 @@
 module integrations
 PearFinder 1.0 PearFinder.qml
+PearLauncher 1.0 PearLauncher.qml
 PearFolderArc 1.0 PearFolderArc.qml
 PearTrash 1.0 PearTrash.qml

@@ -8,6 +8,9 @@ QtObject {
     property string imagetask: "tasks.svgz"
     property bool blur: true
     property int blurRadius: 24
+    property bool liquidGelEffect: true
+    property real refractionStrength: 8.0
+    property real rgbFringing: 2.0
     property int positionTaskIndicator: 3
     property int leftMargin: 20
     property int topMargin: 20
