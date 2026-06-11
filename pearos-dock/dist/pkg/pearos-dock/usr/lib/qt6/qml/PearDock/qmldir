@@ -1,0 +1,8 @@
+module PearDock
+linktarget wavetaskplugin
+optional plugin wavetaskplugin
+classname PearDockPlugin
+typeinfo wavetask.qmltypes
+prefer :/qt/qml/PearDock/
+depends QtQuick
+

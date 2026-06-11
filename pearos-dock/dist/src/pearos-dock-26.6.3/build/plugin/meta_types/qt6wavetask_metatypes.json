@@ -1,0 +1,632 @@
+[
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "auto"
+                    }
+                ],
+                "className": "Backend",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 38,
+                        "name": "MiddleClickAction",
+                        "values": [
+                            "None",
+                            "Close",
+                            "NewInstance",
+                            "ToggleMinimized",
+                            "ToggleGrouping",
+                            "BringToCurrentDesktop"
+                        ]
+                    }
+                ],
+                "lineNumber": 32,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parent",
+                                "type": "QObject*"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 52,
+                        "name": "jumpListActions",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "showAllPlaces",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "parent",
+                                "type": "QObject*"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 53,
+                        "name": "placesActions",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parent",
+                                "type": "QObject*"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 54,
+                        "name": "recentDocumentActions",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "action",
+                                "type": "QAction*"
+                            }
+                        ],
+                        "index": 6,
+                        "isConst": true,
+                        "lineNumber": 55,
+                        "name": "setActionGroup",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "window",
+                                "type": "QWindow*"
+                            },
+                            {
+                                "name": "enable",
+                                "type": "bool"
+                            },
+                            {
+                                "name": "x",
+                                "type": "int"
+                            },
+                            {
+                                "name": "y",
+                                "type": "int"
+                            },
+                            {
+                                "name": "w",
+                                "type": "int"
+                            },
+                            {
+                                "name": "h",
+                                "type": "int"
+                            },
+                            {
+                                "name": "radius",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 56,
+                        "name": "setBlurBehind",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "item",
+                                "type": "QQuickItem*"
+                            }
+                        ],
+                        "index": 8,
+                        "isConst": true,
+                        "lineNumber": 58,
+                        "name": "globalRect",
+                        "returnType": "QRect"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 9,
+                        "isConst": true,
+                        "lineNumber": 60,
+                        "name": "isApplication",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "pid",
+                                "type": "qint64"
+                            }
+                        ],
+                        "index": 10,
+                        "isConst": true,
+                        "lineNumber": 62,
+                        "name": "parentPid",
+                        "returnType": "qint64"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 64,
+                        "name": "tryDecodeApplicationsUrl",
+                        "returnType": "QUrl"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 65,
+                        "name": "applicationCategories",
+                        "returnType": "QStringList"
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "Backend",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 68,
+                        "name": "addLauncher",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 70,
+                        "name": "showAllPlaces",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 73,
+                        "name": "handleRecentDocumentAction",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "backend.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "Backend",
+                "lineNumber": 34,
+                "object": true,
+                "qualifiedClassName": "SmartLauncher::Backend",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "count",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 53,
+                        "name": "countChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "countVisible",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 54,
+                        "name": "countVisibleChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "progress",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 55,
+                        "name": "progressChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "progressVisible",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 56,
+                        "name": "progressVisibleChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "urgent",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 57,
+                        "name": "urgentChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 59,
+                        "name": "reloadRequested",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 60,
+                        "name": "launcherRemoved",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "uri",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "properties",
+                                "type": "QMap<QString,QVariant>"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 63,
+                        "name": "update",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    },
+                    {
+                        "access": "protected",
+                        "name": "QDBusContext"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "smartlauncherbackend.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "SmartLauncherItem"
+                    }
+                ],
+                "className": "Item",
+                "lineNumber": 19,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 24,
+                        "name": "launcherUrl",
+                        "notify": "launcherUrlChanged",
+                        "override": false,
+                        "read": "launcherUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "virtual": false,
+                        "write": "setLauncherUrl"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 26,
+                        "name": "count",
+                        "notify": "countChanged",
+                        "override": false,
+                        "read": "count",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 27,
+                        "name": "countVisible",
+                        "notify": "countVisibleChanged",
+                        "override": false,
+                        "read": "countVisible",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 28,
+                        "name": "progress",
+                        "notify": "progressChanged",
+                        "override": false,
+                        "read": "progress",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 29,
+                        "name": "progressVisible",
+                        "notify": "progressVisibleChanged",
+                        "override": false,
+                        "read": "progressVisible",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 30,
+                        "name": "urgent",
+                        "notify": "urgentChanged",
+                        "override": false,
+                        "read": "urgent",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "virtual": false
+                    }
+                ],
+                "qualifiedClassName": "SmartLauncher::Item",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "launcherUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 46,
+                        "name": "launcherUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "count",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 48,
+                        "name": "countChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "countVisible",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 49,
+                        "name": "countVisibleChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "progress",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 50,
+                        "name": "progressChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "progressVisible",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 51,
+                        "name": "progressVisibleChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "urgent",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 52,
+                        "name": "urgentChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "smartlauncheritem.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "PearDockPlugin",
+                "lineNumber": 3,
+                "object": true,
+                "qualifiedClassName": "PearDockPlugin",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQmlExtensionPlugin"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "plugin.cpp",
+        "outputRevision": 69
+    }
+]

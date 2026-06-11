@@ -1,0 +1,4 @@
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/wavetask_autogen/include/moc_backend.cpp.json
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/wavetask_autogen/include/moc_smartlauncherbackend.cpp.json
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/wavetask_autogen/include/moc_smartlauncheritem.cpp.json
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/wavetask_autogen/include/plugin.moc.json

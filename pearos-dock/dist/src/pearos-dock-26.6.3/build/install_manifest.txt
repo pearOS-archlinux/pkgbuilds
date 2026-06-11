@@ -1,0 +1,114 @@
+/usr/lib/qt6/qml/PearDock/libwavetaskplugin.so
+/usr/lib/qt6/qml/PearDock/qmldir
+/usr/lib/qt6/qml/PearDock/wavetask.qmltypes
+/usr/share/plasma/plasmoids/PearDock/contents/assets/basher.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/blocker.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/boarder.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/bomber.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/bridger.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/bridger_walk.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/climber.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/digger.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/drownfall.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/drownwalk.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/exit.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/faller.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/floater.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/miner.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/reader.xpm
+/usr/share/plasma/plasmoids/PearDock/contents/assets/readme
+/usr/share/plasma/plasmoids/PearDock/contents/assets/rocketlauncher.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/sitter.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/slider.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/splat.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/superman.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/tumble.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/waiter.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/walker.png
+/usr/share/plasma/plasmoids/PearDock/contents/assets/xmas-walker.png
+/usr/share/plasma/plasmoids/PearDock/contents/config/config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/config/main.xml
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/Config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/bg.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/bgl.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/bgr.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/bgt.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/readme
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Light/tasks.svgz
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/Config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/bg.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/bgl.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/bgr.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/bgt.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/readme
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Big Sur Night/tasks.svgz
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/bg.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/bgl.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/bgr.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/bgt.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/tasks.svgz
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe Dark/Config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/Config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/bg.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/bgl.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/bgr.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/bgt.png
+/usr/share/plasma/plasmoids/PearDock/contents/skins/Tahoe/tasks.svgz
+/usr/share/plasma/plasmoids/PearDock/contents/skins/readme
+/usr/share/plasma/plasmoids/PearDock/contents/ui/AudioStream.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/Badge.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/GroupDialog.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/GroupExpanderOverlay.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/MouseHandler.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/PipeWireThumbnail.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/PlayerController.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/PulseAudio.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ScrollableTextWrapper.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/TaskProgressOverlay.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ToolTipDelegate.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ToolTipInstance.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ToolTipWindowMouseArea.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/code/DockZoom.js
+/usr/share/plasma/plasmoids/PearDock/contents/ui/code/TaskTools.js
+/usr/share/plasma/plasmoids/PearDock/contents/ui/code/LayoutMetrics.js
+/usr/share/plasma/plasmoids/PearDock/contents/ui/config.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/PearFinder.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/PearFolderArc.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/PearTrash.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/launchertools.js
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/qmldir
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/AppsIcon.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/appicons/launchpad_dark.png
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/appicons/launchpad_light.png
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/LICENSE
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/code.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/file-text.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/globe.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/image.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/pwr.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/search.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/star.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/stngs.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/tool.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/feather/trash-2.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/LICENSE
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/cpu.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/film.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/flask-conical.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/gamepad-2.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/icons/lucide/paperclip.svg
+/usr/share/plasma/plasmoids/PearDock/contents/ui/integrations/PearLauncher.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/TaskList.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/Task.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ContextMenu.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/TaskBadgeOverlay.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ConfigBehavior.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/shaders/dock_prism.vert
+/usr/share/plasma/plasmoids/PearDock/contents/ui/shaders/dock_prism.vert.qsb
+/usr/share/plasma/plasmoids/PearDock/contents/ui/shaders/dock_prism.frag.qsb
+/usr/share/plasma/plasmoids/PearDock/contents/ui/shaders/dock_prism.frag
+/usr/share/plasma/plasmoids/PearDock/contents/ui/main.qml
+/usr/share/plasma/plasmoids/PearDock/contents/ui/ConfigAppearance.qml
+/usr/share/plasma/plasmoids/PearDock/metadata.json
+/usr/share/plasma/layout-templates/PearDock.panel/contents/layout.js
+/usr/share/plasma/layout-templates/PearDock.panel/metadata.json

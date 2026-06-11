@@ -1,0 +1,154 @@
+{
+    "classes": [
+        {
+            "className": "Backend",
+            "lineNumber": 34,
+            "object": true,
+            "qualifiedClassName": "SmartLauncher::Backend",
+            "signals": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "count",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 0,
+                    "lineNumber": 53,
+                    "name": "countChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "countVisible",
+                            "type": "bool"
+                        }
+                    ],
+                    "index": 1,
+                    "lineNumber": 54,
+                    "name": "countVisibleChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "progress",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 2,
+                    "lineNumber": 55,
+                    "name": "progressChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "progressVisible",
+                            "type": "bool"
+                        }
+                    ],
+                    "index": 3,
+                    "lineNumber": 56,
+                    "name": "progressVisibleChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "urgent",
+                            "type": "bool"
+                        }
+                    ],
+                    "index": 4,
+                    "lineNumber": 57,
+                    "name": "urgentChanged",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 5,
+                    "lineNumber": 59,
+                    "name": "reloadRequested",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 6,
+                    "lineNumber": 60,
+                    "name": "launcherRemoved",
+                    "returnType": "void"
+                }
+            ],
+            "slots": [
+                {
+                    "access": "private",
+                    "arguments": [
+                        {
+                            "name": "uri",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "properties",
+                            "type": "QMap<QString,QVariant>"
+                        }
+                    ],
+                    "index": 7,
+                    "lineNumber": 63,
+                    "name": "update",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                },
+                {
+                    "access": "protected",
+                    "name": "QDBusContext"
+                }
+            ]
+        }
+    ],
+    "inputFile": "smartlauncherbackend.h",
+    "outputRevision": 69
+}

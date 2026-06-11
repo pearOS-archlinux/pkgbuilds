@@ -1,0 +1,10 @@
+-I
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin
+-I
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin
+-I
+/usr/lib/qt6/qml
+--resource
+/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/.qt/rcc/qmake_PearDock.qrc
+--module
+PearDock
