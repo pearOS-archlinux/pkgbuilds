@@ -1,6 +1,6 @@
 # Maintainer: Alexandru Balan <alxb421@gmail.com>
 pkgname=kscreenlocker
-pkgver=26.5.2
+pkgver=26.5.3
 pkgrel=1
 pkgdesc="pearOS dark theme for KDE Screen Locker"
 arch=('x86_64')

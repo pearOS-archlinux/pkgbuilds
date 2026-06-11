@@ -3,7 +3,7 @@ Type = Package
 Operation = Install
 Operation = Upgrade
 Target = plasma-desktop
-Target = pearos-lockscreen
+Target = kscreenlocker
 
 [Action]
 Description = Applying pearOS lockscreen theme...
