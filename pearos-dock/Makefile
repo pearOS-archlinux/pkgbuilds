@@ -1,5 +1,5 @@
 VERSION  := 26.6
-PKGNAME  := pear-dock
+PKGNAME  := pearos-dock
 PKGREL   := 1
 DISTDIR  := dist
 SRCDIR   := $(PKGNAME)-$(VERSION)
