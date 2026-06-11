@@ -1,0 +1,19 @@
+# Maintainer: Alexandru Balan
+pkgname=pearos-muternvf
+pkgver=26.6
+pkgrel=1
+pkgdesc="Mutern Fonts for pearOS"
+arch=('any')
+url="https://github.com/pearOS-archlinux/pearos-muternvf"
+license=('GPL3')
+depends=('systemd')
+
+source=("muternvf::git+$url")
+sha256sums=('SKIP')
+
+package() {
+    cd "$srcdir/muternvf"
+    install -d "$pkgdir/usr/share/fonts/TTF"
+    install -m644 "$srcdir/muternvf/"*.ttf "$pkgdir/usr/share/fonts/TTF/"
+    
+}
