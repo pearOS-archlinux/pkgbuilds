@@ -1,0 +1,7 @@
+post_install() {
+    systemctl enable bootsound.service
+}
+
+post_remove() {
+    systemctl disable bootsound.service
+}

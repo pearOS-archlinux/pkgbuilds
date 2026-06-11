@@ -1,0 +1,24 @@
+# Maintainer: Alexandru Balan
+pkgname=pearos-bootsound
+pkgver=26.6
+pkgrel=1
+pkgdesc="Boot sound service for pearOS"
+arch=('any')
+url="https://github.com/Pear-Project/pearos-boot-sound"
+license=('GPL3')
+depends=('systemd')
+install=$pkgname.install
+
+# Am eliminat #tag=v26.6 pentru a clona branch-ul implicit (main)
+source=("pearos-boot-sound::git+$url")
+sha256sums=('SKIP')
+
+package() {
+    cd "$srcdir/pearos-boot-sound"
+    
+    install -d "$pkgdir/usr/lib/systemd/system"
+    install -d "$pkgdir/boot"
+
+    install -Dm644 bootsound.service "$pkgdir/usr/lib/systemd/system/bootsound.service"
+    install -Dm644 boot-sound.wav "$pkgdir/boot/boot-sound.wav"
+}
