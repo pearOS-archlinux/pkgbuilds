@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/PearDock">
-    <file alias="qmldir">/home/alxb421/Desktop/pkgbuilds/pearos-dock/dist/src/pearos-dock-26.6.3/build/plugin/qmldir</file>
-  </qresource>
-</RCC>
-
