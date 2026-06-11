@@ -170,6 +170,66 @@
       <label>Show a reflection of the icon below the dock</label>
       <default>true</default>
     </entry>
+    <entry name="launcherIcon" type="String">
+      <label>Path or icon name for the launcher dock button</label>
+      <default>/usr/share/extras/launchpad.svg</default>
+    </entry>
+    <entry name="skinBlur" type="Bool">
+      <label>Enable background blur</label>
+      <default>true</default>
+    </entry>
+    <entry name="skinBlurRadius" type="Int">
+      <label>Blur radius</label>
+      <default>24</default>
+    </entry>
+    <entry name="skinLiquidGelEffect" type="Bool">
+      <label>Enable liquid-gel refraction + RGB prism effect</label>
+      <default>true</default>
+    </entry>
+    <entry name="skinRefractionStrength" type="Double">
+      <label>Refraction strength</label>
+      <default>8.0</default>
+    </entry>
+    <entry name="skinRgbFringing" type="Double">
+      <label>RGB prism fringing amount</label>
+      <default>2.0</default>
+    </entry>
+    <entry name="skinPositionTaskIndicator" type="Int">
+      <label>Task indicator dot position</label>
+      <default>3</default>
+    </entry>
+    <entry name="skinLeftMargin" type="Int">
+      <label>Skin inside left margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinTopMargin" type="Int">
+      <label>Skin inside top margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinRightMargin" type="Int">
+      <label>Skin inside right margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinBottomMargin" type="Int">
+      <label>Skin inside bottom margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinOutsideLeftMargin" type="Int">
+      <label>Skin outside left margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinOutsideTopMargin" type="Int">
+      <label>Skin outside top margin</label>
+      <default>10</default>
+    </entry>
+    <entry name="skinOutsideRightMargin" type="Int">
+      <label>Skin outside right margin</label>
+      <default>20</default>
+    </entry>
+    <entry name="skinOutsideBottomMargin" type="Int">
+      <label>Skin outside bottom margin</label>
+      <default>-8</default>
+    </entry>
   </group>
 
 </kcfg>

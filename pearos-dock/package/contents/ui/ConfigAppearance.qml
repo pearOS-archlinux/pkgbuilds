@@ -19,8 +19,6 @@ import QtQuick.Layouts
 KCMUtils.SimpleKCM {
     id: root
 
-    // Probes whether PulseAudio.qml (which imports org.kde.plasma.private.volume)
-    // can load; controls whether the audio-stream config options are enabled.
     Component {
         id: pulseAudioProbe
         PulseAudio {}
@@ -46,11 +44,17 @@ KCMUtils.SimpleKCM {
     property string cfg_skinName: Plasmoid.configuration.skinName
     property alias cfg_showReflection: showReflection.checked
 
+    // ── Margin overrides ─────────────────────────────────────────────────────
+    property alias cfg_skinLeftMargin:         skinLeftMarginSlider.value
+    property alias cfg_skinTopMargin:          skinTopMarginSlider.value
+    property alias cfg_skinRightMargin:        skinRightMarginSlider.value
+    property alias cfg_skinBottomMargin:       skinBottomMarginSlider.value
+    property alias cfg_skinOutsideLeftMargin:  skinOutsideLeftMarginSlider.value
+    property alias cfg_skinOutsideTopMargin:   skinOutsideTopMarginSlider.value
+    property alias cfg_skinOutsideRightMargin: skinOutsideRightMarginSlider.value
+    property alias cfg_skinOutsideBottomMargin: skinOutsideBottomMarginSlider.value
+
     Component.onCompleted: {
-        /* Don't rely on bindings for checking the radiobuttons
-           When checking forceStripes, the condition for the checked value for the allow stripes button
-           became true and that one got checked instead, stealing the checked state for the just clicked checkbox
-        */
         if (maxStripes.value === 1) {
             forbidStripes.checked = true;
         } else if (!Plasmoid.configuration.forceStripes && maxStripes.value > 1) {
@@ -67,7 +71,6 @@ KCMUtils.SimpleKCM {
             Kirigami.FormData.label: "Skin:"
             textRole: "fileName"
 
-            // Usamos una propiedad local para rastrear si ya sincronizamos el valor inicial
             property bool initialSyncDone: false
 
             model: FolderListModel {
@@ -76,42 +79,35 @@ KCMUtils.SimpleKCM {
                 showDirs: true
                 showFiles: false
                 showDotAndDotDot: false
-                // Forzamos a que el modelo se mantenga actualizado
                 sortField: FolderListModel.Name
             }
 
             onActivated: {
-                // Actualizamos la configuración al elegir manualmente
                 cfg_skinName = textAt(currentIndex)
             }
 
             function syncValue() {
-                // Si el modelo ya tiene carpetas y aún no hemos sincronizado...
                 if (count > 0 && !initialSyncDone) {
                     for (let i = 0; i < count; i++) {
                         if (textAt(i) === cfg_skinName) {
                             currentIndex = i;
-                            initialSyncDone = true; // Marcamos como hecho
+                            initialSyncDone = true;
                             return;
                         }
                     }
                 }
             }
 
-            // Monitoreamos cuando el modelo termine de cargar los archivos
             Connections {
                 target: folderModel
-                // 'status' cambia a FolderListModel.Ready cuando termina de leer el disco
                 function onStatusChanged() {
                     if (folderModel.status === FolderListModel.Ready) {
                         skinChooser.syncValue();
                     }
                 }
-                // Por si acaso los archivos ya estaban listos
                 function onCountChanged() { skinChooser.syncValue() }
             }
 
-            // Intentar sincronizar al completar por si el disco es ultra rápido
             Component.onCompleted: syncValue()
         }
         // --- Selector de Tamaño de Iconos ---
@@ -128,7 +124,6 @@ KCMUtils.SimpleKCM {
                 stepSize: 2
                 snapMode: QQC2.Slider.SnapOnRelease
 
-                // El valor inicial vendrá de la configuración de Plasma
                 value: Plasmoid.configuration.iconSize || 44
             }
 
@@ -151,7 +146,6 @@ KCMUtils.SimpleKCM {
                 to: 100
                 stepSize: 5
                 snapMode: QQC2.Slider.SnapOnRelease
-                // El valor inicial viene de la configuración (ej: 90% -> 0.9)
                 value: Plasmoid.configuration.magnification || 50
             }
             QQC2.Label {
@@ -176,7 +170,6 @@ KCMUtils.SimpleKCM {
                 stepSize: 0.1
                 snapMode: QQC2.Slider.SnapOnRelease
 
-                // El valor inicial vendrá de la configuración de Plasma
                 value: Plasmoid.configuration.amplitud || 1.8
             }
 
@@ -192,6 +185,54 @@ KCMUtils.SimpleKCM {
             id: showReflection
             Kirigami.FormData.label: i18nc("@label", "Reflection:")
             text: i18nc("@option:check", "Show icon reflection below dock")
+        }
+
+        // ── Inside margins ────────────────────────────────────────────────────
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Inside Margins") }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Left:")
+            QQC2.Slider { id: skinLeftMarginSlider; from: 0; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinLeftMargin }
+            QQC2.Label  { text: Math.round(skinLeftMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Top:")
+            QQC2.Slider { id: skinTopMarginSlider; from: 0; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinTopMargin }
+            QQC2.Label  { text: Math.round(skinTopMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Right:")
+            QQC2.Slider { id: skinRightMarginSlider; from: 0; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinRightMargin }
+            QQC2.Label  { text: Math.round(skinRightMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Bottom:")
+            QQC2.Slider { id: skinBottomMarginSlider; from: 0; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinBottomMargin }
+            QQC2.Label  { text: Math.round(skinBottomMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+
+        // ── Outside margins ───────────────────────────────────────────────────
+        Item { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Outside Margins") }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Left:")
+            QQC2.Slider { id: skinOutsideLeftMarginSlider; from: -30; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinOutsideLeftMargin }
+            QQC2.Label  { text: Math.round(skinOutsideLeftMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Top:")
+            QQC2.Slider { id: skinOutsideTopMarginSlider; from: -30; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinOutsideTopMargin }
+            QQC2.Label  { text: Math.round(skinOutsideTopMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Right:")
+            QQC2.Slider { id: skinOutsideRightMarginSlider; from: -30; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinOutsideRightMargin }
+            QQC2.Label  { text: Math.round(skinOutsideRightMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Bottom:")
+            QQC2.Slider { id: skinOutsideBottomMarginSlider; from: -30; to: 60; stepSize: 1; Layout.fillWidth: true; value: Plasmoid.configuration.skinOutsideBottomMargin }
+            QQC2.Label  { text: Math.round(skinOutsideBottomMarginSlider.value) + "px"; color: Kirigami.Theme.disabledTextColor; Layout.preferredWidth: Kirigami.Units.gridUnit * 2 }
         }
 
         QQC2.CheckBox {

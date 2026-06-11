@@ -150,7 +150,7 @@ Item {
             id: dockIcon
             width: iconBox.baseRenderSize
             height: iconBox.baseRenderSize
-            source: "/usr/share/extras/launchpad.svg"
+            source: Qt.resolvedUrl("icons/appicons/launchpad_light.png")
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: tasksRoot.isTopPanel ? 0 : Kirigami.Units.smallSpacing
@@ -233,9 +233,7 @@ Item {
         flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
         location: "Floating"
         hideOnWindowDeactivate: true
-        backgroundHints: launcherDialog.searchOnlyMode
-            ? PlasmaCore.Dialog.NoBackground
-            : PlasmaCore.Dialog.StandardBackground
+        backgroundHints: PlasmaCore.Dialog.StandardBackground
 
         property bool isClosing: false
         property bool searchOnlyMode: false   // true = keyboard shortcut (search-only, centered); false = click (full view, above dock)
@@ -322,26 +320,7 @@ Item {
                 if (event.key === Qt.Key_Escape) launcherDialog.closeAnimated()
             }
 
-            // Pill background — visible only in search-only mode
-            Rectangle {
-                id: pillBg
-                anchors.fill: parent
-                visible: launcherDialog.searchOnlyMode
-                z: -1
-                radius: launcherMain.searching ? 20 : height / 2
-                color: Qt.rgba(Kirigami.Theme.backgroundColor.r,
-                               Kirigami.Theme.backgroundColor.g,
-                               Kirigami.Theme.backgroundColor.b, 0.97)
-                Behavior on radius { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-                layer.enabled: visible
-                layer.effect: DropShadow {
-                    horizontalOffset: 0; verticalOffset: 10
-                    radius: 28; samples: 57
-                    color: Qt.rgba(0, 0, 0, 0.40)
-                }
-            }
-
-            // offset by dialogSvg margins so PlasmaCore.Dialog chrome aligns (disabled in search mode)
+            // offset by dialogSvg margins so content aligns with the SVG border (not needed in search mode)
             Item {
                 id: svgOffsetItem
                 x: launcherDialog.searchOnlyMode ? 0 : -dialogSvg.margins.left
@@ -398,18 +377,33 @@ Item {
 
                             Kirigami.Icon {
                                 id: searchModeBtn
-                                source: launcherDialog.searchOnlyMode ? "search" : "search"
-                                isMask: true
+                                source: {
+                                    if (launcherDialog.searchOnlyMode)
+                                        return Qt.resolvedUrl("icons/feather/search.svg")
+                                    if (searchIconArea.containsMouse && launcherMain.showAllApps)
+                                        return "go-previous-symbolic"
+                                    return launcherMain.showAllApps
+                                        ? Qt.resolvedUrl("icons/AppsIcon.svg")
+                                        : "favorite-symbolic"
+                                }
+                                isMask: launcherDialog.searchOnlyMode || launcherMain.showAllApps
                                 color: launcherMain.dimmedTextColor
                                 Layout.preferredWidth:  20
                                 Layout.preferredHeight: 20
                                 MouseArea {
+                                    id: searchIconArea
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
+                                    enabled: !launcherDialog.searchOnlyMode
                                     onClicked: {
-                                        launcherDialog.searchOnlyMode = true
-                                        searchTextField.forceActiveFocus()
+                                        if (launcherMain.showAllApps) {
+                                            launcherDialog.searchOnlyMode = true
+                                            searchTextField.forceActiveFocus()
+                                        } else {
+                                            launcherMain.showAllApps = true
+                                            searchTextField.forceActiveFocus(Qt.BacktabFocusReason)
+                                        }
                                     }
                                 }
                             }

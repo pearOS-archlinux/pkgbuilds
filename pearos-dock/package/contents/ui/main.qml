@@ -131,15 +131,18 @@ PlasmoidItem {
                   imagetask: skinFolderUrl + config.imagetask,
                   blur: config.blur,
                   blurRadius: config.blurRadius,
+                  liquidGelEffect: config.liquidGelEffect,
+                  refractionStrength: config.refractionStrength,
+                  rgbFringing: config.rgbFringing,
                   positionTaskIndicator: config.positionTaskIndicator,
-                  left: config.leftMargin,
-                  top: config.topMargin,
-                  right: config.rightMargin,
-                  bottom: config.bottomMargin,
-                  outLeft: config.outsideLeftMargin,
-                  outTop: config.outsideTopMargin + tasks.topoutimage,
-                  outRight: config.outsideRightMargin,
-                  outBottom: config.outsideBottomMargin
+                  left:    Plasmoid.configuration.skinLeftMargin,
+                  top:     Plasmoid.configuration.skinTopMargin,
+                  right:   Plasmoid.configuration.skinRightMargin,
+                  bottom:  Plasmoid.configuration.skinBottomMargin,
+                  outLeft:  Plasmoid.configuration.skinOutsideLeftMargin,
+                  outTop:   Plasmoid.configuration.skinOutsideTopMargin + tasks.topoutimage,
+                  outRight: Plasmoid.configuration.skinOutsideRightMargin,
+                  outBottom: Plasmoid.configuration.skinOutsideBottomMargin
               };
 
               console.log("EXITO: Skin '" + skinName + "' cargada. Imagen: " + tasks.skinParams.image);
@@ -151,6 +154,19 @@ PlasmoidItem {
           console.log("ERROR al cargar Config.qml: " + component.errorString());
           // Fallback: Si no existe el .qml, podrías intentar cargar valores por defecto aquí
       }
+  }
+
+  function updateSkinMargins() {
+      let p = Object.assign({}, tasks.skinParams);
+      p.left    = Plasmoid.configuration.skinLeftMargin;
+      p.top     = Plasmoid.configuration.skinTopMargin;
+      p.right   = Plasmoid.configuration.skinRightMargin;
+      p.bottom  = Plasmoid.configuration.skinBottomMargin;
+      p.outLeft  = Plasmoid.configuration.skinOutsideLeftMargin;
+      p.outTop   = Plasmoid.configuration.skinOutsideTopMargin + tasks.topoutimage;
+      p.outRight = Plasmoid.configuration.skinOutsideRightMargin;
+      p.outBottom = Plasmoid.configuration.skinOutsideBottomMargin;
+      tasks.skinParams = p;
   }
 
   // Detecta si entra zoom y si sale
@@ -480,12 +496,17 @@ PlasmoidItem {
 
             function onSkinNameChanged() {
                 console.log("Nueva skin detectada: " + Plasmoid.configuration.skinName);
-                loadSkinConfig(); // La función que lee el .ini y carga la imagen
-            }
-
-            function onIconSizeChanged() {
                 loadSkinConfig();
             }
+            function onIconSizeChanged()              { loadSkinConfig(); }
+            function onSkinLeftMarginChanged()        { tasks.updateSkinMargins(); }
+            function onSkinTopMarginChanged()         { tasks.updateSkinMargins(); }
+            function onSkinRightMarginChanged()       { tasks.updateSkinMargins(); }
+            function onSkinBottomMarginChanged()      { tasks.updateSkinMargins(); }
+            function onSkinOutsideLeftMarginChanged() { tasks.updateSkinMargins(); }
+            function onSkinOutsideTopMarginChanged()  { tasks.updateSkinMargins(); }
+            function onSkinOutsideRightMarginChanged(){ tasks.updateSkinMargins(); }
+            function onSkinOutsideBottomMarginChanged(){ tasks.updateSkinMargins(); }
 
             function onLaunchersChanged(): void {
                 tasksModel.launcherList = Plasmoid.configuration.launchers
