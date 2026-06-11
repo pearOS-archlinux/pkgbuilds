@@ -44,6 +44,15 @@ KCMUtils.SimpleKCM {
     property string cfg_skinName: Plasmoid.configuration.skinName
     property alias cfg_showReflection: showReflection.checked
 
+    // ── Skin feature overrides (no UI yet — declared to prevent KCM warnings) ─
+    property string cfg_launcherIcon
+    property bool   cfg_skinBlur
+    property int    cfg_skinBlurRadius
+    property bool   cfg_skinLiquidGelEffect
+    property double cfg_skinRefractionStrength
+    property double cfg_skinRgbFringing
+    property int    cfg_skinPositionTaskIndicator
+
     // ── Margin overrides ─────────────────────────────────────────────────────
     property alias cfg_skinLeftMargin:         skinLeftMarginSlider.value
     property alias cfg_skinTopMargin:          skinTopMarginSlider.value
@@ -124,7 +133,7 @@ KCMUtils.SimpleKCM {
                 stepSize: 2
                 snapMode: QQC2.Slider.SnapOnRelease
 
-                value: Plasmoid.configuration.iconSize || 44
+                value: Plasmoid.configuration.iconSize || 50
             }
 
             QQC2.Label {
@@ -146,7 +155,7 @@ KCMUtils.SimpleKCM {
                 to: 100
                 stepSize: 5
                 snapMode: QQC2.Slider.SnapOnRelease
-                value: Plasmoid.configuration.magnification || 50
+                value: Plasmoid.configuration.magnification || 80
             }
             QQC2.Label {
                 text: Math.floor(magnificationSlider.value) + "%"
@@ -170,7 +179,7 @@ KCMUtils.SimpleKCM {
                 stepSize: 0.1
                 snapMode: QQC2.Slider.SnapOnRelease
 
-                value: Plasmoid.configuration.amplitud || 1.8
+                value: Plasmoid.configuration.amplitud || 1.5
             }
 
             QQC2.Label {

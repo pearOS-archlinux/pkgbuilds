@@ -158,17 +158,17 @@
       <default>Tahoe Dark</default>
     </entry>
     <entry name="iconSize" type="Int">
-      <default>42</default>
+      <default>50</default>
     </entry>
     <entry name="magnification" type="Double">
-      <default>90.0</default>
+      <default>80.0</default>
     </entry>
     <entry name="amplitud" type="Double">
-      <default>1.8</default>
+      <default>1.5</default>
     </entry>
     <entry name="showReflection" type="Bool">
       <label>Show a reflection of the icon below the dock</label>
-      <default>true</default>
+      <default>false</default>
     </entry>
     <entry name="launcherIcon" type="String">
       <label>Path or icon name for the launcher dock button</label>
@@ -220,7 +220,7 @@
     </entry>
     <entry name="skinOutsideTopMargin" type="Int">
       <label>Skin outside top margin</label>
-      <default>10</default>
+      <default>0</default>
     </entry>
     <entry name="skinOutsideRightMargin" type="Int">
       <label>Skin outside right margin</label>
@@ -228,7 +228,7 @@
     </entry>
     <entry name="skinOutsideBottomMargin" type="Int">
       <label>Skin outside bottom margin</label>
-      <default>-8</default>
+      <default>-10</default>
     </entry>
   </group>
 

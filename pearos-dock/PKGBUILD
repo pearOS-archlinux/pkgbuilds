@@ -1,5 +1,5 @@
 pkgname=pearos-dock
-pkgver=26.6.2
+pkgver=26.6.3
 pkgrel=1
 pkgdesc="macOS Tahoe-style dock for KDE Plasma 6"
 arch=('x86_64')
@@ -14,8 +14,6 @@ depends=(
     'kwindowsystem'
     'kwin'
     'plasma-activities'
-    'pearos-appmenu'
-    'pearos-liquidgel'
 )
 makedepends=(
     'cmake'
