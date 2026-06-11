@@ -1,0 +1,15 @@
+post_install() {
+    echo ""
+    echo "pearOS lockscreen theme installed."
+    echo "The theme will be applied automatically after each plasma-desktop update."
+    echo ""
+    echo "To apply immediately without rebooting, run:"
+    echo "  sudo /usr/share/pearos/apply-lockscreen-theme.sh"
+    echo ""
+    echo "Font settings: ~/.config/extras/lockscreen/style.json"
+    echo ""
+}
+
+post_upgrade() {
+    post_install
+}

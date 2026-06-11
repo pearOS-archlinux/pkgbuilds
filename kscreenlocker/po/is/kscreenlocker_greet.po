@@ -1,0 +1,93 @@
+# Copyright (C) 2023 This file is copyright:
+# This file is distributed under the same license as the kscreenlocker package.
+#
+# SPDX-FileCopyrightText: 2023, 2024 Guðmundur Erlingsson <gudmundure@gmail.com>
+# SPDX-FileCopyrightText: 2025, 2026 Sveinn í Felli <sv1@fellsnet.is>
+msgid ""
+msgstr ""
+"Project-Id-Version: kscreenlocker\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2026-05-13 00:47+0000\n"
+"PO-Revision-Date: 2026-06-01 10:13+0000\n"
+"Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
+"Language-Team: Icelandic\n"
+"Language: is\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 23.08.5\n"
+
+#: fallbacktheme/Greeter.qml:59
+msgid "Warning: Caps Lock on"
+msgstr "Aðvörun: Caps Lock hástafalás er á"
+
+#: fallbacktheme/Greeter.qml:75
+msgid "The session is locked"
+msgstr "Setan er læst"
+
+#: fallbacktheme/Greeter.qml:76
+msgid "The session has been locked by %1"
+msgstr "Setunni var læst af %1"
+
+#: fallbacktheme/Greeter.qml:83
+msgid "Password"
+msgstr "Lykilorð"
+
+#: fallbacktheme/Greeter.qml:101
+msgid "(or place your fingerprint on the reader)"
+msgstr "(eða settu fingrafarið þitt á lesarann)"
+
+#: fallbacktheme/Greeter.qml:107
+msgid "(or use your smartcard)"
+msgstr "(eða notaðu snjallkortið þitt)"
+
+#: fallbacktheme/Greeter.qml:116
+msgid "&Switch Users"
+msgstr "&Skipta um notendur"
+
+#: fallbacktheme/Greeter.qml:123
+msgid "Un&lock"
+msgstr "Af&læsa"
+
+#: fallbacktheme/Greeter.qml:135
+msgid "Unlocking failed"
+msgstr "Mistókst að aflæsa"
+
+#: main.cpp:123
+#, kde-format
+msgid "Greeter for the KDE Plasma Workspaces Screen locker"
+msgstr "Kveðjuviðmót fyrir KDE Plasma skjálæsinguna"
+
+#: main.cpp:127
+#, kde-format
+msgid "Starts the greeter in testing mode"
+msgstr "Byrjar kveðjuviðmótið í prufusniði"
+
+#: main.cpp:130
+#, kde-format
+msgid "Starts the greeter with the selected shell theme (only in Testing mode)"
+msgstr "Byrjar kveðjuviðmótið með valda skeljaþemana (aðeins í prufusniði)"
+
+#: main.cpp:134
+#, kde-format
+msgid "Lock immediately, ignoring any grace time etc."
+msgstr "Læsa strax, hunsa allan náðartíma o.s.frv."
+
+#: main.cpp:136
+#, kde-format
+msgid "Delay till the lock user interface gets shown in milliseconds."
+msgstr "Bið þar til læsiviðmótið birtist í millisekúndum."
+
+#: main.cpp:139
+#, kde-format
+msgid "Don't show any lock user interface."
+msgstr "Ekki sýna neitt læsiviðmót."
+
+#: main.cpp:141
+#, kde-format
+msgid "File descriptor for connecting to ksld."
+msgstr "Skráarlýsir fyrir tengingu við ksld."
+
+#~ msgid "Default to the switch user UI."
+#~ msgstr "Fara sjálfgefið í viðmót til að skipta um notanda."

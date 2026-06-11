@@ -1,0 +1,96 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Diego Iastrubni <elcuco@kde.org>, 2012, 2013.
+# elkana bardugo <ttv200@gmail.com>, 2016.
+# Elkana Bardugo <ttv200@gmail.com>, 2017. #zanata
+# SPDX-FileCopyrightText: 2023-2026 Yaron Shahrabani <sh.yaron@gmail.com>
+msgid ""
+msgstr ""
+"Project-Id-Version: kscreenlocker_greet\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2026-05-13 00:47+0000\n"
+"PO-Revision-Date: 2026-05-13 21:19+0300\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
+"Language-Team: צוות התרגום של KDE ישראל\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Lokalize 26.04.0\n"
+
+#: fallbacktheme/Greeter.qml:59
+msgid "Warning: Caps Lock on"
+msgstr "אזהרה: Caps Lock פעיל"
+
+#: fallbacktheme/Greeter.qml:75
+msgid "The session is locked"
+msgstr "ההפעלה נעולה"
+
+#: fallbacktheme/Greeter.qml:76
+msgid "The session has been locked by %1"
+msgstr "ההפעלה ננעלה על ידי %1"
+
+#: fallbacktheme/Greeter.qml:83
+msgid "Password"
+msgstr "סיסמה"
+
+#: fallbacktheme/Greeter.qml:101
+msgid "(or place your fingerprint on the reader)"
+msgstr "(או להניח את טביעת האצבע שלך על הקורא)"
+
+#: fallbacktheme/Greeter.qml:107
+msgid "(or use your smartcard)"
+msgstr "(או להשתמש בכרטיס החכם שלך)"
+
+#: fallbacktheme/Greeter.qml:116
+msgid "&Switch Users"
+msgstr "ה&חלפת משתמשים"
+
+#: fallbacktheme/Greeter.qml:123
+msgid "Un&lock"
+msgstr "&שחרור נעילה"
+
+#: fallbacktheme/Greeter.qml:135
+msgid "Unlocking failed"
+msgstr "שחרור הנעילה נכשל"
+
+#: main.cpp:123
+#, kde-format
+msgid "Greeter for the KDE Plasma Workspaces Screen locker"
+msgstr "מנהל כניסה לנועל המסך של KDE"
+
+#: main.cpp:127
+#, kde-format
+msgid "Starts the greeter in testing mode"
+msgstr "מפעיל את מנהל הכניסה במצב בדיקה"
+
+#: main.cpp:130
+#, kde-format
+msgid "Starts the greeter with the selected shell theme (only in Testing mode)"
+msgstr "מפעיל את מנהל הכניסה עם ערכת העיצוב הנבחרת למעטפת (במצב בדיקה בלבד)"
+
+#: main.cpp:134
+#, kde-format
+msgid "Lock immediately, ignoring any grace time etc."
+msgstr "לנעול מייד, ללא המתנה וכו׳."
+
+#: main.cpp:136
+#, kde-format
+msgid "Delay till the lock user interface gets shown in milliseconds."
+msgstr "זמן המתנה עד להופעת ממשק נעילת משתמש במילישניות."
+
+#: main.cpp:139
+#, kde-format
+msgid "Don't show any lock user interface."
+msgstr "לא להציע שום ממשק משתמש לנעילה."
+
+#: main.cpp:141
+#, kde-format
+msgid "File descriptor for connecting to ksld."
+msgstr "קובץ מגשר לחיבור ל־ksld."
+
+#~ msgid "Default to the switch user UI."
+#~ msgstr "ייסוג לממשק החלפת משתמשים."

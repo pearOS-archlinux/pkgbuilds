@@ -1,0 +1,90 @@
+# Translation of kscreenlocker_greet to Norwegian Nynorsk
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2026-05-13 00:47+0000\n"
+"PO-Revision-Date: 2026-05-15 22:53+0200\n"
+"Last-Translator: Karl Ove Hufthammer <karl@huftis.org>\n"
+"Language-Team: Norwegian Nynorsk <l10n-no@nuug.no>\n"
+"Language: nn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 26.04.1\n"
+"X-Environment: kde\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+
+#: fallbacktheme/Greeter.qml:59
+msgid "Warning: Caps Lock on"
+msgstr "Åtvaring: «Caps Lock» er på"
+
+#: fallbacktheme/Greeter.qml:75
+msgid "The session is locked"
+msgstr "Økta er låst"
+
+#: fallbacktheme/Greeter.qml:76
+msgid "The session has been locked by %1"
+msgstr "Økta vart låst av %1"
+
+#: fallbacktheme/Greeter.qml:83
+msgid "Password"
+msgstr "Passord"
+
+#: fallbacktheme/Greeter.qml:101
+msgid "(or place your fingerprint on the reader)"
+msgstr "(eller set fingeren på avlesaren)"
+
+#: fallbacktheme/Greeter.qml:107
+msgid "(or use your smartcard)"
+msgstr "(eller set inn smartkortet ditt)"
+
+#: fallbacktheme/Greeter.qml:116
+msgid "&Switch Users"
+msgstr "&Byt brukarar"
+
+#: fallbacktheme/Greeter.qml:123
+msgid "Un&lock"
+msgstr "&Lås opp"
+
+#: fallbacktheme/Greeter.qml:135
+msgid "Unlocking failed"
+msgstr "Klarte ikkje låsa opp"
+
+#: main.cpp:123
+#, kde-format
+msgid "Greeter for the KDE Plasma Workspaces Screen locker"
+msgstr "Velkomstbilete for skjermlåsar for KDE Plasma-arbeidsområde"
+
+#: main.cpp:127
+#, kde-format
+msgid "Starts the greeter in testing mode"
+msgstr "Startar velkomstbiletet i testmodus"
+
+#: main.cpp:130
+#, kde-format
+msgid "Starts the greeter with the selected shell theme (only in Testing mode)"
+msgstr "Startar velkomstbiletet med det valde skaltemaet (berre i testmodus)"
+
+#: main.cpp:134
+#, kde-format
+msgid "Lock immediately, ignoring any grace time etc."
+msgstr "Låser med ein gong, utan å ta omsyn til ventetid e.l."
+
+#: main.cpp:136
+#, kde-format
+msgid "Delay till the lock user interface gets shown in milliseconds."
+msgstr "Forseinking i millisekund til låsarbiletet vert vist."
+
+#: main.cpp:139
+#, kde-format
+msgid "Don't show any lock user interface."
+msgstr "Ikkje vis noko låsarbilete."
+
+#: main.cpp:141
+#, kde-format
+msgid "File descriptor for connecting to ksld."
+msgstr "Filskildring for kopling til ksld."

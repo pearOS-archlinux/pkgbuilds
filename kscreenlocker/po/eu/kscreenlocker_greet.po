@@ -1,0 +1,99 @@
+# Translation of kscreenlocker_greet.po to Euskara/Basque (eu).
+# Copyright (C) 2017, The Free Software Foundation.
+# Copyright (C) 2018-2026 This file is copyright:
+# This file is distributed under the same license as the kscreenlocker package.
+# SPDX-FileCopyrightText: 2024-2026 KDE euskaratzeko proiektuaren arduraduna <xalba@ni.eus>
+#
+# Translators:
+# Iñigo Salvador Azurmendi <xalba@ni.eus>, 2017, 2025, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: kscreenlocker_greet\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2026-05-13 00:47+0000\n"
+"PO-Revision-Date: 2026-06-04 21:16+0200\n"
+"Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
+"Language-Team: Basque <kde-i18n-eu@kde.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 26.04.1\n"
+
+#: fallbacktheme/Greeter.qml:59
+msgid "Warning: Caps Lock on"
+msgstr "Abisua: Maius Giltzatuta"
+
+#: fallbacktheme/Greeter.qml:75
+msgid "The session is locked"
+msgstr "Saioa giltzatuta dago"
+
+#: fallbacktheme/Greeter.qml:76
+msgid "The session has been locked by %1"
+msgstr "Saioa %1(e)k giltzatu du"
+
+#: fallbacktheme/Greeter.qml:83
+msgid "Password"
+msgstr "Pasahitza"
+
+#: fallbacktheme/Greeter.qml:101
+msgid "(or place your fingerprint on the reader)"
+msgstr "(edo ipini zure hatz-marka irakurgailuan)"
+
+#: fallbacktheme/Greeter.qml:107
+msgid "(or use your smartcard)"
+msgstr "(edo erabili zure txartel-adimenduna)"
+
+#: fallbacktheme/Greeter.qml:116
+msgid "&Switch Users"
+msgstr "Al&datu erabiltzaileak"
+
+#: fallbacktheme/Greeter.qml:123
+msgid "Un&lock"
+msgstr "Gi&ltzapetik askatu"
+
+#: fallbacktheme/Greeter.qml:135
+msgid "Unlocking failed"
+msgstr "Giltzapetik askatzea huts egin du"
+
+#: main.cpp:123
+#, kde-format
+msgid "Greeter for the KDE Plasma Workspaces Screen locker"
+msgstr "KDE Plasma Languneen pantaila giltzatzailearen harreragilea"
+
+#: main.cpp:127
+#, kde-format
+msgid "Starts the greeter in testing mode"
+msgstr "Harreragilea proba moduan abiarazten du"
+
+#: main.cpp:130
+#, kde-format
+msgid "Starts the greeter with the selected shell theme (only in Testing mode)"
+msgstr ""
+"Harreragilea hautatutako oskolerako gaiarekin abiarazten du (Proba moduan "
+"bakarrik)"
+
+#: main.cpp:134
+#, kde-format
+msgid "Lock immediately, ignoring any grace time etc."
+msgstr "Giltzatu berehala, luzapen denborei etab. begiratu gabe"
+
+#: main.cpp:136
+#, kde-format
+msgid "Delay till the lock user interface gets shown in milliseconds."
+msgstr ""
+"Atzeratu erabiltzailea giltzatzeko interfazea milisegundotan erakutsi arte."
+
+#: main.cpp:139
+#, kde-format
+msgid "Don't show any lock user interface."
+msgstr "Ez erakutsi erabiltzailea giltzatzeko interfazerik."
+
+#: main.cpp:141
+#, kde-format
+msgid "File descriptor for connecting to ksld."
+msgstr "ksld-ra konektatzeko fitxategi deskriptorea."
+
+#~ msgid "Default to the switch user UI."
+#~ msgstr "Lehenetsi aldatu erabiltzailea erabiltzaile interfazera."

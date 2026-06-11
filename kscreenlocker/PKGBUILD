@@ -1,0 +1,62 @@
+# Maintainer: Alexandru Balan <alxb421@gmail.com>
+pkgname=kscreenlocker
+pkgver=26.5.2
+pkgrel=1
+pkgdesc="pearOS dark theme for KDE Screen Locker"
+arch=('x86_64')
+url="https://github.com/pearOS-archlinux/pkgbuilds"
+license=('GPL-2.0-or-later')
+depends=(
+    kconfig kcoreaddons kcrash kglobalaccel ki18n kidletime kio
+    knotifications ksvg kwindowsystem kxmlgui layer-shell-qt libkscreen
+    plasma-workspace qt6-base qt6-declarative qt6-5compat
+    xcb-util-keysyms libxcb pam
+)
+makedepends=(
+    cmake extra-cmake-modules ninja
+    kcmutils
+    qt6-wayland wayland wayland-protocols
+)
+conflicts=('kscreenlocker')
+provides=('kscreenlocker')
+install="$pkgname.install"
+
+build() {
+    cmake -B "$srcdir/build" -S "$startdir" \
+        -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_SKIP_RPATH=ON \
+        -DBUILD_TESTING=OFF
+    ninja -C "$srcdir/build"
+}
+
+package() {
+    DESTDIR="$pkgdir" ninja -C "$srcdir/build" install
+
+    # PAM service — cmake doesn't install this, must be shipped manually
+    install -Dm644 "$startdir/kde.pam" "$pkgdir/etc/pam.d/kde"
+
+    # Store theme files in /usr/share/pearos/lockscreen/
+    # The pacman hook copies them to plasma-desktop's lockscreen path.
+    local theme="$pkgdir/usr/share/pearos/lockscreen"
+
+    install -Dm644 "$startdir/lockscreen/LockScreenUi.qml" \
+        "$theme/LockScreenUi.qml"
+
+    for font in "$startdir/lockscreen/fonts/"*.otf; do
+        install -Dm644 "$font" "$theme/fonts/$(basename "$font")"
+        install -Dm644 "$font" "$pkgdir/usr/share/fonts/pearos/$(basename "$font")"
+    done
+
+    for img in "$startdir/pearOS-dark/images/"*.svg; do
+        install -Dm644 "$img" "$theme/images/$(basename "$img")"
+    done
+
+    # Pacman hook — re-applies QML/images after plasma-desktop or this package updates
+    install -Dm644 "$startdir/hooks/pearos-lockscreen.hook" \
+        "$pkgdir/usr/share/libalpm/hooks/pearos-lockscreen.hook"
+
+    install -Dm755 "$startdir/hooks/apply-lockscreen-theme.sh" \
+        "$pkgdir/usr/share/pearos/apply-lockscreen-theme.sh"
+}

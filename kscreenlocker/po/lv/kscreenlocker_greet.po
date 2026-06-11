@@ -1,0 +1,95 @@
+# Copyright (C) 2024 This file is copyright:
+# This file is distributed under the same license as the kscreenlocker package.
+#
+# Maris Nartiss <maris.kde@gmail.com>, 2019.
+# SPDX-FileCopyrightText: 2024, 2025 Toms Trasuns <toms.trasuns@posteo.net>
+msgid ""
+msgstr ""
+"Project-Id-Version: kscreenlocker\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2026-05-13 00:47+0000\n"
+"PO-Revision-Date: 2025-08-22 15:03+0300\n"
+"Last-Translator: Toms Trasuns <toms.trasuns@posteo.net>\n"
+"Language-Team: Latvian <kde-i18n-doc@kde.org>\n"
+"Language: lv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: Lokalize 25.08.0\n"
+
+#: fallbacktheme/Greeter.qml:59
+msgid "Warning: Caps Lock on"
+msgstr "Uzmanību: ir ieslēgts burtslēga taustiņš"
+
+#: fallbacktheme/Greeter.qml:75
+msgid "The session is locked"
+msgstr "Sesija ir bloķēta"
+
+#: fallbacktheme/Greeter.qml:76
+msgid "The session has been locked by %1"
+msgstr "Sesiju ir bloķējis %1"
+
+#: fallbacktheme/Greeter.qml:83
+msgid "Password"
+msgstr ""
+
+#: fallbacktheme/Greeter.qml:101
+msgid "(or place your fingerprint on the reader)"
+msgstr "(vai novietojiet pirkstgalu uz pirkstu nospieduma lasītāja)"
+
+#: fallbacktheme/Greeter.qml:107
+msgid "(or use your smartcard)"
+msgstr "(vai izmantojiet viedkarti)"
+
+#: fallbacktheme/Greeter.qml:116
+msgid "&Switch Users"
+msgstr "&Pārslēgt lietotājus"
+
+#: fallbacktheme/Greeter.qml:123
+msgid "Un&lock"
+msgstr "At&bloķēt"
+
+#: fallbacktheme/Greeter.qml:135
+msgid "Unlocking failed"
+msgstr "Atbloķēšana neizdevās"
+
+#: main.cpp:123
+#, kde-format
+msgid "Greeter for the KDE Plasma Workspaces Screen locker"
+msgstr "KDE „Plasma“ darbvirsmas ekrāna bloķētāja sveicinātājs"
+
+#: main.cpp:127
+#, kde-format
+msgid "Starts the greeter in testing mode"
+msgstr "Palaiž sveicinātāju testēšanas režīmā"
+
+#: main.cpp:130
+#, kde-format
+msgid "Starts the greeter with the selected shell theme (only in Testing mode)"
+msgstr ""
+"Palaiž sveicinātāju ar izvēlēto čaulas motīvu (tikai testēšanas režīmā)"
+
+#: main.cpp:134
+#, kde-format
+msgid "Lock immediately, ignoring any grace time etc."
+msgstr "Bloķēt nekavējoties. Ignorēt jebkādu gaidīšanas laiku u.tml."
+
+#: main.cpp:136
+#, kde-format
+msgid "Delay till the lock user interface gets shown in milliseconds."
+msgstr "Noildze bloķēšanas saskarnes parādīšanai (milisekundēs)."
+
+#: main.cpp:139
+#, kde-format
+msgid "Don't show any lock user interface."
+msgstr "Nerādīt bloķēšanas saskarni"
+
+#: main.cpp:141
+#, kde-format
+msgid "File descriptor for connecting to ksld."
+msgstr "„klsd“ savienojuma datnes deskriptors."
+
+#~ msgid "Default to the switch user UI."
+#~ msgstr "Pēc noklusējuma rādīt lietotāju pārslēgšanas saskarni"
