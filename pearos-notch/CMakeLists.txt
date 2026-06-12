@@ -1,35 +1,69 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 project(pearos-notch LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets DBus Svg Network)
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(CAIRO REQUIRED cairo)
-pkg_check_modules(X11 REQUIRED x11)
-pkg_check_modules(LIBRSVG REQUIRED librsvg-2.0)
-pkg_check_modules(LIBPULSE REQUIRED libpulse)
-pkg_check_modules(GLIB REQUIRED glib-2.0 gio-2.0)
-pkg_check_modules(GDKPIXBUF REQUIRED gdk-pixbuf-2.0)
+pkg_check_modules(XCB REQUIRED xcb)
 
-add_executable(pearos-notch main.cpp)
+option(WITH_LAYER_SHELL "Build with LayerShellQt support for Wayland" ON)
 
-target_include_directories(pearos-notch PRIVATE
-  ${CAIRO_INCLUDE_DIRS}
-  ${X11_INCLUDE_DIRS}
-  ${LIBRSVG_INCLUDE_DIRS}
-  ${LIBPULSE_INCLUDE_DIRS}
-  ${GLIB_INCLUDE_DIRS}
-  ${GDKPIXBUF_INCLUDE_DIRS}
+if(WITH_LAYER_SHELL)
+    find_package(LayerShellQt QUIET PATHS /usr/lib/cmake/LayerShellQt)
+    if(LayerShellQt_FOUND)
+        message(STATUS "LayerShellQt found — Wayland layer shell support enabled")
+        set(HAS_LAYER_SHELL TRUE)
+    else()
+        message(WARNING "LayerShellQt not found — Wayland layer shell support disabled")
+        set(HAS_LAYER_SHELL FALSE)
+    endif()
+else()
+    set(HAS_LAYER_SHELL FALSE)
+endif()
+
+qt_add_executable(pearos-notch
+    src/main.cpp
+    src/Config.h
+    src/Config.cpp
+    src/NotchWindow.h
+    src/NotchWindow.cpp
+    src/MprisWatcher.h
+    src/MprisWatcher.cpp
+    src/SettingsDialog.h
+    src/SettingsDialog.cpp
+    src/resources.qrc
 )
 
-target_link_libraries(pearos-notch
-  ${CAIRO_LIBRARIES}
-  ${X11_LIBRARIES}
-  ${LIBRSVG_LIBRARIES}
-  ${LIBPULSE_LIBRARIES}
-  ${GLIB_LIBRARIES}
-  ${GDKPIXBUF_LIBRARIES}
-  pthread
+target_include_directories(pearos-notch PRIVATE src ${XCB_INCLUDE_DIRS})
+
+target_link_libraries(pearos-notch PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::DBus
+    Qt6::Svg
+    Qt6::Network
+    ${XCB_LIBRARIES}
 )
 
-target_compile_options(pearos-notch PRIVATE ${CAIRO_CFLAGS_OTHER} ${X11_CFLAGS_OTHER} ${LIBRSVG_CFLAGS_OTHER} ${LIBPULSE_CFLAGS_OTHER} ${GLIB_CFLAGS_OTHER} ${GDKPIXBUF_CFLAGS_OTHER})
+if(HAS_LAYER_SHELL)
+    target_compile_definitions(pearos-notch PRIVATE WITH_LAYER_SHELL)
+    target_link_libraries(pearos-notch PRIVATE LayerShellQt::Interface)
+endif()
+
+include(GNUInstallDirs)
+install(TARGETS pearos-notch DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(FILES
+    notch.svg prev.svg next.svg play.svg pause.svg settings.svg
+    home.svg tray_icon.svg browser.svg
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/pearos-notch
+)
+install(FILES pearos-notch.desktop
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)
+install(FILES pearos-notch.png
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps
+)
