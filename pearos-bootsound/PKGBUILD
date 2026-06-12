@@ -1,6 +1,6 @@
 # Maintainer: Alexandru Balan
 pkgname=pearos-bootsound
-pkgver=26.6
+pkgver=26.6.1
 pkgrel=1
 pkgdesc="Boot sound service for pearOS"
 arch=('any')
@@ -20,5 +20,5 @@ package() {
     install -d "$pkgdir/boot"
 
     install -Dm644 bootsound.service "$pkgdir/usr/lib/systemd/system/bootsound.service"
-    install -Dm644 boot-sound.wav "$pkgdir/boot/boot-sound.wav"
+#    install -Dm644 boot-sound.wav "$pkgdir/boot/boot-sound.wav"
 }
