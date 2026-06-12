@@ -387,42 +387,25 @@ void HomeWidget::onUpdateTimer() {
 
 void HomeWidget::onPackageClicked(const PackageInfo& info) {
     Logger::info(QString("Package clicked: %1").arg(info.name));
-    
-    // Fetch full package details including dependencies
-    PackageInfo fullInfo;
-    
+
     if (info.repository.toLower() == "aur") {
-        // For AUR packages, query AUR API for full details
-        AurHelper aurHelper;
-        QEventLoop loop;
-        
-        connect(&aurHelper, &AurHelper::packageInfoReceived, [&fullInfo, &loop](const PackageInfo& aurInfo) {
-            fullInfo = aurInfo;
-            loop.quit();
+        auto* aurHelper = new AurHelper(this);
+        connect(aurHelper, &AurHelper::packageInfoReceived, this, [this, aurHelper](const PackageInfo& aurInfo) {
+            aurHelper->deleteLater();
+            emit openPackageRequested(aurInfo);
+            checkInstalledPackages();
         });
-        
-        connect(&aurHelper, &AurHelper::error, [&fullInfo, &info, &loop](const QString& error) {
-            Logger::warning(QString("Failed to fetch AUR package info: %1").arg(error));
-            fullInfo = info; // Fallback to basic info
-            loop.quit();
+        connect(aurHelper, &AurHelper::error, this, [this, aurHelper, info](const QString& errMsg) {
+            Logger::warning(QString("Failed to fetch AUR package info: %1").arg(errMsg));
+            aurHelper->deleteLater();
+            emit openPackageRequested(info);
+            checkInstalledPackages();
         });
-        
-        aurHelper.getPackageInfo(info.name);
-        loop.exec(); // Wait for response
-        
-        // If we didn't get full info, use the basic info
-        if (fullInfo.name.isEmpty()) {
-            fullInfo = info;
-        }
+        aurHelper->getPackageInfo(info.name);
     } else {
-        // For official repos, fetch full details from ALPM
-        fullInfo = AlpmWrapper::instance().getPackageInfo(info.name);
-        // If not found, use the basic info
-        if (fullInfo.name.isEmpty()) {
-            fullInfo = info;
-        }
+        PackageInfo fullInfo = AlpmWrapper::instance().getPackageInfo(info.name);
+        if (fullInfo.name.isEmpty()) fullInfo = info;
+        emit openPackageRequested(fullInfo);
+        checkInstalledPackages();
     }
-    
-    emit openPackageRequested(fullInfo);
-    checkInstalledPackages();
 }

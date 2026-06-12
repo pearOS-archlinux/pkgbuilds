@@ -178,6 +178,15 @@ void PackageDetailsDialog::setupUi() {
     galleryPlaceholderLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(m_galleryContainer);
 
+    // —— Descriere pachet (AppStream summary/description sau ALPM desc) ——
+    m_descriptionLabel = new QLabel(m_info.description, this);
+    m_descriptionLabel->setWordWrap(true);
+    m_descriptionLabel->setStyleSheet("color: #a1a1aa; font-size: 14px; line-height: 1.5;");
+    m_descriptionLabel->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    if (m_info.description.isEmpty()) m_descriptionLabel->hide();
+    mainLayout->addWidget(m_descriptionLabel);
+
     // —— Detalii pachet în carduri ——
     auto* detailsTitle = new QLabel(tr("Package details"), this);
     detailsTitle->setStyleSheet("color: #f9fafb; font-size: 16px; font-weight: 600;");
@@ -584,37 +593,37 @@ void PackageDetailsDialog::onOperationOutput(const QString& output) {
 }
 
 void PackageDetailsDialog::onOperationCompleted(bool success, const QString& message) {
-    // Refresh ALPM state so subsequent queries reflect the change
     AlpmWrapper::instance().release();
     AlpmWrapper::instance().initialize();
 
-    // Update status and UI
     checkInstallStatus();
     m_isInstalling = false;
     updateButtonStates();
-
     hideProgress();
 
-    // Re-enable close button
     if (m_closeButton)
         m_closeButton->setEnabled(true);
+
+    if (!success && !message.isEmpty()) {
+        QMessageBox::warning(this, tr("Operation Failed"), message);
+    }
 }
 
 void PackageDetailsDialog::onOperationError(const QString& error) {
-    // Refresh ALPM state (best-effort)
     AlpmWrapper::instance().release();
     AlpmWrapper::instance().initialize();
 
-    // Update status and UI
     checkInstallStatus();
     m_isInstalling = false;
     updateButtonStates();
-
     hideProgress();
 
-    // Re-enable close button
     if (m_closeButton)
         m_closeButton->setEnabled(true);
+
+    if (!error.isEmpty()) {
+        QMessageBox::critical(this, tr("Error"), error);
+    }
 }
 
 QString PackageDetailsDialog::findDesktopFile() const {
@@ -915,7 +924,10 @@ void PackageDetailsDialog::onAppStreamDataReady() {
         QString descText = m_info.description;
         if (!m_appstream.summary.isEmpty()) descText = m_appstream.summary;
         if (!m_appstream.description.isEmpty()) descText = m_appstream.description;
-        m_descriptionLabel->setText(descText);
+        if (!descText.isEmpty()) {
+            m_descriptionLabel->setText(descText);
+            m_descriptionLabel->show();
+        }
     }
     if (!m_appstream.screenshotUrls.isEmpty() && m_galleryContainer) {
         QLayout* galleryLayout = m_galleryContainer->layout();

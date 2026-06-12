@@ -1,0 +1,31 @@
+{
+	"BUILD_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/pearos-appstore_autogen",
+	"CMAKE_BINARY_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore",
+	"CMAKE_SOURCE_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Unix Makefiles",
+	"INCLUDE_DIR" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/pearos-appstore_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/updates.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/work.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/categories.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/arcade.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/develop.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/play.png",
+		"/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons/discover.png"
+	],
+	"LOCK_FILE" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/CMakeFiles/pearos-appstore_autogen.dir/AutoRcc_sidebar_icons_GBFAFXFCVO_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "sidebar_icons" ],
+	"OUTPUT_CHECKSUM" : "GBFAFXFCVO",
+	"OUTPUT_NAME" : "qrc_sidebar_icons.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt6/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/CMakeFiles/pearos-appstore_autogen.dir/AutoRcc_sidebar_icons_GBFAFXFCVO_Used.txt",
+	"SOURCE" : "/home/alxb421/Desktop/pkgbuilds/pear-appstore/assets/sidebar_icons.qrc",
+	"USE_BETTER_GRAPH" : true,
+	"VERBOSITY" : 0
+}

@@ -6,6 +6,7 @@
 #include "settings_widget.h"
 #include "user_page_widget.h"
 #include "package_details_dialog.h"
+#include "category_widget.h"
 #include "../utils/logger.h"
 #include "../utils/app_cache.h"
 #include "../core/alpm_wrapper.h"
@@ -517,37 +518,216 @@ static QWidget* makePlaceholder(const QString& title, QWidget* parent) {
     return w;
 }
 
-static QWidget* makeArcadePlaceholder(QWidget* parent) {
-    auto* w = new QWidget(parent);
-    auto* lay = new QVBoxLayout(w);
-    lay->setContentsMargins(0, 0, 0, 0);
-    lay->addStretch();
 
-    auto* card = new QFrame(w);
-    card->setObjectName(QStringLiteral("arcadePlaceholderCard"));
-    card->setMinimumWidth(360);
-    card->setFixedHeight(160);
-    auto* cardLayout = new QVBoxLayout(card);
-    cardLayout->setContentsMargins(24, 24, 24, 24);
+static CategoryWidget* makeArcadeCategory(QWidget* parent) {
+    QVector<AppSection> sections;
 
-    auto* title = new QLabel(QObject::tr("Arcade is under construction"), card);
-    title->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    title->setStyleSheet("font-size: 18px; font-weight: 600; color: #fafafa;");
+    AppSection top;
+    top.title = QObject::tr("Top Free Games");
+    top.featuredApp = "supertuxkart";
+    top.apps = {
+        {"supertuxkart",  "extra"},
+        {"0ad",           "extra"},
+        {"minetest",      "extra"},
+        {"wesnoth",       "extra"},
+        {"openarena",     "extra"},
+        {"neverball",     "extra"},
+    };
+    sections.append(top);
 
-    auto* subtitle = new QLabel(QObject::tr("It will be available in a future update."), card);
-    subtitle->setWordWrap(true);
-    subtitle->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    subtitle->setStyleSheet("font-size: 13px; color: #a1a1aa; margin-top: 6px;");
+    AppSection strategy;
+    strategy.title = QObject::tr("Strategy & Adventure");
+    strategy.apps = {
+        {"0ad",          "extra"},
+        {"wesnoth",      "extra"},
+        {"freeciv",      "extra"},
+        {"flightgear",   "extra"},
+        {"hedgewars",    "extra"},
+        {"pingus",       "extra"},
+    };
+    sections.append(strategy);
 
-    cardLayout->addWidget(title);
-    cardLayout->addWidget(subtitle);
-    lay->addWidget(card, 0, Qt::AlignHCenter);
-    lay->addStretch();
+    AppSection action;
+    action.title = QObject::tr("Action & Racing");
+    action.apps = {
+        {"supertuxkart", "extra"},
+        {"openarena",    "extra"},
+        {"neverball",    "extra"},
+        {"extremetuxracer", "extra"},
+        {"frogatto",     "AUR"},
+        {"vvvvvv",       "AUR"},
+    };
+    sections.append(action);
 
-    // Match card background with the app's card style via stylesheet rule
-    card->setStyleSheet("QFrame#arcadePlaceholderCard { background-color: #393b3e; border-radius: 16px; }");
+    return new CategoryWidget(
+        QObject::tr("Arcade"),
+        QObject::tr("Great games for Linux"),
+        sections, parent);
+}
 
-    return w;
+static CategoryWidget* makeWorkCategory(QWidget* parent) {
+    QVector<AppSection> sections;
+
+    AppSection office;
+    office.title = QObject::tr("Office & Documents");
+    office.featuredApp = "libreoffice-still";
+    office.apps = {
+        {"libreoffice-still", "extra"},
+        {"abiword",           "extra"},
+        {"gnumeric",          "extra"},
+        {"okular",            "extra"},
+        {"zathura",           "extra"},
+        {"calibre",           "extra"},
+    };
+    sections.append(office);
+
+    AppSection email;
+    email.title = QObject::tr("Email & Calendar");
+    email.apps = {
+        {"thunderbird",   "extra"},
+        {"evolution",     "extra"},
+        {"kmail",         "extra"},
+        {"kontact",       "extra"},
+    };
+    sections.append(email);
+
+    AppSection notes;
+    notes.title = QObject::tr("Notes & Knowledge");
+    notes.apps = {
+        {"obsidian",         "AUR"},
+        {"joplin-desktop",   "AUR"},
+        {"cherrytree",       "extra"},
+        {"zim",              "extra"},
+        {"ghostwriter",      "extra"},
+    };
+    sections.append(notes);
+
+    AppSection cloud;
+    cloud.title = QObject::tr("Cloud & Sync");
+    cloud.apps = {
+        {"nextcloud-client", "extra"},
+        {"dropbox",          "AUR"},
+        {"insync",           "AUR"},
+        {"megasync-bin",     "AUR"},
+    };
+    sections.append(cloud);
+
+    return new CategoryWidget(
+        QObject::tr("Work"),
+        QObject::tr("Productivity apps for professionals"),
+        sections, parent);
+}
+
+static CategoryWidget* makePlayCategory(QWidget* parent) {
+    QVector<AppSection> sections;
+
+    AppSection media;
+    media.title = QObject::tr("Media Players");
+    media.featuredApp = "vlc";
+    media.apps = {
+        {"vlc",        "extra"},
+        {"mpv",        "extra"},
+        {"kodi",       "extra"},
+        {"rhythmbox",  "extra"},
+        {"strawberry", "extra"},
+        {"elisa",      "extra"},
+    };
+    sections.append(media);
+
+    AppSection streaming;
+    streaming.title = QObject::tr("Streaming & Podcasts");
+    streaming.apps = {
+        {"spotify",       "AUR"},
+        {"nuclear",       "AUR"},
+        {"gpodder",       "extra"},
+        {"shortwave",     "extra"},
+    };
+    sections.append(streaming);
+
+    AppSection video;
+    video.title = QObject::tr("Video Creation");
+    video.apps = {
+        {"kdenlive",   "extra"},
+        {"pitivi",     "extra"},
+        {"handbrake",  "extra"},
+        {"obs-studio", "extra"},
+        {"shotcut",    "extra"},
+        {"natron",     "AUR"},
+    };
+    sections.append(video);
+
+    AppSection photo;
+    photo.title = QObject::tr("Photo & Design");
+    photo.apps = {
+        {"darktable",    "extra"},
+        {"rawtherapee",  "extra"},
+        {"inkscape",     "extra"},
+        {"gimp",         "extra"},
+        {"krita",        "extra"},
+        {"imagemagick",  "extra"},
+    };
+    sections.append(photo);
+
+    return new CategoryWidget(
+        QObject::tr("Play"),
+        QObject::tr("Entertainment, media & creativity"),
+        sections, parent);
+}
+
+static CategoryWidget* makeDevelopCategory(QWidget* parent) {
+    QVector<AppSection> sections;
+
+    AppSection editors;
+    editors.title = QObject::tr("Editors & IDEs");
+    editors.featuredApp = "visual-studio-code-bin";
+    editors.apps = {
+        {"visual-studio-code-bin", "AUR"},
+        {"neovim",                 "extra"},
+        {"kate",                   "extra"},
+        {"sublime-text-4",         "AUR"},
+        {"gedit",                  "extra"},
+        {"mousepad",               "extra"},
+    };
+    sections.append(editors);
+
+    AppSection devtools;
+    devtools.title = QObject::tr("DevTools & APIs");
+    devtools.apps = {
+        {"postman-bin",   "AUR"},
+        {"insomnia-bin",  "AUR"},
+        {"dbeaver",       "extra"},
+        {"httpie",        "extra"},
+        {"wireshark-qt",  "extra"},
+        {"docker",        "extra"},
+    };
+    sections.append(devtools);
+
+    AppSection ides;
+    ides.title = QObject::tr("Platforms & IDEs");
+    ides.apps = {
+        {"android-studio",    "AUR"},
+        {"jetbrains-toolbox", "AUR"},
+        {"eclipse-java",      "extra"},
+        {"codeblocks",        "extra"},
+        {"qtcreator",         "extra"},
+    };
+    sections.append(ides);
+
+    AppSection vcs;
+    vcs.title = QObject::tr("Version Control");
+    vcs.apps = {
+        {"github-desktop",  "AUR"},
+        {"gitg",            "extra"},
+        {"meld",            "extra"},
+        {"git",             "extra"},
+        {"gitkraken",       "AUR"},
+    };
+    sections.append(vcs);
+
+    return new CategoryWidget(
+        QObject::tr("Develop"),
+        QObject::tr("Tools for developers"),
+        sections, parent);
 }
 
 void MainWindow::setupContent() {
@@ -559,12 +739,17 @@ void MainWindow::setupContent() {
 
     m_stackedWidget = new QStackedWidget(this);
     m_stackedWidget->setObjectName("mainContainer");
+    auto* arcadeWidget  = makeArcadeCategory(this);
+    auto* workWidget    = makeWorkCategory(this);
+    auto* playWidget    = makePlayCategory(this);
+    auto* developWidget = makeDevelopCategory(this);
+
     m_stackedWidget->addWidget(m_homeWidget);
     m_stackedWidget->addWidget(m_searchWidget);
-    m_stackedWidget->addWidget(makeArcadePlaceholder(this));
-    m_stackedWidget->addWidget(makePlaceholder(tr("Work"), this));
-    m_stackedWidget->addWidget(makePlaceholder(tr("Play"), this));
-    m_stackedWidget->addWidget(makePlaceholder(tr("Develop"), this));
+    m_stackedWidget->addWidget(arcadeWidget);
+    m_stackedWidget->addWidget(workWidget);
+    m_stackedWidget->addWidget(playWidget);
+    m_stackedWidget->addWidget(developWidget);
     m_stackedWidget->addWidget(makePlaceholder(tr("Categories"), this));
     m_stackedWidget->addWidget(m_updatesWidget);
     m_stackedWidget->addWidget(m_userPageWidget);
@@ -601,9 +786,13 @@ void MainWindow::setupContent() {
 
     m_searchWidget->updateRepositoryList(false, false);
 
-    connect(m_homeWidget, &HomeWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
-    connect(m_searchWidget, &SearchWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
+    connect(m_homeWidget,    &HomeWidget::openPackageRequested,     this, &MainWindow::onOpenPackageRequested);
+    connect(m_searchWidget,  &SearchWidget::openPackageRequested,   this, &MainWindow::onOpenPackageRequested);
     connect(m_installedWidget, &InstalledWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
+    connect(arcadeWidget,    &CategoryWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
+    connect(workWidget,      &CategoryWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
+    connect(playWidget,      &CategoryWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
+    connect(developWidget,   &CategoryWidget::openPackageRequested, this, &MainWindow::onOpenPackageRequested);
     connect(m_updatesWidget, &UpdatesWidget::updatesCountChanged, this, [this](int count) {
         if (!m_sideList || m_sideList->count() <= UPDATES_ROW) return;
         m_sideList->item(UPDATES_ROW)->setData(UPDATES_BADGE_ROLE, count);

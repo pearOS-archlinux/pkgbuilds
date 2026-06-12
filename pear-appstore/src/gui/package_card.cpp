@@ -28,7 +28,7 @@ PackageCard::PackageCard(const PackageInfo& info, QWidget* parent, DisplayStyle 
     , m_repositoryLabel(new QLabel(this))
     , m_statusLabel(new QLabel(this)) {
     setupUi();
-    checkInstallStatus();
+    // Install status is set asynchronously by the parent widget
 }
 
 void PackageCard::setupUi() {
@@ -181,7 +181,7 @@ void PackageCard::onAppStreamDataReady() {
 }
 
 void PackageCard::applyAppStreamData(const AppStreamData& data) {
-    const int iconSize = 56;
+    const int iconSize = (m_displayStyle == Compact) ? 48 : 56;
     QPixmap iconPx;
 
     if (!data.iconPath.isEmpty()) {
@@ -195,9 +195,11 @@ void PackageCard::applyAppStreamData(const AppStreamData& data) {
     }
     if (iconPx.isNull()) {
         QStringList themeCandidates;
-        themeCandidates << m_info.name << m_info.name.toLower()
-                       << m_info.name.replace(QLatin1Char('-'), QLatin1Char('_'))
-                       << m_info.name.toLower().replace(QLatin1Char('-'), QLatin1Char('_'));
+        QString nameLower = m_info.name.toLower();
+        QString nameUnderscored = QString(m_info.name).replace(QLatin1Char('-'), QLatin1Char('_'));
+        QString nameLowerUnderscored = nameLower;
+        nameLowerUnderscored.replace(QLatin1Char('-'), QLatin1Char('_'));
+        themeCandidates << m_info.name << nameLower << nameUnderscored << nameLowerUnderscored;
         for (const QString& key : themeCandidates) {
             if (key.isEmpty()) continue;
             QIcon themeIcon = QIcon::fromTheme(key);

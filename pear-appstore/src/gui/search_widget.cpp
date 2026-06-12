@@ -12,6 +12,7 @@
 #include <QtConcurrent>
 #include <QTimer>
 #include <QResizeEvent>
+#include <QSet>
 
 SearchWidget::SearchWidget(QWidget* parent)
     : QWidget(parent)
@@ -111,16 +112,16 @@ void SearchWidget::onSearchClicked() {
 }
 
 void SearchWidget::performSearch() {
-    QString query = m_searchInput->text().trimmed().toLower().replace(' ', '-');
-    QString aurQuery = m_searchInput->text().trimmed();
-    
+    QString query = m_searchInput->text().trimmed();
+    QString aurQuery = query;
+
     if (query.isEmpty()) {
         m_searchButton->setEnabled(true);
         m_searchButton->setText("Search");
         if (m_contentStack) m_contentStack->setCurrentIndex(1);
         return;
     }
-    
+
     auto it = m_searchCache.constFind(query);
     if (it != m_searchCache.constEnd()) {
         QVector<PackageInfo> cached = it.value();
@@ -128,7 +129,7 @@ void SearchWidget::performSearch() {
         m_aurHelper->searchPackages(aurQuery);
         return;
     }
-    
+
     (void)QtConcurrent::run([this, query, aurQuery]() {
         QVector<PackageInfo> results = AlpmWrapper::instance().searchPackages(query);
         QMetaObject::invokeMethod(this, [this, results, query, aurQuery]() {
@@ -143,7 +144,15 @@ void SearchWidget::performSearch() {
 }
 
 void SearchWidget::onAurSearchCompleted(const QVector<PackageInfo>& results) {
-    m_allResults.append(results);
+    // Append only AUR packages not already found in official repos
+    QSet<QString> seen;
+    for (const auto& pkg : m_allResults) seen.insert(pkg.name);
+    for (const auto& pkg : results) {
+        if (!seen.contains(pkg.name)) {
+            m_allResults.append(pkg);
+            seen.insert(pkg.name);
+        }
+    }
     m_searchButton->setEnabled(true);
     m_searchButton->setText("Search");
     if (m_contentStack) {
@@ -194,6 +203,16 @@ void SearchWidget::displayResults(const QVector<PackageInfo>& results) {
     }
     m_columnCount = columnCountForWidth(m_scrollArea->viewport()->width());
     refreshGridLayout();
+
+    (void)QtConcurrent::run([this]() {
+        QVector<PackageInfo> installed = AlpmWrapper::instance().getInstalledPackages();
+        QSet<QString> names;
+        for (const auto& p : installed) names.insert(p.name);
+        QMetaObject::invokeMethod(this, [this, names]() {
+            for (auto* card : m_resultCards)
+                card->updateInstallStatus(names.contains(card->packageInfo().name));
+        }, Qt::QueuedConnection);
+    });
 }
 
 int SearchWidget::columnCountForWidth(int width) {
@@ -242,31 +261,22 @@ void SearchWidget::clearResults() {
 
 void SearchWidget::onPackageClicked(const PackageInfo& info) {
     Logger::info(QString("Package clicked: %1").arg(info.name));
-    
-    PackageInfo fullInfo = info;
-    
-    // For AUR packages, fetch complete details including maintainer, URL, dependencies
+
     if (info.repository.toLower() == "aur") {
         auto* aurHelper = new AurHelper(this);
-        QEventLoop loop;
-        
-        connect(aurHelper, &AurHelper::packageInfoReceived, [&](const PackageInfo& detailedInfo) {
-            fullInfo = detailedInfo;
-            loop.quit();
+        connect(aurHelper, &AurHelper::packageInfoReceived, this, [this, aurHelper](const PackageInfo& detailedInfo) {
+            aurHelper->deleteLater();
+            emit openPackageRequested(detailedInfo);
         });
-        
-        connect(aurHelper, &AurHelper::error, [&](const QString& errorMsg) {
+        connect(aurHelper, &AurHelper::error, this, [this, aurHelper, info](const QString& errorMsg) {
             Logger::warning(QString("Failed to fetch AUR details for %1: %2").arg(info.name, errorMsg));
-            loop.quit();
+            aurHelper->deleteLater();
+            emit openPackageRequested(info);
         });
-        
         aurHelper->getPackageInfo(info.name);
-        loop.exec();
-        
-        aurHelper->deleteLater();
+    } else {
+        emit openPackageRequested(info);
     }
-    
-    emit openPackageRequested(fullInfo);
 }
 
 void SearchWidget::updateRepositoryList(bool multilibEnabled, bool chaoticAurEnabled) {

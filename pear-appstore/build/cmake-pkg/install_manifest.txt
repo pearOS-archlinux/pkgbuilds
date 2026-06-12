@@ -1,0 +1,3 @@
+/usr/bin/pearos-appstore
+/usr/share/applications/pearos-appstore.desktop
+/usr/share/pearos-appstore/stylesheet.qss

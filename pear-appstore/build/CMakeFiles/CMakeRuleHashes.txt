@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+84b7ba6de1df946e45570b7dcc878196 CMakeFiles/pearos-appstore_autogen
+50f8d45e8c1eb73b94ff1df3de01a3fc CMakeFiles/pkg
+243bf2206b15df4486dbcafc834a5d90 pearos-appstore_autogen/GBFAFXFCVO/qrc_sidebar_icons.cpp
+5f9485704d56e1c755dcd04bc75f8115 pearos-appstore_autogen/timestamp

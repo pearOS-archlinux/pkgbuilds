@@ -56,6 +56,7 @@ set(SOURCES
     src/gui/package_details_dialog.cpp
     src/gui/loading_overlay.cpp
     src/gui/scroll_bar_fade.cpp
+    src/gui/category_widget.cpp
 )
 
 # Header files
@@ -83,6 +84,7 @@ set(HEADERS
     src/gui/package_details_dialog.h
     src/gui/loading_overlay.h
     src/gui/scroll_bar_fade.h
+    src/gui/category_widget.h
 )
 
 # Create executable

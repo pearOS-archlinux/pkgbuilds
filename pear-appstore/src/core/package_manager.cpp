@@ -74,14 +74,13 @@ void PackageManager::installPackage(const QString& packageName, const QString& r
     
     QString command;
     if (isAUR && (m_helper == Helper::Yay)) {
-        // AUR packages - use pkexec to get userpassword before hand
-        // Paru has a problem here, so default to yay
-        command = QString("pkexec %1 -S %2 --noconfirm").arg(helper, packageName);
+        // AUR packages: yay must run as the current user (it handles sudo internally)
+        command = QString("%1 -S %2 --noconfirm").arg(helper, packageName);
     } else {
-        // Official repos and chaotic-aur need root access and use pacman
+        // Official repos and chaotic-aur need root access via pacman
         command = QString("pkexec pacman -S %1 --noconfirm").arg(packageName);
     }
-    
+
     executeCommand("sh", QStringList() << "-c" << command);
 }
 
@@ -122,13 +121,18 @@ void PackageManager::updatePackage(const QString& packageName, const QString& re
 
 void PackageManager::updateAllPackages() {
     std::lock_guard<std::mutex> lock(m_mutex);
-    
+
     Logger::info("Updating all packages");
     emit operationStarted("Updating all packages...");
-    
-    QString command = QString("pkexec %1 -Syu --noconfirm")
-                        .arg(getHelperName());
-    
+
+    QString command;
+    if (m_helper == Helper::Yay) {
+        // yay handles both AUR and official repos; runs as current user (manages sudo internally)
+        command = QStringLiteral("yay -Syu --noconfirm");
+    } else {
+        command = QStringLiteral("pkexec pacman -Syu --noconfirm");
+    }
+
     executeCommand("sh", QStringList() << "-c" << command);
 }
 

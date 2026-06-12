@@ -1,0 +1,10 @@
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/pearos-appstore.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/pkg.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/edit_cache.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/rebuild_cache.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/list_install_components.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/install.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/install/local.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/install/strip.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/pearos-appstore_autogen_timestamp_deps.dir
+/home/alxb421/Desktop/pkgbuilds/pear-appstore/build/cmake-pkg/CMakeFiles/pearos-appstore_autogen.dir

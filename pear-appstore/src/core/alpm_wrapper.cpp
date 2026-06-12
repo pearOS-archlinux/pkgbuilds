@@ -364,25 +364,15 @@ QStringList AlpmWrapper::getEnabledRepositories() const {
 }
 
 void AlpmWrapper::refreshDatabases() {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    
-    if (!m_initialized) {
-        Logger::error("ALPM not initialized");
-        return;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_handle) {
+            alpm_release(m_handle);
+            m_handle = nullptr;
+            m_syncDbs = nullptr;
+            m_initialized = false;
+        }
     }
-    
-    // Release current handle
-    if (m_handle) {
-        alpm_release(m_handle);
-        m_handle = nullptr;
-        m_syncDbs = nullptr;
-        m_initialized = false;
-    }
-    
-    // Re-initialize to pick up new repositories
-    m_mutex.unlock();
     initialize();
-    m_mutex.lock();
-    
     Logger::info("ALPM databases refreshed");
 }
