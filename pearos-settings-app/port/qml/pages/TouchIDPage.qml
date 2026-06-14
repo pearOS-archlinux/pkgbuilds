@@ -154,7 +154,7 @@ PageBase {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: fingerPicker.open()
+                            onClicked: fingerPicker.shown = !fingerPicker.shown
                         }
                     }
 
@@ -211,27 +211,20 @@ PageBase {
         topPadding: 12
     }
 
-    Spacer {}
-
-    // ── Finger picker popup ───────────────────────────────────────────────
-    Popup {
+    // ── Finger picker (inline, shown below the + button) ─────────────────
+    SettingsCard {
         id: fingerPicker
-        modal: true; focus: true
-        anchors.centerIn: Overlay.overlay
-        width: 280
-
-        background: Rectangle {
-            color: Theme.bgCard; radius: 12
-            border.color: Theme.divider; border.width: 1
-        }
+        property bool shown: false
+        visible: shown && TouchID.hasDevice && !TouchID.enrolling
+        height: shown ? implicitHeight : 0
 
         Column {
             width: parent.width; spacing: 0
 
             Text {
                 text: "Choose a finger to enroll"
-                font.pixelSize: 14; font.weight: Font.DemiBold; color: Theme.textPrimary
-                padding: 16; width: parent.width
+                font.pixelSize: 13; font.weight: Font.DemiBold; color: Theme.textPrimary
+                topPadding: 4; bottomPadding: 8
             }
 
             Repeater {
@@ -244,27 +237,26 @@ PageBase {
                 delegate: Item {
                     width: parent.width; height: 38
                     Text {
-                        anchors.left: parent.left; anchors.leftMargin: 16
+                        anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         text: modelData.replace(/-/g, " ")
                         font.pixelSize: 13; color: Theme.textPrimary
                     }
                     Rectangle {
                         anchors.bottom: parent.bottom; width: parent.width; height: 1
-                        color: Theme.divider
-                        visible: index < 9
+                        color: Theme.divider; visible: index < 9
                     }
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: {
-                            fingerPicker.close()
+                            fingerPicker.shown = false
                             TouchID.enrollFingerprint(modelData)
                         }
                     }
                 }
             }
-
-            Item { width: 1; height: 8 }
         }
     }
+
+    Spacer {}
 }
