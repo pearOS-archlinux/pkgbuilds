@@ -1,0 +1,372 @@
+{
+    "classes": [
+        {
+            "className": "AppearanceManager",
+            "lineNumber": 6,
+            "methods": [
+                {
+                    "access": "public",
+                    "index": 1,
+                    "lineNumber": 39,
+                    "name": "refresh",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "scheme",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 2,
+                    "lineNumber": 40,
+                    "name": "setColorScheme",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "size",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 3,
+                    "lineNumber": 41,
+                    "name": "setFontSize",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "family",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 4,
+                    "lineNumber": 42,
+                    "name": "setFontFamily",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "theme",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 5,
+                    "lineNumber": 43,
+                    "name": "setIconTheme",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "enabled",
+                            "type": "bool"
+                        }
+                    ],
+                    "index": 6,
+                    "lineNumber": 44,
+                    "name": "setLgEnabled",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "v",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 7,
+                    "lineNumber": 45,
+                    "name": "setLgBlurStrength",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "v",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 8,
+                    "lineNumber": 46,
+                    "name": "setLgNoiseStrength",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "v",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 9,
+                    "lineNumber": 47,
+                    "name": "setLgRefractionStrength",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "v",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 10,
+                    "lineNumber": 48,
+                    "name": "setLgRefractionEdgeSize",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "v",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 11,
+                    "lineNumber": 49,
+                    "name": "setLgRGBFringing",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "lineNumber": 8,
+                    "name": "colorScheme",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "colorScheme",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "lineNumber": 9,
+                    "name": "fontSize",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "fontSize",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "lineNumber": 10,
+                    "name": "fontFamily",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "fontFamily",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "lineNumber": 11,
+                    "name": "iconTheme",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "iconTheme",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "lineNumber": 12,
+                    "name": "colorSchemes",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "colorSchemes",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QVariantList",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 5,
+                    "lineNumber": 13,
+                    "name": "iconThemes",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "iconThemes",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QVariantList",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 6,
+                    "lineNumber": 16,
+                    "name": "lgEnabled",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgEnabled",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 7,
+                    "lineNumber": 17,
+                    "name": "lgBlurStrength",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgBlurStrength",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 8,
+                    "lineNumber": 18,
+                    "name": "lgNoiseStrength",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgNoiseStrength",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 9,
+                    "lineNumber": 19,
+                    "name": "lgRefractionStrength",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgRefractionStrength",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 10,
+                    "lineNumber": 20,
+                    "name": "lgRefractionEdgeSize",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgRefractionEdgeSize",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 11,
+                    "lineNumber": 21,
+                    "name": "lgRGBFringing",
+                    "notify": "appearanceChanged",
+                    "override": false,
+                    "read": "lgRGBFringing",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                }
+            ],
+            "qualifiedClassName": "AppearanceManager",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "lineNumber": 52,
+                    "name": "appearanceChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "appearancemanager.h",
+    "outputRevision": 69
+}

@@ -1,0 +1,140 @@
+{
+    "classes": [
+        {
+            "className": "BatteryManager",
+            "lineNumber": 5,
+            "methods": [
+                {
+                    "access": "public",
+                    "index": 1,
+                    "lineNumber": 23,
+                    "name": "refresh",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "lineNumber": 7,
+                    "name": "percentage",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "percentage",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "lineNumber": 8,
+                    "name": "isCharging",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "isCharging",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "lineNumber": 9,
+                    "name": "isPresent",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "isPresent",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "bool",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "lineNumber": 10,
+                    "name": "timeRemaining",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "timeRemaining",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "lineNumber": 11,
+                    "name": "designCapacity",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "designCapacity",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 5,
+                    "lineNumber": 12,
+                    "name": "currentCapacity",
+                    "notify": "statusChanged",
+                    "override": false,
+                    "read": "currentCapacity",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                }
+            ],
+            "qualifiedClassName": "BatteryManager",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "lineNumber": 26,
+                    "name": "statusChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "batterymanager.h",
+    "outputRevision": 69
+}

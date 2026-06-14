@@ -1,0 +1,171 @@
+{
+    "classes": [
+        {
+            "className": "KeyboardManager",
+            "lineNumber": 6,
+            "methods": [
+                {
+                    "access": "public",
+                    "index": 1,
+                    "lineNumber": 22,
+                    "name": "refresh",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "layout",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "variant",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 2,
+                    "lineNumber": 23,
+                    "name": "setLayout",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "layout",
+                            "type": "QString"
+                        }
+                    ],
+                    "index": 3,
+                    "isCloned": true,
+                    "lineNumber": 23,
+                    "name": "setLayout",
+                    "returnType": "void"
+                },
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "delayMs",
+                            "type": "int"
+                        },
+                        {
+                            "name": "rateHz",
+                            "type": "int"
+                        }
+                    ],
+                    "index": 4,
+                    "lineNumber": 24,
+                    "name": "setRepeat",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "properties": [
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 0,
+                    "lineNumber": 8,
+                    "name": "layout",
+                    "notify": "keyboardChanged",
+                    "override": false,
+                    "read": "layout",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 1,
+                    "lineNumber": 9,
+                    "name": "variant",
+                    "notify": "keyboardChanged",
+                    "override": false,
+                    "read": "variant",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QString",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 2,
+                    "lineNumber": 10,
+                    "name": "repeatDelay",
+                    "notify": "keyboardChanged",
+                    "override": false,
+                    "read": "repeatDelay",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 3,
+                    "lineNumber": 11,
+                    "name": "repeatRate",
+                    "notify": "keyboardChanged",
+                    "override": false,
+                    "read": "repeatRate",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "int",
+                    "user": false,
+                    "virtual": false
+                },
+                {
+                    "constant": false,
+                    "designable": true,
+                    "final": false,
+                    "index": 4,
+                    "lineNumber": 12,
+                    "name": "layouts",
+                    "notify": "keyboardChanged",
+                    "override": false,
+                    "read": "layouts",
+                    "required": false,
+                    "scriptable": true,
+                    "stored": true,
+                    "type": "QVariantList",
+                    "user": false,
+                    "virtual": false
+                }
+            ],
+            "qualifiedClassName": "KeyboardManager",
+            "signals": [
+                {
+                    "access": "public",
+                    "index": 0,
+                    "lineNumber": 27,
+                    "name": "keyboardChanged",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "keyboardmanager.h",
+    "outputRevision": 69
+}

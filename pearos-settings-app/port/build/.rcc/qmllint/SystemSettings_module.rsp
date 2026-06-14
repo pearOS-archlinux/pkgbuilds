@@ -1,0 +1,16 @@
+-I
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build
+-I
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build/PearOSSettings
+-I
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build
+-I
+/usr/lib/qt6/qml
+--resource
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build/.qt/rcc/qmake_PearOSSettings.qrc
+--resource
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build/.qt/rcc/SystemSettings_raw_qml_0.qrc
+--resource
+/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build/.qt/rcc/SystemSettings_raw_qml_0_extra_qmldirs.qrc
+--module
+PearOSSettings

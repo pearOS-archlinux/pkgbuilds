@@ -1,0 +1,3167 @@
+{
+    "formatRevision": 1,
+    "modules": [
+        {
+            "moduleFiles": [
+                {
+                    "entries": [
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "onCompleted",
+                            "line": 7,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 14,
+                            "message": "Cannot generate efficient code for internal conversion with incompatible or ambiguous types: conversion to QVariant -> QColor stored as QVariant"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "x",
+                            "line": 18,
+                            "message": "Cannot load property value from (component in /home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DesktopDockPage.qml)::parent with type QQuickItem."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 48,
+                            "durationMicroseconds": 0,
+                            "functionName": "cursorShape",
+                            "line": 22,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "onClicked",
+                            "line": 23,
+                            "message": "Cannot load property value from (component in /home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DesktopDockPage.qml)::parent with type QQuickItem."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 27,
+                            "durationMicroseconds": 0,
+                            "functionName": "fill",
+                            "line": 22,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 30,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 40,
+                            "durationMicroseconds": 3000,
+                            "functionName": "color",
+                            "line": 34,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 27,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 33,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 33,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 39,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 48,
+                            "durationMicroseconds": 0,
+                            "functionName": "height",
+                            "line": 39,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 38,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 66,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 38,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 49,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 40,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 53,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 27,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 52,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 52,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 56,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 66,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 56,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 31,
+                            "durationMicroseconds": 0,
+                            "functionName": "from",
+                            "line": 59,
+                            "message": "Could not find property \"from\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 55,
+                            "durationMicroseconds": 0,
+                            "functionName": "to",
+                            "line": 59,
+                            "message": "Could not find property \"to\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 27,
+                            "durationMicroseconds": 0,
+                            "functionName": "stepSize",
+                            "line": 60,
+                            "message": "Could not find property \"stepSize\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 61,
+                            "message": "Could not find property \"value\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 63,
+                            "message": "Could not find signal \"moved\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "x",
+                            "line": 65,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 43,
+                            "durationMicroseconds": 0,
+                            "functionName": "y",
+                            "line": 65,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 66,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 67,
+                            "message": "Cannot generate efficient code for internal conversion with incompatible or ambiguous types: call to method rgba, returning QVariant -> QColor stored as QVariant"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 69,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "height",
+                            "line": 69,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "x",
+                            "line": 74,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "y",
+                            "line": 75,
+                            "message": "Cannot access value for name sl"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 79,
+                            "message": "Cannot generate efficient code for internal conversion with incompatible or ambiguous types: call to method rgba, returning QVariant -> QColor stored as QVariant"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 23,
+                            "durationMicroseconds": 0,
+                            "functionName": "text",
+                            "line": 84,
+                            "message": "Cannot retrieve a non-object type by ID: sl"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 44,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 89,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "horizontalAlignment",
+                            "line": 90,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 52,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 83,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 100,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 56,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 99,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 105,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 109,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 62,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 112,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 111,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 111,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 116,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 118,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 119,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 115,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 115,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 123,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 123,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 128,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 129,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 129,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 132,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 132,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 136,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 71,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 139,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 138,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 138,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 142,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 142,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 31,
+                            "durationMicroseconds": 0,
+                            "functionName": "text",
+                            "line": 146,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 52,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 147,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 46,
+                            "durationMicroseconds": 0,
+                            "functionName": "horizontalAlignment",
+                            "line": 148,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 49,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 145,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 151,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 152,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 152,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 158,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 56,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 158,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 159,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 163,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 165,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 166,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 166,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 169,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 169,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 173,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 174,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 174,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 177,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 177,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 181,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 70,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 184,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 183,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 183,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 188,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 190,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 191,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 187,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 187,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 195,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 195,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 199,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 73,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 202,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 201,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 201,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 206,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 207,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 207,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 205,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 205,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 220,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 66,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 219,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 225,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 228,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 73,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 231,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 230,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 230,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 235,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 236,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 236,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 234,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 234,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 240,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 240,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 88,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 240,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 243,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 245,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 246,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 246,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 249,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 249,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 252,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 255,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 254,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 254,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 259,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 260,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 260,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 258,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 258,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 264,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 264,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 88,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 264,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 267,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 269,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 270,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 270,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 273,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 273,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 88,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 273,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 276,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 278,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 279,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 279,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 282,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 282,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 286,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 81,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 289,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 288,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 72,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 288,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 293,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 295,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 296,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 292,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 292,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 309,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 66,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 308,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 314,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 87,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 316,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 316,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 316,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 317,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 317,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 87,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 318,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 318,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 318,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 319,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 319,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 87,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 320,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 320,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 320,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 321,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 321,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 87,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 322,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 322,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 125,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 322,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 333,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 67,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 332,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 338,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 89,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 340,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 340,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 340,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 341,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 341,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 89,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 342,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 342,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 342,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 343,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 343,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 89,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 344,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 344,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 134,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 344,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 345,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 345,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 89,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 346,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 135,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 346,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 135,
+                            "durationMicroseconds": 0,
+                            "functionName": "onMoved",
+                            "line": 346,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 357,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 60,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 356,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 362,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 365,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 152,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 366,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 366,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 366,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 367,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 152,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 367,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 152,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 367,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 367,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 367,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 369,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 369,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 372,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 155,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 373,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 373,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 373,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 374,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 139,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 374,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 139,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 374,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 374,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 374,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 376,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 376,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 379,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 159,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 380,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 380,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 380,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 381,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 143,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 381,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 143,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 381,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 381,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 381,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 383,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 383,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 386,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 157,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 387,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 387,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 387,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 388,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 147,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 388,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 147,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 388,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 388,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 388,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 390,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 390,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 393,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 159,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 394,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 394,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 394,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 395,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 142,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 395,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 142,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 395,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 395,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 395,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 397,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 397,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 400,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 160,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 401,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 401,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 401,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 402,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 142,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 402,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 142,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 402,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 402,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 402,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 404,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 404,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 408,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 147,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 409,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 409,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 409,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 412,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 414,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 415,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 411,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 411,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 418,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 418,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 422,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 147,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 423,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 423,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 423,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 426,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 428,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 429,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 425,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 425,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 432,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 432,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 88,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 432,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 26,
+                            "durationMicroseconds": 0,
+                            "functionName": "visible",
+                            "line": 435,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 436,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 159,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 437,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 437,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 437,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 438,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 145,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 438,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 145,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 438,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 438,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 438,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 450,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 70,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 449,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 455,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 458,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 148,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 459,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 459,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 459,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 462,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 464,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 465,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 461,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 461,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 468,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 468,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 471,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 156,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 472,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 472,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 472,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 475,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 477,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 30,
+                            "durationMicroseconds": 0,
+                            "functionName": "enabled",
+                            "line": 478,
+                            "message": "Could not find property \"enabled\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 479,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 474,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 474,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 482,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 482,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 485,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 145,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 486,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 486,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 486,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 28,
+                            "durationMicroseconds": 0,
+                            "functionName": "model",
+                            "line": 489,
+                            "message": "Could not find property \"model\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 35,
+                            "durationMicroseconds": 0,
+                            "functionName": "currentIndex",
+                            "line": 491,
+                            "message": "Could not find property \"currentIndex\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 34,
+                            "durationMicroseconds": 0,
+                            "functionName": "onActivated",
+                            "line": 492,
+                            "message": "Could not find signal \"activated\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 36,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 488,
+                            "message": "Could not find property \"right\"."
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 74,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 488,
+                            "message": "Could not find property \"verticalCenter\"."
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 16,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 505,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 67,
+                            "durationMicroseconds": 0,
+                            "functionName": "weight",
+                            "line": 504,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 20,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 510,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 513,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 155,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 514,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 514,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 514,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 515,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 149,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 515,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 149,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 515,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 515,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 515,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 517,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 517,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 520,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 156,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 521,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 521,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 521,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 522,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 150,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 522,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 150,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 522,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 522,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 522,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 524,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 524,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 527,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 154,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 528,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 528,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 528,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 529,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 148,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 529,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 148,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 529,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 529,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 529,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 531,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 531,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 534,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 149,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 535,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 535,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 535,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 536,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 144,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 536,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 144,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 536,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 536,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 536,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 32,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 538,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 64,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 538,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 24,
+                            "durationMicroseconds": 0,
+                            "functionName": "width",
+                            "line": 541,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 169,
+                            "durationMicroseconds": 0,
+                            "functionName": "color",
+                            "line": 542,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 38,
+                            "durationMicroseconds": 0,
+                            "functionName": "left",
+                            "line": 542,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 75,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 542,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 109,
+                            "durationMicroseconds": 0,
+                            "functionName": "value",
+                            "line": 543,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 2,
+                            "column": 144,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 543,
+                            "message": "Cannot access value for name Dock"
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 144,
+                            "durationMicroseconds": 0,
+                            "functionName": "onToggled",
+                            "line": 543,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 41,
+                            "durationMicroseconds": 0,
+                            "functionName": "right",
+                            "line": 543,
+                            "message": ""
+                        },
+                        {
+                            "codegenResult": 0,
+                            "column": 79,
+                            "durationMicroseconds": 0,
+                            "functionName": "verticalCenter",
+                            "line": 543,
+                            "message": ""
+                        }
+                    ],
+                    "filePath": "/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DesktopDockPage.qml"
+                }
+            ],
+            "moduleId": "PearOSSettings(SystemSettings)"
+        }
+    ]
+}

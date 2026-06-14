@@ -1,0 +1,41 @@
+<RCC>
+  <qresource prefix="/qt/qml/PearOSSettings/">
+    <file alias="qml/Main.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/Main.qml</file>
+    <file alias="qml/components/Theme.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/Theme.qml</file>
+    <file alias="qml/components/Navigator.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/Navigator.qml</file>
+    <file alias="qml/components/PageBase.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/PageBase.qml</file>
+    <file alias="qml/components/NavSection.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/NavSection.qml</file>
+    <file alias="qml/components/NavItem.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/NavItem.qml</file>
+    <file alias="qml/components/Spacer.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/Spacer.qml</file>
+    <file alias="qml/components/CardSection.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/CardSection.qml</file>
+    <file alias="qml/components/SettingsToggle.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/SettingsToggle.qml</file>
+    <file alias="qml/components/SettingsCard.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/SettingsCard.qml</file>
+    <file alias="qml/components/SettingsSlider.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/SettingsSlider.qml</file>
+    <file alias="qml/components/SectionTitle.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/SectionTitle.qml</file>
+    <file alias="qml/components/CardDivider.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/components/CardDivider.qml</file>
+    <file alias="qml/pages/GeneralPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/GeneralPage.qml</file>
+    <file alias="qml/pages/AppearancePage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/AppearancePage.qml</file>
+    <file alias="qml/pages/WiFiPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/WiFiPage.qml</file>
+    <file alias="qml/pages/BluetoothPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/BluetoothPage.qml</file>
+    <file alias="qml/pages/NetworkPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/NetworkPage.qml</file>
+    <file alias="qml/pages/SoundPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/SoundPage.qml</file>
+    <file alias="qml/pages/BatteryPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/BatteryPage.qml</file>
+    <file alias="qml/pages/DisplaysPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DisplaysPage.qml</file>
+    <file alias="qml/pages/WallpaperPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/WallpaperPage.qml</file>
+    <file alias="qml/pages/AboutPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/AboutPage.qml</file>
+    <file alias="qml/pages/StoragePage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/StoragePage.qml</file>
+    <file alias="qml/pages/SoftwareUpdatePage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/SoftwareUpdatePage.qml</file>
+    <file alias="qml/pages/KeyboardPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/KeyboardPage.qml</file>
+    <file alias="qml/pages/TrackpadPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/TrackpadPage.qml</file>
+    <file alias="qml/pages/UsersPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/UsersPage.qml</file>
+    <file alias="qml/pages/DateTimePage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DateTimePage.qml</file>
+    <file alias="qml/pages/PrivacyPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/PrivacyPage.qml</file>
+    <file alias="qml/pages/LockScreenPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/LockScreenPage.qml</file>
+    <file alias="qml/pages/NotificationsPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/NotificationsPage.qml</file>
+    <file alias="qml/pages/StubPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/StubPage.qml</file>
+    <file alias="qml/pages/PearIDPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/PearIDPage.qml</file>
+    <file alias="qml/pages/PearIntelligencePage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/PearIntelligencePage.qml</file>
+    <file alias="qml/pages/DesktopDockPage.qml">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/qml/pages/DesktopDockPage.qml</file>
+  </qresource>
+</RCC>
+

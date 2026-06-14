@@ -1,0 +1,41 @@
+module PearOSSettings
+typeinfo SystemSettings.qmltypes
+prefer :/qt/qml/PearOSSettings/
+Main 1.0 qml/Main.qml
+singleton Theme 1.0 qml/components/Theme.qml
+singleton Navigator 1.0 qml/components/Navigator.qml
+PageBase 1.0 qml/components/PageBase.qml
+NavSection 1.0 qml/components/NavSection.qml
+NavItem 1.0 qml/components/NavItem.qml
+Spacer 1.0 qml/components/Spacer.qml
+CardSection 1.0 qml/components/CardSection.qml
+SettingsToggle 1.0 qml/components/SettingsToggle.qml
+SettingsCard 1.0 qml/components/SettingsCard.qml
+SettingsSlider 1.0 qml/components/SettingsSlider.qml
+SectionTitle 1.0 qml/components/SectionTitle.qml
+CardDivider 1.0 qml/components/CardDivider.qml
+GeneralPage 1.0 qml/pages/GeneralPage.qml
+AppearancePage 1.0 qml/pages/AppearancePage.qml
+WiFiPage 1.0 qml/pages/WiFiPage.qml
+BluetoothPage 1.0 qml/pages/BluetoothPage.qml
+NetworkPage 1.0 qml/pages/NetworkPage.qml
+SoundPage 1.0 qml/pages/SoundPage.qml
+BatteryPage 1.0 qml/pages/BatteryPage.qml
+DisplaysPage 1.0 qml/pages/DisplaysPage.qml
+WallpaperPage 1.0 qml/pages/WallpaperPage.qml
+AboutPage 1.0 qml/pages/AboutPage.qml
+StoragePage 1.0 qml/pages/StoragePage.qml
+SoftwareUpdatePage 1.0 qml/pages/SoftwareUpdatePage.qml
+KeyboardPage 1.0 qml/pages/KeyboardPage.qml
+TrackpadPage 1.0 qml/pages/TrackpadPage.qml
+UsersPage 1.0 qml/pages/UsersPage.qml
+DateTimePage 1.0 qml/pages/DateTimePage.qml
+PrivacyPage 1.0 qml/pages/PrivacyPage.qml
+LockScreenPage 1.0 qml/pages/LockScreenPage.qml
+NotificationsPage 1.0 qml/pages/NotificationsPage.qml
+StubPage 1.0 qml/pages/StubPage.qml
+PearIDPage 1.0 qml/pages/PearIDPage.qml
+PearIntelligencePage 1.0 qml/pages/PearIntelligencePage.qml
+DesktopDockPage 1.0 qml/pages/DesktopDockPage.qml
+depends QtQuick
+

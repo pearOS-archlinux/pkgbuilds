@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>sidebar_icons/work.svg</file>
+        <file>sidebar_icons/shopping.svg</file>
+        <file>sidebar_icons/generic.svg</file>
+        <file>delete.svg</file>
+    </qresource>
+</RCC>
