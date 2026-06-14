@@ -9,6 +9,38 @@ PageBase {
     readonly property string ap: "file:///home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/assets/"
     Component.onCompleted: Trackpad.refresh()
 
+    component Toggle: Rectangle {
+        property bool on: false
+        property var onChange: null
+        width: 36; height: 18; radius: 9
+        color: on ? "#3B82F6" : "#cccccc"
+        Behavior on color { ColorAnimation { duration: 200 } }
+        Rectangle {
+            width: 14; height: 14; radius: 7; color: "white"; y: 2
+            x: parent.on ? 20 : 2; Behavior on x { NumberAnimation { duration: 200 } }
+        }
+        MouseArea {
+            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+            onClicked: { parent.on = !parent.on; if (parent.onChange) parent.onChange(parent.on) }
+        }
+    }
+
+    component Row2: Item {
+        property string label: ""
+        property bool toggled: false
+        property var onToggle: null
+        width: parent.width; height: 44
+        Text {
+            anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter
+            text: parent.label; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary
+        }
+        Toggle {
+            anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+            on: parent.toggled
+            onChange: parent.onToggle
+        }
+    }
+
     // GIFs section
     SettingsCard {
         Row {
@@ -36,90 +68,192 @@ PageBase {
     }
     Spacer {}
 
-    // Point & Click tab
+    // ── Point & Click ──────────────────────────────────────────────────────
     SettingsCard {
         visible: activeTab === 0
         Column {
             width: parent.width; spacing: 0
 
+            Row2 {
+                label: "Enable Trackpad"
+                toggled: Trackpad.enabled
+                onToggle: function(v) { Trackpad.setEnabled(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Tap to Click"
+                toggled: Trackpad.tapToClick
+                onToggle: function(v) { Trackpad.setTapToClick(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
             Item {
                 width: parent.width; height: 44
-                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Tap to Click"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Rectangle {
-                    id: tapTog; width: 36; height: 18; radius: 9
-                    property bool localState: Trackpad.tapToClick
-                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                    color: localState ? "#3B82F6" : "#cccccc"
-                    Behavior on color { ColorAnimation { duration: 200 } }
-                    Rectangle { width: 14; height: 14; radius: 7; color: "white"; y: 2; x: tapTog.localState ? 20 : 2; Behavior on x { NumberAnimation { duration: 200 } } }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { tapTog.localState = !tapTog.localState; Trackpad.setTapToClick(tapTog.localState) } }
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Click Method"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Row {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+                    Repeater {
+                        model: [{label: "Button Areas", val: 1}, {label: "Clickfinger", val: 2}]
+                        delegate: Rectangle {
+                            height: 28; width: cmLbl.implicitWidth + 16; radius: 6
+                            color: Trackpad.clickMethod === modelData.val ? "#3B82F6" : Qt.rgba(0,0,0,0.08)
+                            Text { id: cmLbl; anchors.centerIn: parent; text: modelData.label; font.pixelSize: 12
+                                color: Trackpad.clickMethod === modelData.val ? "white" : Theme.textPrimary }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: Trackpad.setClickMethod(modelData.val) }
+                        }
+                    }
                 }
             }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
 
+            Row2 {
+                label: "Left Handed"
+                toggled: Trackpad.leftHanded
+                onToggle: function(v) { Trackpad.setLeftHanded(v) }
+            }
             Rectangle { width: parent.width; height: 1; color: Theme.divider }
 
             Column {
-                width: parent.width; spacing: 8; topPadding: 10; bottomPadding: 10
+                width: parent.width; spacing: 6; topPadding: 10; bottomPadding: 10
                 Text { text: "Pointer Acceleration"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
                 Row {
-                    width: parent.width; spacing: 10
+                    width: parent.width; spacing: 8
                     Text { text: "-1"; font.pixelSize: 11; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
                     Slider {
-                        from: -1; to: 1; stepSize: 0.1; value: Trackpad.speed
-                        palette.accent: "#3B82F6"; width: parent.width - 60
+                        from: -1; to: 1; stepSize: 0.05
+                        value: Trackpad.pointerAcceleration
+                        palette.accent: "#3B82F6"; width: parent.width - 80
                         anchors.verticalCenter: parent.verticalCenter
-                        onMoved: Trackpad.setSpeed(value)
+                        onMoved: Trackpad.setPointerAcceleration(Math.round(value * 20) / 20)
                     }
                     Text { text: "+1"; font.pixelSize: 11; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: Trackpad.pointerAcceleration.toFixed(2); font.pixelSize: 11; color: Theme.textSecondary; width: 36; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Item {
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Acceleration Profile"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Row {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+                    Repeater {
+                        model: [{label: "Flat", val: 1}, {label: "Adaptive", val: 2}]
+                        delegate: Rectangle {
+                            height: 28; width: apLbl.implicitWidth + 16; radius: 6
+                            color: Trackpad.accelProfile === modelData.val ? "#3B82F6" : Qt.rgba(0,0,0,0.08)
+                            Text { id: apLbl; anchors.centerIn: parent; text: modelData.label; font.pixelSize: 12
+                                color: Trackpad.accelProfile === modelData.val ? "white" : Theme.textPrimary }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: Trackpad.setAccelProfile(modelData.val) }
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Scroll & Zoom tab
+    // ── Scroll & Zoom ──────────────────────────────────────────────────────
     SettingsCard {
         visible: activeTab === 1
         Column {
             width: parent.width; spacing: 0
 
-            Item {
-                width: parent.width; height: 44
-                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Natural Scrolling"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Rectangle {
-                    id: natTog; width: 36; height: 18; radius: 9
-                    property bool localState: Trackpad.naturalScroll
-                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                    color: localState ? "#3B82F6" : "#cccccc"
-                    Behavior on color { ColorAnimation { duration: 200 } }
-                    Rectangle { width: 14; height: 14; radius: 7; color: "white"; y: 2; x: natTog.localState ? 20 : 2; Behavior on x { NumberAnimation { duration: 200 } } }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { natTog.localState = !natTog.localState; Trackpad.setNaturalScroll(natTog.localState) } }
-                }
+            Row2 {
+                label: "Natural Scrolling"
+                toggled: Trackpad.naturalScroll
+                onToggle: function(v) { Trackpad.setNaturalScroll(v) }
             }
-
             Rectangle { width: parent.width; height: 1; color: Theme.divider }
 
             Item {
                 width: parent.width; height: 44
-                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Two Finger Scrolling"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
-                Rectangle {
-                    id: twoTog; width: 36; height: 18; radius: 9
-                    property bool localState: Trackpad.twoFingerScroll
-                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                    color: localState ? "#3B82F6" : "#cccccc"
-                    Behavior on color { ColorAnimation { duration: 200 } }
-                    Rectangle { width: 14; height: 14; radius: 7; color: "white"; y: 2; x: twoTog.localState ? 20 : 2; Behavior on x { NumberAnimation { duration: 200 } } }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { twoTog.localState = !twoTog.localState; Trackpad.setTwoFingerScroll(twoTog.localState) } }
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Scroll Method"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Row {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+                    Repeater {
+                        model: [{label: "Two Finger", val: 1}, {label: "Edge", val: 2}]
+                        delegate: Rectangle {
+                            height: 28; width: smLbl.implicitWidth + 16; radius: 6
+                            color: Trackpad.scrollMethod === modelData.val ? "#3B82F6" : Qt.rgba(0,0,0,0.08)
+                            Text { id: smLbl; anchors.centerIn: parent; text: modelData.label; font.pixelSize: 12
+                                color: Trackpad.scrollMethod === modelData.val ? "white" : Theme.textPrimary }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                onClicked: Trackpad.setScrollMethod(modelData.val) }
+                        }
+                    }
                 }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Column {
+                width: parent.width; spacing: 6; topPadding: 10; bottomPadding: 10
+                Text { text: "Scroll Speed"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                Row {
+                    width: parent.width; spacing: 8
+                    Text { text: "Slow"; font.pixelSize: 11; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
+                    Slider {
+                        from: 0.1; to: 5.0; stepSize: 0.1
+                        value: Trackpad.scrollFactor
+                        palette.accent: "#3B82F6"; width: parent.width - 100
+                        anchors.verticalCenter: parent.verticalCenter
+                        onMoved: Trackpad.setScrollFactor(Math.round(value * 10) / 10)
+                    }
+                    Text { text: "Fast"; font.pixelSize: 11; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter }
+                    Text { text: Trackpad.scrollFactor.toFixed(1) + "×"; font.pixelSize: 11; color: Theme.textSecondary; width: 30; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Disable While Typing"
+                toggled: Trackpad.disableWhileTyping
+                onToggle: function(v) { Trackpad.setDisableWhileTyping(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Disable on External Mouse"
+                toggled: Trackpad.disableEventsOnExtMouse
+                onToggle: function(v) { Trackpad.setDisableEventsOnExtMouse(v) }
             }
         }
     }
 
-    // More Gestures tab
+    // ── More Gestures ──────────────────────────────────────────────────────
     SettingsCard {
         visible: activeTab === 2
-        Item {
-            width: parent.width; height: 60
-            Text { anchors.centerIn: parent; text: "More gestures coming soon"; font.pixelSize: 13; color: Theme.textSecondary }
+        Column {
+            width: parent.width; spacing: 0
+
+            Row2 {
+                label: "Tap and Drag"
+                toggled: Trackpad.tapAndDrag
+                onToggle: function(v) { Trackpad.setTapAndDrag(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Tap Drag Lock"
+                toggled: Trackpad.tapDragLock
+                onToggle: function(v) { Trackpad.setTapDragLock(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Middle Button Emulation"
+                toggled: Trackpad.middleEmulation
+                onToggle: function(v) { Trackpad.setMiddleEmulation(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Row2 {
+                label: "Three-Finger Tap as Right Click"
+                toggled: Trackpad.lmrTapButtonMap
+                onToggle: function(v) { Trackpad.setLmrTapButtonMap(v) }
+            }
         }
     }
 
