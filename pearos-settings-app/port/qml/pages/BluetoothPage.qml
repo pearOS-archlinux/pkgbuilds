@@ -51,7 +51,7 @@ PageBase {
                             Text { text: modelData.name; font.pixelSize: 13; color: Theme.textPrimary; elide: Text.ElideRight; width: parent.width }
                             Text {
                                 text: modelData.connected ? "Connected" : modelData.type
-                                font.pixelSize: 12; color: modelData.connected ? "#28ca42" : "#666"
+                                font.pixelSize: 12; color: modelData.connected ? "#28ca42" : Theme.textSecondary
                             }
                         }
                         Text {

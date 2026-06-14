@@ -31,6 +31,7 @@ set(BACKEND_SOURCES
     backend/startupmanager.cpp
     backend/pearidmanager.cpp
     backend/dockmanager.cpp
+    backend/touchidmanager.cpp
 )
 
 qt_add_executable(SystemSettings
@@ -81,6 +82,7 @@ qt_add_qml_module(SystemSettings
         qml/pages/PearIDPage.qml
         qml/pages/PearIntelligencePage.qml
         qml/pages/DesktopDockPage.qml
+        qml/pages/TouchIDPage.qml
 )
 
 target_link_libraries(SystemSettings PRIVATE

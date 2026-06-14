@@ -26,6 +26,7 @@
 #include "backend/startupmanager.h"
 #include "backend/pearidmanager.h"
 #include "backend/dockmanager.h"
+#include "backend/touchidmanager.h"
 
 int main(int argc, char *argv[]) {
     qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &ctx, const QString &msg) {
@@ -68,6 +69,7 @@ int main(int argc, char *argv[]) {
     StartupManager   startup;
     PearIDManager    pearid;
     DockManager      dock;
+    TouchIDManager   touchid;
 
     QQmlApplicationEngine engine;
     QQmlContext *ctx = engine.rootContext();
@@ -89,6 +91,7 @@ int main(int argc, char *argv[]) {
     ctx->setContextProperty("Startup",    &startup);
     ctx->setContextProperty("PearID",     &pearid);
     ctx->setContextProperty("Dock",       &dock);
+    ctx->setContextProperty("TouchID",    &touchid);
 
     engine.loadFromModule("PearOSSettings", "Main");
 

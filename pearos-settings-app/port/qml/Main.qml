@@ -495,7 +495,7 @@ ApplicationWindow {
                 StubPage { stubTitle: "Screen Time" }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===17; sourceComponent: Component { LockScreenPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===18; sourceComponent: Component { PrivacyPage {} } }
-                StubPage { stubTitle: "Touch ID & Password" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===19; sourceComponent: Component { TouchIDPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===20; sourceComponent: Component { UsersPage {} } }
                 StubPage { stubTitle: "Internet Accounts" }
                 StubPage { stubTitle: "Game Center" }

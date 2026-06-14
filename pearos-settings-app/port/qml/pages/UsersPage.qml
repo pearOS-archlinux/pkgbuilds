@@ -24,7 +24,7 @@ PageBase {
                                 Text {
                                     anchors.centerIn: parent
                                     text: (modelData.fullName || modelData.username || "?")[0].toUpperCase()
-                                    font.pixelSize: 16; font.weight: Font.DemiBold; color: "#555"
+                                    font.pixelSize: 16; font.weight: Font.DemiBold; color: Theme.textPrimary
                                 }
                             }
                             Column {

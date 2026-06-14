@@ -37,7 +37,7 @@ PageBase {
                             }
                             MouseArea { anchors.fill: parent; onClicked: Appearance.setColorScheme(modelData.name) }
                         }
-                        Text { text: modelData.label; font.pixelSize: 11; color: "#333"; anchors.horizontalCenter: parent.horizontalCenter }
+                        Text { text: modelData.label; font.pixelSize: 11; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
             }
@@ -91,7 +91,7 @@ PageBase {
                             color: parent.selected === index ? "#3B82F6" : Qt.rgba(0,0,0,0.08)
                             Text {
                                 id: sLbl; anchors.centerIn: parent; text: modelData; font.pixelSize: 12
-                                color: parent.parent.selected === index ? "white" : "#333"
+                                color: parent.parent.selected === index ? "white" : Theme.textPrimary
                             }
                             MouseArea { anchors.fill: parent; onClicked: parent.parent.selected = index }
                         }
@@ -157,7 +157,7 @@ PageBase {
                             color: index === 0 ? "#3B82F6" : "transparent"
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text { text: modelData; font.pixelSize: 12; color: "#333" }
+                        Text { text: modelData; font.pixelSize: 12; color: Theme.textPrimary }
                     }
                 }
             }
@@ -175,7 +175,7 @@ PageBase {
                             color: index === 0 ? "#3B82F6" : "transparent"
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text { text: modelData; font.pixelSize: 12; color: "#333" }
+                        Text { text: modelData; font.pixelSize: 12; color: Theme.textPrimary }
                     }
                 }
             }

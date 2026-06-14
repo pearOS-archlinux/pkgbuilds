@@ -45,8 +45,8 @@ PageBase {
     SettingsCard {
         Row {
             width: parent.width; height: 120; spacing: 16
-            Image { source: ap + "touch.gif"; width: (parent.width - 16) / 2; height: 120; fillMode: Image.PreserveAspectFit }
-            Image { source: ap + "touch1.gif"; width: (parent.width - 16) / 2; height: 120; fillMode: Image.PreserveAspectFit }
+            AnimatedImage { source: ap + "touch.gif"; width: (parent.width - 16) / 2; height: 120; fillMode: Image.PreserveAspectFit; playing: true }
+            AnimatedImage { source: ap + "touch1.gif"; width: (parent.width - 16) / 2; height: 120; fillMode: Image.PreserveAspectFit; playing: true }
         }
     }
     Spacer {}
