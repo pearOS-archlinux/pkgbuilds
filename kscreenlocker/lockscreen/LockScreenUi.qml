@@ -66,8 +66,15 @@ Item {
             var lines = xhr.responseText.split('\n')
             for (var i = 0; i < lines.length; i++) {
                 var line = lines[i].trim()
-                if (line.indexOf("Image=file://") === 0) {
-                    lockScreenUi.desktopWallpaperPath = line.substring("Image=".length)
+                if (line.indexOf("Image=") === 0) {
+                    var val = line.substring("Image=".length).trim()
+                    if (val === "") continue
+                    // Ensure the path is a proper file:// URL
+                    if (val.indexOf("file://") === 0) {
+                        lockScreenUi.desktopWallpaperPath = val
+                    } else {
+                        lockScreenUi.desktopWallpaperPath = "file://" + val
+                    }
                     return
                 }
             }
@@ -265,7 +272,7 @@ Item {
     // ── top-left: battery ─────────────────────────────────────────────────────
     Battery {
         anchors.top: parent.top; anchors.topMargin: 12
-        anchors.right: parent.right; anchors.rightMargin: 40
+        anchors.left: parent.left; anchors.leftMargin: 40
     }
 
     // ── top-right: shutdown ───────────────────────────────────────────────────
