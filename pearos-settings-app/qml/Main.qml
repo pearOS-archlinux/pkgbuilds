@@ -33,7 +33,12 @@ ApplicationWindow {
 
     property string searchQuery: ""
 
-    Component.onCompleted: { PearID.checkState(); Wallpaper.refreshTint() }
+    Component.onCompleted: {
+        PearID.checkState()
+        Wallpaper.refreshTint()
+        Appearance.refresh()
+        Display.refreshDisplays()
+    }
 
     readonly property var allNavItems: [
         { label: "Wi-Fi",                    idx: 0  },

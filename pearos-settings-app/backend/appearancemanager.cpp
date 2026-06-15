@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QTextStream>
 #include <QFileInfo>
+#include <QRegularExpression>
 
 AppearanceManager::AppearanceManager(QObject *parent) : QObject(parent) {}
 
@@ -54,13 +55,13 @@ void AppearanceManager::refresh() {
     if (!acc.isEmpty())
         m_accent = acc;
 
-    run("kreadconfig5 --group 'General' --key 'font' 2>/dev/null", [this](QString out) {
+    run("kreadconfig6 --file kdeglobals --group 'General' --key 'font' 2>/dev/null", [this](QString out) {
         QString f = out.trimmed();
         QStringList parts = f.split(',');
         m_fontFamily = parts.value(0);
         m_fontSize   = parts.value(1, "10");
     });
-    run("kreadconfig5 --group 'Icons' --key 'Theme' 2>/dev/null", [this](QString out) {
+    run("kreadconfig6 --file kdeglobals --group 'Icons' --key 'Theme' 2>/dev/null", [this](QString out) {
         m_iconTheme = out.trimmed();
     });
 
@@ -90,25 +91,24 @@ void AppearanceManager::refresh() {
             emit appearanceChanged();
         });
 
-    // Liquid Gel settings
-    run("kreadconfig6 --file kwinrc --group Plugins --key forceblurEnabled", [this](QString out) {
-        m_lgEnabled = out.trimmed() == "true";
-    });
-    run("kreadconfig6 --file kwinrc --group Effect-blurplus --key BlurStrength", [this](QString out) {
-        bool ok; int v = out.trimmed().toInt(&ok); if (ok) m_lgBlurStrength = v;
-    });
-    run("kreadconfig6 --file kwinrc --group Effect-blurplus --key NoiseStrength", [this](QString out) {
-        bool ok; int v = out.trimmed().toInt(&ok); if (ok) m_lgNoiseStrength = v;
-    });
-    run("kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionStrength", [this](QString out) {
-        bool ok; int v = out.trimmed().toInt(&ok); if (ok) m_lgRefractionStrength = v;
-    });
-    run("kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionEdgeSize", [this](QString out) {
-        bool ok; int v = out.trimmed().toInt(&ok); if (ok) m_lgRefractionEdgeSize = v;
-    });
-    run("kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionRGBFringing", [this](QString out) {
-        bool ok; int v = out.trimmed().toInt(&ok); if (ok) m_lgRGBFringing = v;
-    });
+    // Liquid Gel settings — read all in one shot to avoid multiple incomplete emits
+    run("kreadconfig6 --file kwinrc --group Plugins --key forceblurEnabled && "
+        "kreadconfig6 --file kwinrc --group Effect-blurplus --key BlurStrength && "
+        "kreadconfig6 --file kwinrc --group Effect-blurplus --key NoiseStrength && "
+        "kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionStrength && "
+        "kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionEdgeSize && "
+        "kreadconfig6 --file kwinrc --group Effect-blurplus --key RefractionRGBFringing",
+        [this](QString out) {
+            QStringList vals = out.trimmed().split('\n');
+            if (vals.size() >= 1) m_lgEnabled = vals[0].trimmed() == "true";
+            bool ok;
+            if (vals.size() >= 2) { int v = vals[1].trimmed().toInt(&ok); if (ok) m_lgBlurStrength = v; }
+            if (vals.size() >= 3) { int v = vals[2].trimmed().toInt(&ok); if (ok) m_lgNoiseStrength = v; }
+            if (vals.size() >= 4) { int v = vals[3].trimmed().toInt(&ok); if (ok) m_lgRefractionStrength = v; }
+            if (vals.size() >= 5) { int v = vals[4].trimmed().toInt(&ok); if (ok) m_lgRefractionEdgeSize = v; }
+            if (vals.size() >= 6) { int v = vals[5].trimmed().toInt(&ok); if (ok) m_lgRGBFringing = v; }
+            emit appearanceChanged();
+        });
 }
 
 void AppearanceManager::applyIconThemeForAccent(const QString &accent, const QString &colorScheme) {
@@ -147,8 +147,22 @@ void AppearanceManager::applyIconThemeForAccent(const QString &accent, const QSt
             .arg(theme), [](QString) {});
 }
 
+void AppearanceManager::maybeUpdateWallpaper(const QString &mode) {
+    // Read the actual current wallpaper from plasma desktop config
+    run("grep '^Image=' ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null | head -1",
+        [mode](QString out) {
+            QString img = out.trimmed().remove(QRegularExpression("^Image=file://")).remove(QRegularExpression("^Image="));
+            QString base = QFileInfo(img).fileName();
+            if (base != "dark-mode.jpg" && base != "light-mode.jpg")
+                return;
+            QString target = (mode == "dark")
+                ? "/usr/share/extras/wallpapers/Default/dark-mode.jpg"
+                : "/usr/share/extras/wallpapers/Default/light-mode.jpg";
+            QProcess::startDetached("plasma-apply-wallpaperimage", {target});
+        });
+}
+
 void AppearanceManager::setColorScheme(const QString &mode) {
-    // "auto" — no system command (like Electron); just record locally
     if (mode == "auto") {
         m_colorScheme = "auto";
         emit appearanceChanged();
@@ -160,9 +174,10 @@ void AppearanceManager::setColorScheme(const QString &mode) {
     m_colorScheme = mode;
     emit appearanceChanged();
     QString script = themeSwitcherScript();
-    run(QString("bash \"%1\" --%2 2>/dev/null").arg(script, mode), [this](QString) {
+    run(QString("bash \"%1\" --%2 2>/dev/null").arg(script, mode), [this, mode](QString) {
         emit appearanceChanged();
         applyIconThemeForAccent(m_accent, m_colorScheme);
+        maybeUpdateWallpaper(mode);
     });
 }
 

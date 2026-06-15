@@ -81,4 +81,5 @@ private:
     void writeLgKey(const QString &key, const QString &value);
     void reconfigureLiquidGel();
     void applyIconThemeForAccent(const QString &accent, const QString &colorScheme);
+    void maybeUpdateWallpaper(const QString &mode);
 };

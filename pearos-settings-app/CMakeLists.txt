@@ -106,5 +106,6 @@ if(KF6WindowSystem_FOUND)
     target_compile_definitions(SystemSettings PRIVATE HAVE_KWINDOWSYSTEM)
 endif()
 
-install(TARGETS SystemSettings DESTINATION /usr/share/extras/system-settings)
+set_target_properties(SystemSettings PROPERTIES OUTPUT_NAME "systemsettings1")
+install(TARGETS SystemSettings DESTINATION /usr/bin)
 install(DIRECTORY assets/ DESTINATION /usr/share/extras/system-settings/assets)

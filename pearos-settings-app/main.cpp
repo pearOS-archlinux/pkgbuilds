@@ -41,8 +41,9 @@ int main(int argc, char *argv[]) {
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setAlphaBufferSize(8);
     QSurfaceFormat::setDefaultFormat(fmt);
-    QGuiApplication::setApplicationName("System Settings");
+    QGuiApplication::setApplicationName("systemsettings1");
     QGuiApplication::setOrganizationName("PearOS");
+    QGuiApplication::setDesktopFileName("systemsettings1");
 
     QGuiApplication app(argc, argv);
 
