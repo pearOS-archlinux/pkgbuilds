@@ -1,6 +1,6 @@
 # Maintainer: Alexandru Balan
 pkgname=pearos-bootsound
-pkgver=26.6.1
+pkgver=26.6.2
 pkgrel=1
 pkgdesc="Boot sound service for pearOS"
 arch=('any')
