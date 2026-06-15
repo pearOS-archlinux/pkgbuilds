@@ -1,10 +1,15 @@
-build:
-	cd system-settings && npm i
-	makepkg -sr
+.PHONY: all clean dev-build dev-install
+
+all:
+	makepkg -sf
+
 clean:
-	rm -rf pkg/
-	rm -rf src/
-	rm -rf alg-*
-	rm -rf *.zst
-	rm -rf *.sig
-	rm -rf system-settings/node_modules
+	rm -rf build/ pkg/ src/ *.zst *.sig
+
+dev-build:
+	mkdir -p build
+	cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+	cmake --build build --parallel
+
+dev-install:
+	cmake --install build

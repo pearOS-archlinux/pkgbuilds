@@ -1,2 +1,2 @@
 #!/bin/bash
-cd /usr/share/extras/system-settings && npm start
+exec /usr/share/extras/system-settings/SystemSettings "$@"

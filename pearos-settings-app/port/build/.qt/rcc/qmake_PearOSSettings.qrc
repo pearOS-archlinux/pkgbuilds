@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/PearOSSettings">
-    <file alias="qmldir">/home/alxb421/Desktop/pkgbuilds/pearos-settings-app/port/build/PearOSSettings/qmldir</file>
-  </qresource>
-</RCC>
-
