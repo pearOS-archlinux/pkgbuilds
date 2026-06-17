@@ -82,4 +82,7 @@ private:
     void reconfigureLiquidGel();
     void applyIconThemeForAccent(const QString &accent, const QString &colorScheme);
     void maybeUpdateWallpaper(const QString &mode);
+    void enableAutoTheme();
+    void disableAutoTheme();
+    static bool autoThemeEnabled();
 };

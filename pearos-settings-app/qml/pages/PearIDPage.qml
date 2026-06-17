@@ -427,11 +427,10 @@ PageBase {
     // ═══════════════════════════════════════════════════════════════
     // EDIT DIALOG
     // ═══════════════════════════════════════════════════════════════
-    Rectangle {
+    overlay: Rectangle {
         visible: editDialogOpen
         anchors.fill: parent
         color: Qt.rgba(0, 0, 0, 0.5)
-        z: 1000
 
         MouseArea { anchors.fill: parent; onClicked: editDialogOpen = false }
 
@@ -510,9 +509,9 @@ PageBase {
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                if (editDialogField === "firstName")   PearID.updateName(editDialogValue, editDialogValue2)
-                                else if (editDialogField === "phone")  PearID.updatePhone(editDialogValue)
-                                else if (editDialogField === "billing") PearID.updateBillingAddress(editDialogValue)
+                                if (editDialogField === "firstName")        PearID.updateName(editDialogValue, editDialogValue2)
+                                else if (editDialogField === "phone")       PearID.updatePhone(editDialogValue)
+                                else if (editDialogField === "billing")     PearID.updateBillingAddress(editDialogValue)
                                 else if (editDialogField === "oldPassword") PearID.changePassword(editDialogValue, editDialogValue2)
                             }
                         }

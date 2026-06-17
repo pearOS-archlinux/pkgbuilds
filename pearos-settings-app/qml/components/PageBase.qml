@@ -6,12 +6,14 @@ Item {
     id: root
     property string title: ""
     default property alias pageContent: col.children
+    property alias overlay: overlayItem.children
 
     Layout.fillWidth: true
     Layout.fillHeight: true
 
     Flickable {
-        anchors.fill: parent
+        width: parent.width
+        height: parent.height
         contentWidth: width
         contentHeight: col.implicitHeight + 40
         clip: true
@@ -23,5 +25,11 @@ Item {
             width: parent.width - 23  // 7 left + 16 right
             spacing: 0
         }
+    }
+
+    Item {
+        id: overlayItem
+        anchors.fill: parent
+        z: 100
     }
 }

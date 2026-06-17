@@ -132,12 +132,10 @@ PageBase {
     }
     Spacer {}
 
-    // Password dialog — inline (like Electron's modal)
-    Rectangle {
+    overlay: Rectangle {
         visible: showPasswordDialog
         anchors.fill: parent
-        color: Qt.rgba(0,0,0,0.45)
-        z: 100
+        color: Qt.rgba(0, 0, 0, 0.45)
 
         MouseArea { anchors.fill: parent; onClicked: showPasswordDialog = false }
 
@@ -172,7 +170,6 @@ PageBase {
 
                 Row {
                     anchors.right: parent.right; spacing: 8
-
                     Rectangle {
                         height: 30; width: cancelLbl.implicitWidth + 20; radius: 6; color: Qt.rgba(0,0,0,0.08)
                         Text { id: cancelLbl; anchors.centerIn: parent; text: "Cancel"; font.pixelSize: 12; color: Theme.textPrimary }

@@ -15,12 +15,9 @@ Rectangle {
 
     Column {
         id: col
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.leftMargin: padH
-        anchors.rightMargin: padH
-        anchors.topMargin: padV
+        x: padH
+        y: padV
+        width: parent.width - padH * 2
         spacing: 0
     }
 }

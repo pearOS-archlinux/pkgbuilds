@@ -6,8 +6,80 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QRegularExpression>
+#include <QTime>
 
 AppearanceManager::AppearanceManager(QObject *parent) : QObject(parent) {}
+
+static QString systemdUserDir() {
+    return QDir::homePath() + "/.config/systemd/user";
+}
+
+bool AppearanceManager::autoThemeEnabled() {
+    QProcess p;
+    p.start("systemctl", {"--user", "is-enabled", "pearos-theme-light.timer"});
+    p.waitForFinished(3000);
+    return p.exitCode() == 0;
+}
+
+void AppearanceManager::enableAutoTheme() {
+    QString script = themeSwitcherScript();
+    QString dir = systemdUserDir();
+    QDir().mkpath(dir);
+
+    auto writeUnit = [](const QString &path, const QString &content) {
+        QFile f(path);
+        if (f.open(QIODevice::WriteOnly | QIODevice::Text))
+            QTextStream(&f) << content;
+    };
+
+    writeUnit(dir + "/pearos-theme-light.service",
+        "[Unit]\nDescription=PearOS Auto Theme - Light\n\n"
+        "[Service]\nType=oneshot\nExecStart=" + script + " --light\n");
+
+    writeUnit(dir + "/pearos-theme-light.timer",
+        "[Unit]\nDescription=PearOS Auto Theme - Light at 08:00\n\n"
+        "[Timer]\nOnCalendar=*-*-* 08:00:00\nPersistent=true\n\n"
+        "[Install]\nWantedBy=timers.target\n");
+
+    writeUnit(dir + "/pearos-theme-dark.service",
+        "[Unit]\nDescription=PearOS Auto Theme - Dark\n\n"
+        "[Service]\nType=oneshot\nExecStart=" + script + " --dark\n");
+
+    writeUnit(dir + "/pearos-theme-dark.timer",
+        "[Unit]\nDescription=PearOS Auto Theme - Dark at 18:00\n\n"
+        "[Timer]\nOnCalendar=*-*-* 18:00:00\nPersistent=true\n\n"
+        "[Install]\nWantedBy=timers.target\n");
+
+    run("systemctl --user daemon-reload && "
+        "systemctl --user enable --now pearos-theme-light.timer pearos-theme-dark.timer",
+        [](QString) {});
+
+    // Apply appropriate theme immediately based on current hour
+    QString immediateMode = (QTime::currentTime().hour() >= 8 && QTime::currentTime().hour() < 18)
+                            ? "light" : "dark";
+    run(QString("bash \"%1\" --%2 2>/dev/null").arg(script, immediateMode),
+        [this, immediateMode](QString) {
+            applyIconThemeForAccent(m_accent, immediateMode);
+            maybeUpdateWallpaper(immediateMode);
+        });
+
+    m_colorScheme = "auto";
+    emit appearanceChanged();
+}
+
+void AppearanceManager::disableAutoTheme() {
+    run("systemctl --user disable --now pearos-theme-light.timer pearos-theme-dark.timer 2>/dev/null || true;"
+        " systemctl --user daemon-reload 2>/dev/null || true",
+        [](QString) {});
+
+    QString dir = systemdUserDir();
+    const QStringList units = {
+        "pearos-theme-light.service", "pearos-theme-light.timer",
+        "pearos-theme-dark.service",  "pearos-theme-dark.timer"
+    };
+    for (const QString &u : units)
+        QFile::remove(dir + "/" + u);
+}
 
 QString AppearanceManager::themeSwitcherDir() {
     static const QStringList candidates = {
@@ -43,12 +115,13 @@ void AppearanceManager::run(const QString &cmd, std::function<void(QString)> cb)
 }
 
 void AppearanceManager::refresh() {
-    // Dark/light mode from state file
-    QString state = readFile(themeSwitcherDir() + "/state");
-    if (state == "dark" || state == "light")
-        m_colorScheme = state;
-    else
+    // Auto mode is canonical if systemd timers are installed
+    if (autoThemeEnabled()) {
         m_colorScheme = "auto";
+    } else {
+        QString state = readFile(themeSwitcherDir() + "/state");
+        m_colorScheme = (state == "dark" || state == "light") ? state : "light";
+    }
 
     // Accent from accent file
     QString acc = readFile(themeSwitcherDir() + "/accent");
@@ -164,13 +237,14 @@ void AppearanceManager::maybeUpdateWallpaper(const QString &mode) {
 
 void AppearanceManager::setColorScheme(const QString &mode) {
     if (mode == "auto") {
-        m_colorScheme = "auto";
-        emit appearanceChanged();
-        applyIconThemeForAccent(m_accent, m_colorScheme);
+        enableAutoTheme();
         return;
     }
     if (mode != "dark" && mode != "light")
         return;
+
+    disableAutoTheme();
+
     m_colorScheme = mode;
     emit appearanceChanged();
     QString script = themeSwitcherScript();

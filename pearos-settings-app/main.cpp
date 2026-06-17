@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     QSurfaceFormat::setDefaultFormat(fmt);
     QGuiApplication::setApplicationName("systemsettings1");
     QGuiApplication::setOrganizationName("PearOS");
-    QGuiApplication::setDesktopFileName("systemsettings1");
+    QGuiApplication::setDesktopFileName("pearos-systemsettings");
 
     QGuiApplication app(argc, argv);
 

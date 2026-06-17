@@ -3,7 +3,7 @@
 pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS System Settings application (Qt6/QML)"
-pkgver=26.6.2
+pkgver=26.6.3
 pkgrel=2
 arch=('x86_64')
 depends=('qt6-base' 'qt6-declarative' 'qt6-5compat'
@@ -23,6 +23,7 @@ prepare() {
   cp -r "${startdir}/backend"       "${srcdir}/backend"
   cp -r "${startdir}/qml"           "${srcdir}/qml"
   cp -r "${startdir}/themeswitcher" "${srcdir}/themeswitcher"
+  cp -r "${startdir}/pearID"        "${srcdir}/pearID"
   cp    "${startdir}/main.cpp"        "${srcdir}/main.cpp"
   cp    "${startdir}/CMakeLists.txt"  "${srcdir}/CMakeLists.txt"
 }
@@ -43,7 +44,9 @@ package() {
   install -d "${pkgdir}/usr/share/extras/${_realname}"
   cp -r "${srcdir}/assets"        "${pkgdir}/usr/share/extras/${_realname}/assets"
   cp -r "${srcdir}/themeswitcher" "${pkgdir}/usr/share/extras/${_realname}/themeswitcher"
+  cp -r "${srcdir}/pearID"        "${pkgdir}/usr/share/extras/${_realname}/pearID"
   chmod +x "${pkgdir}/usr/share/extras/${_realname}/themeswitcher/kde-theme-switch.sh"
+  chmod +x "${pkgdir}/usr/share/extras/${_realname}/pearID/"*.sh
 
   install -Dm644 "${srcdir}/pearos-systemsettings.desktop" \
     "${pkgdir}/usr/share/applications/pearos-systemsettings.desktop"

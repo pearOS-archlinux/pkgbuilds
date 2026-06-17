@@ -7,7 +7,7 @@
 static QString findScriptDir() {
     QString installed = "/usr/share/extras/system-settings/pearID";
     if (QDir(installed).exists()) return installed;
-    QString src = QDir::homePath() + "/Desktop/pkgbuilds/pearos-settings-app/system-settings/pearID";
+    QString src = QDir::homePath() + "/Desktop/pkgbuilds/pearos-settings-app/pearID";
     if (QDir(src).exists()) return src;
     return installed;
 }
