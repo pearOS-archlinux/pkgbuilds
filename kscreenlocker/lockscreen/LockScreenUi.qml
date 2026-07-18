@@ -9,6 +9,7 @@ import QtQml
 import QtQuick
 import QtQuick.Controls as QQC2
 import QtQuick.Layouts
+import QtCore
 import Qt5Compat.GraphicalEffects
 import Qt.labs.platform as QtPlatform
 
@@ -56,30 +57,10 @@ Item {
     }
 
     // ── desktop wallpaper loader ──────────────────────────────────────────────
-    // Reads wallpaper path from Plasma's config so lockscreen always matches desktop.
+    // The wallpaper is handled natively by `wallpaperItem` (via kscreenlocker plugin).
+    // The fallback path is set to a static default to prevent QML errors.
     function loadDesktopWallpaper() {
-        var xhr = new XMLHttpRequest()
-        xhr.open("GET", "file://" + lockScreenUi.homeDir
-                 + "/.config/plasma-org.kde.plasma.desktop-appletsrc", true)
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState !== XMLHttpRequest.DONE) return
-            var lines = xhr.responseText.split('\n')
-            for (var i = 0; i < lines.length; i++) {
-                var line = lines[i].trim()
-                if (line.indexOf("Image=") === 0) {
-                    var val = line.substring("Image=".length).trim()
-                    if (val === "") continue
-                    // Ensure the path is a proper file:// URL
-                    if (val.indexOf("file://") === 0) {
-                        lockScreenUi.desktopWallpaperPath = val
-                    } else {
-                        lockScreenUi.desktopWallpaperPath = "file://" + val
-                    }
-                    return
-                }
-            }
-        }
-        xhr.send()
+        lockScreenUi.desktopWallpaperPath = "file:///usr/share/extras/wallpapers/Default/dark-mode.jpg"
     }
 
     // ── style.json loader ─────────────────────────────────────────────────────
@@ -163,8 +144,34 @@ Item {
         function onPromptForSecretChanged() { passwordField.forceActiveFocus() }
     }
 
-    // ── wallpaper background image (always in sync with desktop) ─────────────
-    // Visible as base background; ShaderEffectSource captures it for blur/contrast effects.
+    // ── solid black fallback — ALWAYS the first rendered item ───────────────
+    // Must be the first child (no z property) so it renders behind wallpaper
+    // but still fills the window → panel CANNOT bleed through X11 compositing.
+    Rectangle {
+        id: solidBackground
+        anchors.fill: parent
+        color: "#000000"
+    }
+
+    // ── wallpaper item — renders the wallpaper plugin set via System Settings ─
+    // kscreenlocker injects `wallpaper` (a QQuickItem from the configured plugin).
+    // We reparent it here and size via Qt.binding (anchors can't be set imperatively).
+    // → Changing wallpaper in System Settings → Screen Locking works automatically.
+    Item {
+        id: wallpaperItem
+        anchors.fill: parent
+        Component.onCompleted: {
+            if (typeof wallpaper !== "undefined" && wallpaper) {
+                wallpaper.parent = wallpaperItem
+                wallpaper.x = 0
+                wallpaper.y = 0
+                wallpaper.width  = Qt.binding(function() { return wallpaperItem.width })
+                wallpaper.height = Qt.binding(function() { return wallpaperItem.height })
+            }
+        }
+    }
+
+    // ── wallpaper background image (fallback: used when desktopWallpaperPath is set) ──
     Image {
         id: wallpaperBg
         anchors.fill: parent
@@ -174,13 +181,12 @@ Item {
     }
 
     // ── wallpaper source for graphical effects ─────────────────────────────
-    // Prefers desktopWallpaperPath (direct Image read); falls back to `wallpaper`
-    // context property provided by kscreenlocker when it has a plugin configured.
+    // Used by blur and contrast effects. Prefers wallpaper plugin, falls back to Image.
     ShaderEffectSource {
         id: wallpaperSource
         sourceItem: {
-            if (lockScreenUi.desktopWallpaperPath !== "") return wallpaperBg
             if (typeof wallpaper !== "undefined" && wallpaper) return wallpaper
+            if (lockScreenUi.desktopWallpaperPath !== "") return wallpaperBg
             return null
         }
         hideSource: false; visible: false
@@ -273,6 +279,7 @@ Item {
     Battery {
         anchors.top: parent.top; anchors.topMargin: 12
         anchors.left: parent.left; anchors.leftMargin: 40
+        z: 5
     }
 
     // ── top-right: shutdown ───────────────────────────────────────────────────
@@ -281,6 +288,7 @@ Item {
         anchors.top: parent.top; anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 40
         width: 22; height: 22
+        z: 5
         source: Qt.resolvedUrl("images/system-shutdown.svg")
         fillMode: Image.PreserveAspectFit
         visible: sessionManagement.canShutdown
@@ -298,6 +306,7 @@ Item {
         anchors.top: parent.top; anchors.topMargin: 15
         anchors.right: parent.right; anchors.rightMargin: 70
         width: 22; height: 22
+        z: 5
         source: Qt.resolvedUrl("images/system-reboot.svg")
         fillMode: Image.PreserveAspectFit
         visible: sessionManagement.canReboot
@@ -524,7 +533,7 @@ Item {
         Timer {
             id: startupTimer; interval: 0; running: true; repeat: false
             onTriggered: {
-                if (Window.window) Window.window.requestActivate()
+                if (lockScreenUi.Window.window) lockScreenUi.Window.window.requestActivate()
                 authenticator.startAuthenticating()
                 passwordField.forceActiveFocus()
             }
