@@ -1,0 +1,17 @@
+post_install() {
+    echo "==> patching libprocesscore.so.10..."
+    if [ ! -e /usr/lib/libprocesscore.so.10 ]; then
+        ln -s /usr/lib/libprocesscore.so.11 /usr/lib/libprocesscore.so.10
+    fi
+}
+
+post_upgrade() {
+    post_install
+}
+
+post_remove() {
+    echo "==> removing patch"
+    if [ -L /usr/lib/libprocesscore.so.10 ]; then
+        rm /usr/lib/libprocesscore.so.10
+    fi
+}

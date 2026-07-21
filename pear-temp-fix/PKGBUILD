@@ -1,0 +1,15 @@
+# Maintainer: Alexandru Balan <alex@pear-software.com>
+
+pkgname=pear-temp-fix
+pkgver=26.7
+pkgrel=1
+pkgdesc="libprocesscore.so.10 -> .so.11 patcher"
+arch=('x86_64')
+url="https://github.com/pearOS-archlinux/iso/"
+license=('MIT')
+depends=()
+install="${pkgname}.install"
+
+package() {
+    return 0
+}
