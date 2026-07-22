@@ -1,0 +1,42 @@
+# Maintainer: Alexandru Balan <alex@pear-software.com>
+pkgname=pearos-appmenu
+pkgver=26.5
+pkgrel=1
+pkgdesc="Global Menu applet for Plasma Desktop (pearOS custom build)"
+arch=('x86_64')
+url="https://invent.kde.org/plasma/plasma-workspace"
+license=('GPL-2.0-or-later')
+depends=(
+    'libplasma'
+    'plasma-workspace'
+    'qt6-base'
+    'qt6-declarative'
+    'kwindowsystem'
+    'ki18n'
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'kconfig'
+    'kcoreaddons'
+)
+
+build() {
+    cmake -B "$startdir/build" -S "$startdir" \
+        -DCMAKE_BUILD_TYPE=None \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DKDE_INSTALL_QTPLUGINDIR=lib/qt6/plugins-appmenu \
+        -DCMAKE_SKIP_RPATH=ON
+    cmake --build "$startdir/build"
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install "$startdir/build"
+
+    # Sourced by startplasma-wayland and startplasma-x11 for all users.
+    # Prepends our plugin path so Qt finds this build before the one in plasma-workspace.
+    install -Dm755 /dev/stdin "$pkgdir/etc/xdg/plasma-workspace/env/plasma-appmenu.sh" << 'EOF'
+#!/bin/sh
+export QT_PLUGIN_PATH="/usr/lib/qt6/plugins-appmenu${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
+EOF
+}
