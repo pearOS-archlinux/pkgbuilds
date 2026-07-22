@@ -1,7 +1,7 @@
 # Maintainer: akash6222 <akashlinux0@gmail.com>
 
 pkgname=calamares
-pkgver=3.4.0
+pkgver=3.4.2
 pkgrel=3
 pkgdesc='Distribution-independent installer framework'
 arch=('x86_64')
