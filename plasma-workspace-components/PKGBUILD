@@ -1,0 +1,86 @@
+# Maintainer: pearOS
+
+# Vendored plasma-workspace QML modules that PearDock's QML (pearos-dock)
+# imports at runtime: org.kde.plasma.workspace.{trianglemousefilter,dbus},
+# org.kde.plasma.private.mpris, org.kde.taskmanager,
+# org.kde.plasma.private.kicker. Source: Filer/plasma-workspace-components-src
+# (this repo's own top-level CMakeLists.txt; every module subdirectory is an
+# unmodified copy of upstream plasma-workspace tag v6.7.3, plus 4 static
+# Wayland protocol XML files from plasma-wayland-protocols v1.21.0). See that
+# tree's CMakeLists.txt comments for exactly what was trimmed/stubbed from
+# each module and why.
+#
+# To produce the source tarball:
+#   cd Filer && tar -czf plasma-workspace-components-6.7.3.tar.gz \
+#       --transform 's,^plasma-workspace-components-src,plasma-workspace-components-6.7.3,' \
+#       plasma-workspace-components-src
+#
+# Built with HAVE_X11 1 in libtaskmanager/config-X11.h to match the ABI of
+# the *installed* libtaskmanager.so.6 this pearOS build was validated
+# against (its symbol table, including XWindowTasksModel and
+# TasksModel::requestToggleShaded, was confirmed with `nm -D` against the
+# system plasma-workspace 6.7.3 package before vendoring -- building from a
+# different upstream revision produced a libtaskmanager.so.6 missing symbols
+# that other system libraries linking against that soname expect,
+# manifesting as an undefined-symbol crash at dock startup).
+#
+# This package intentionally conflicts with plasma-workspace: it exists
+# specifically so filer-dock doesn't need that package installed at all.
+# Remove the conflicts/provides lines below if your system ever needs both
+# side by side (they'd fight over the same install paths under
+# /usr/lib/qt6/qml/org/kde/... and /usr/lib/libtaskmanager.so.6 /
+# /usr/lib/libkmpris.so.6).
+
+pkgname=plasma-workspace-components
+pkgver=6.7.3
+pkgrel=1
+pkgdesc="Vendored plasma-workspace QML modules (taskmanager, mpris, kicker, trianglemousefilter, dbus) for filer-dock, without depending on the plasma-workspace package"
+arch=('x86_64')
+url="https://github.com/pearOS-ArchLinux/Filer"
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later' 'GPL-3.0-only' 'BSD-3-Clause')
+provides=('plasma-workspace-components')
+conflicts=('plasma-workspace')
+depends=(
+    'qt6-base'
+    'qt6-declarative'
+    'qt6-wayland'
+    'dbus'
+    'libx11'
+    'kconfig'
+    'ki18n'
+    'kitemmodels'
+    'kio'
+    'kservice'
+    'kwindowsystem'
+    'kcoreaddons'
+    'kiconthemes'
+    'knotifications'
+    'kauth'
+    'krunner'
+    'libplasma'
+    'plasma-activities'
+    'plasma-activities-stats'
+    'kscreenlocker' # runtime: screen-lock power-menu entry talks to its DBus service
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'gcc'
+    'pkgconf'
+)
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SHA256SUM_PLACEHOLDER')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          -DBUILD_TESTING=OFF
+    make -C build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make -C build DESTDIR="$pkgdir" install
+}

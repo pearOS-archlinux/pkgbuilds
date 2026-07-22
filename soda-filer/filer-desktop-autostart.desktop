@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Filer Desktop
+Comment=Soda desktop manager (icons, wallpaper, top bar, file chooser portal)
+Exec=Filer
+Icon=filer
+X-KDE-autostart-phase=1
+NoDisplay=true

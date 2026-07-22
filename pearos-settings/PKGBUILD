@@ -1,7 +1,7 @@
 pkgname=pearos-settings
 destname="/etc"
 destnameusr="/usr"
-pkgver=26.5.4
+pkgver=26.5.8
 pkgrel=1
 pkgdesc="Settings for pearOS NiceC0re"
 arch=('x86_64')
@@ -19,7 +19,6 @@ depends=('konsole'
          'pearos-calculator'
          'pearos-liquidgel'
          'pearos-window-borders'
-         'pearos-livecd-desktop'
          'pearos-icons'
          'pearos-keyring'
          'pearos-zshconfig'

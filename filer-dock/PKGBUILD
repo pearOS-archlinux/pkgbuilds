@@ -1,0 +1,72 @@
+# Maintainer: pearOS
+
+# Standalone Qt6/KF6 host for the pearos-dock Plasma applet, run outside
+# plasmashell as its own always-on-top layer-shell panel -- spawned by Filer
+# (a Qt5 app; the two can't be linked together) via
+# Application::startDock()/stopDock() in src/application.cpp. See
+# Filer/filer-dock/README.md for the full architecture writeup.
+#
+# To produce the source tarball:
+#   cd Filer && tar -czf filer-dock-<pkgver>.tar.gz \
+#       --transform 's,^filer-dock,filer-dock-<pkgver>,' \
+#       filer-dock
+#
+# Installs the actual executable to /usr/lib/Filer.app/filer-dock (next to
+# Filer itself, matching Application::startDock()'s lookup at
+# applicationDirPath()+"/filer-dock" -- NOT /usr/bin, which that code never
+# checks).
+#
+# Application::startDock() also unconditionally prepends
+# $HOME/.local/lib/plugins to QT_PLUGIN_PATH, for the org.kde.panel
+# containment plugin (filer-dock-panel-containment package, built from
+# ../panel-containment-src) -- harmless once that package is installed
+# system-wide: it lands at /usr/lib/qt6/plugins/plasma/applets (verified:
+# CMAKE_INSTALL_PREFIX=/usr makes KDEInstallDirs auto-detect the shared Qt
+# prefix and route plugins there), which Qt's QPluginLoader searches by
+# default regardless of QT_PLUGIN_PATH.
+
+pkgname=filer-dock
+pkgver=26.7.19
+pkgrel=1
+pkgdesc="Standalone panel host for the pearos-dock Plasma applet, spawned by Filer without needing plasmashell"
+arch=('x86_64')
+url="https://github.com/pearOS-ArchLinux/Filer"
+license=('GPL-2.0-or-later')
+depends=(
+    'qt6-base'
+    'qt6-declarative'
+    'qt6-wayland'
+    'kconfig'
+    'libplasma'
+    'layer-shell-qt'
+    'pearos-dock'
+    'plasma-workspace-components'
+    'filer-dock-panel-containment'
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'gcc'
+)
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SHA256SUM_PLACEHOLDER')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          -DFILER_DOCK_PEARDOCK_PACKAGE_DIR=/usr/share/plasma/plasmoids/PearDock
+    make -C build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make -C build DESTDIR="$pkgdir" install
+
+    # Application::startDock() looks next to Filer's own binary
+    # (/usr/lib/Filer.app/, per soda-filer's PKGBUILD), not /usr/bin.
+    install -dm755 "$pkgdir/usr/lib/Filer.app"
+    mv "$pkgdir/usr/bin/filer-dock" "$pkgdir/usr/lib/Filer.app/filer-dock"
+    rmdir --ignore-fail-on-non-empty "$pkgdir/usr/bin"
+}

@@ -365,12 +365,74 @@ exit "$ex"
 }
 
 // Run bash bin_install in background (no calamares "running" check per your changes)
+static bool fix_layout(QStringList *failed = nullptr) {
+    const QString skel = QStringLiteral("/etc/skel/.config");
+    const QString dest = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+
+    static const char *plainFiles[] = {
+        "plasma-org.kde.plasma.desktop-appletsrc",
+        "plasmarc",
+        "plasmashellrc",
+        "kdeglobals",
+        "gtkrc",
+        "gtkrc-2.0",
+        "Trolltech.conf",
+        nullptr
+    };
+
+    static const char *dirs[] = {
+        "gtk-2.0",
+        "gtk-3.0",
+        "gtk-4.0",
+        nullptr
+    };
+
+    bool allOk = true;
+
+    for (int i = 0; plainFiles[i]; ++i) {
+        QString src = skel + QLatin1Char('/') + plainFiles[i];
+        QString dst = dest + QLatin1Char('/') + plainFiles[i];
+        if (!QFile::exists(src))
+            continue;
+        if (QFile::exists(dst) && !QFile::remove(dst)) {
+            allOk = false;
+            if (failed) *failed << QLatin1String(plainFiles[i]);
+            continue;
+        }
+        if (!QFile::copy(src, dst)) {
+            allOk = false;
+            if (failed) *failed << QLatin1String(plainFiles[i]);
+        }
+    }
+
+    for (int i = 0; dirs[i]; ++i) {
+        QString src = skel + QLatin1Char('/') + dirs[i];
+        QString dst = dest + QLatin1Char('/') + dirs[i];
+        if (!QDir(src).exists())
+            continue;
+        QDir(dst).removeRecursively();
+        QProcess proc;
+        // Pass dst explicitly so cp replaces the directory, not nests inside it
+        proc.start(QStringLiteral("cp"), QStringList() << QStringLiteral("-r") << src << dst);
+        proc.waitForFinished(10000);
+        if (proc.exitCode() != 0 || !QDir(dst).exists()) {
+            allOk = false;
+            if (failed) *failed << QLatin1String(dirs[i]);
+        }
+    }
+
+    return allOk;
+}
+
 static void run_bin_install() {
     QProcess *proc = new QProcess();
     proc->setWorkingDirectory(QDir::currentPath());
     QObject::connect(proc, &QProcess::finished, proc, [proc](int code) {
         if (code != 0)
             fprintf(stderr, "bin_install exit code: %d\n", code);
+        proc->deleteLater();
+    });
+    QObject::connect(proc, &QProcess::errorOccurred, proc, [proc](QProcess::ProcessError) {
         proc->deleteLater();
     });
     proc->start("bash", QStringList() << "bin_install");
@@ -658,6 +720,18 @@ public:
             fix_liquid_gel_after_upgrade(desktop_env);
         });
         grid1->addWidget(fixLiquidBtn, row, col); if (++col == 2) { col = 0; row++; }
+
+        QPushButton *fixLayoutBtn = addButton("Fix Layout ", "preferences-desktop", false, [this]() {
+            QStringList failed;
+            bool ok = fix_layout(&failed);
+            if (ok) {
+                QMessageBox::information(this, tr("Fix Layout"), tr("Layout restored successfully."));
+            } else {
+                QMessageBox::warning(this, tr("Fix Layout"),
+                    tr("Some files could not be copied:\n") + failed.join(QLatin1Char('\n')));
+            }
+        });
+        grid1->addWidget(fixLayoutBtn, row, col); if (++col == 2) { col = 0; row++; }
 
         if (!is_live_iso) {
             QPushButton *yt = addButton("YouTube ", "assets/youtube.svg", true, []() { open_url("https://youtube.com/pearOS"); });

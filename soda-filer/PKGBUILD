@@ -1,0 +1,92 @@
+pkgname=soda-filer
+pkgver=26.7.14
+pkgrel=1
+pkgdesc="Filer file manager and desktop for the Soda desktop environment (pearOS), with xdg-desktop-portal FileChooser backend"
+arch=('x86_64')
+url="https://github.com/pearOS-ArchLinux/Filer"
+license=('GPL-2.0-or-later')
+provides=('filer')
+conflicts=('filer')
+depends=(
+    'qt5-base'
+    'qt5-x11extras'
+    'qt5-multimedia'
+    'kwindowsystem5'
+    'libfm'
+    'menu-cache'
+    'glib2'
+    'libx11'
+    'libxcb'
+    'p7zip'              # zip extraction + Compress context-menu action
+    'xdg-desktop-portal' # file chooser portal routing
+)
+makedepends=(
+    'cmake'
+    'gcc'
+    'pkgconf'
+    'qt5-tools'
+)
+optdepends=(
+    'fastfetch: shows Soda as the desktop environment via the bundled config'
+)
+backup=(
+    'etc/xdg/xdg-desktop-portal/kde-portals.conf'
+    'etc/xdg/fastfetch/config.jsonc'
+)
+source=(
+    "$pkgname-$pkgver.tar.gz"
+    'filer.portal'
+    'kde-portals.conf'
+    'fastfetch-config.jsonc'
+    'filer.desktop'
+    'filer-desktop-autostart.desktop'
+)
+sha256sums=('SHA256SUM_PLACEHOLDER'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr/lib/Filer.app
+    make -C build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    # installs /usr/lib/Filer.app/{Filer,Resources/...}
+    make -C build DESTDIR="$pkgdir" install
+
+    # command-line launcher
+    install -dm755 "$pkgdir/usr/bin"
+    ln -s /usr/lib/Filer.app/Filer "$pkgdir/usr/bin/Filer"
+
+    # xdg-desktop-portal: declare the "filer" FileChooser backend and
+    # prefer it in KDE/Soda sessions. The preference goes to /etc/xdg
+    # (checked before /usr/share) so it does not conflict with the
+    # kde-portals.conf shipped by plasma.
+    install -Dm644 "$srcdir/filer.portal" \
+        "$pkgdir/usr/share/xdg-desktop-portal/portals/filer.portal"
+    install -Dm644 "$srcdir/kde-portals.conf" \
+        "$pkgdir/etc/xdg/xdg-desktop-portal/kde-portals.conf"
+    install -Dm644 "$srcdir/kde-portals.conf" \
+        "$pkgdir/etc/xdg/xdg-desktop-portal/soda-portals.conf"
+
+    # fastfetch reports "Soda" as the DE (system-wide default config;
+    # a per-user ~/.config/fastfetch/config.jsonc still wins)
+    install -Dm644 "$srcdir/fastfetch-config.jsonc" \
+        "$pkgdir/etc/xdg/fastfetch/config.jsonc"
+
+    # app menu entry + desktop-manager autostart for the session
+    install -Dm644 "$srcdir/filer.desktop" \
+        "$pkgdir/usr/share/applications/filer.desktop"
+    install -Dm644 "$srcdir/filer-desktop-autostart.desktop" \
+        "$pkgdir/etc/xdg/autostart/filer-desktop.desktop"
+
+    install -Dm644 src/icons/filer-128.png \
+        "$pkgdir/usr/share/icons/hicolor/128x128/apps/filer.png"
+}

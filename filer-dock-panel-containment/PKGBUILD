@@ -1,0 +1,72 @@
+# Maintainer: pearOS
+
+# Vendored copy of plasma-desktop's containments/panel (org.kde.panel),
+# fetched from the KDE plasma-desktop repo at tag v6.6.5 -- this pearOS
+# build does not have plasma-desktop installed (filer-dock deliberately
+# avoids depending on plasmashell/plasma-desktop), so filer-dock's
+# View::addContainment("org.kde.panel") had nothing real to load without it.
+# Source: Filer/panel-containment-src (see that tree's CMakeLists.txt for
+# the full history of why this got vendored -- a stale KSycoca cache entry
+# from an earlier, unrelated plasma-desktop install was masking the problem
+# until a full `kbuildsycoca6 --noincremental` exposed it).
+#
+# To produce the source tarball:
+#   cd Filer && tar -czf filer-dock-panel-containment-6.6.5.tar.gz \
+#       --transform 's,^panel-containment-src,filer-dock-panel-containment-6.6.5,' \
+#       panel-containment-src
+#
+# plasma_add_applet(... GENERATE_CONTAINMENT_CLASS) installs the compiled
+# containment plugin to ${KDE_INSTALL_PLUGINDIR}/plasma/applets -- with
+# CMAKE_INSTALL_PREFIX=/usr that's the standard system Qt plugin path
+# (/usr/lib/qt6/plugins/plasma/applets), which Qt searches by default
+# regardless of QT_PLUGIN_PATH. Application::startDock() in
+# src/application.cpp additionally prepends $HOME/.local/lib/plugins to
+# QT_PLUGIN_PATH (a per-user dev-tree convenience, harmless once this
+# package is installed system-wide -- Qt's own default plugin path list
+# still gets searched too).
+#
+# Conflicts with plasma-desktop for the same reason
+# plasma-workspace-components conflicts with plasma-workspace: both would
+# fight over installing org.kde.panel at the same path. Drop the
+# conflicts/provides lines if this system ever needs plasma-desktop too.
+
+pkgname=filer-dock-panel-containment
+pkgver=6.6.5
+pkgrel=1
+pkgdesc="Vendored org.kde.panel containment (from plasma-desktop) for filer-dock, without depending on the plasma-desktop package"
+arch=('x86_64')
+url="https://github.com/pearOS-ArchLinux/Filer"
+license=('LGPL-2.1-or-later' 'GPL-2.0-or-later')
+provides=('filer-dock-panel-containment')
+conflicts=('plasma-desktop')
+depends=(
+    'qt6-base'
+    'qt6-declarative'
+    'kcoreaddons'
+    'ki18n'
+    'kconfig'
+    'kconfigwidgets'
+    'kservice'
+    'kwindowsystem'
+    'libplasma'
+)
+makedepends=(
+    'cmake'
+    'extra-cmake-modules'
+    'gcc'
+)
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SHA256SUM_PLACEHOLDER')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr
+    make -C build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make -C build DESTDIR="$pkgdir" install
+}

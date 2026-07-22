@@ -1,0 +1,18 @@
+{
+    "classes": [
+        {
+            "className": "PearDockPlugin",
+            "lineNumber": 3,
+            "object": true,
+            "qualifiedClassName": "PearDockPlugin",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QQmlExtensionPlugin"
+                }
+            ]
+        }
+    ],
+    "inputFile": "plugin.cpp",
+    "outputRevision": 69
+}
