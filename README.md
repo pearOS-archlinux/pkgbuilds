@@ -4,7 +4,7 @@
   width="64"
   style="border-radius: 99px;"
   alt="PearOS logo"></img>
-  <h1 align="center">RearOS</h1>
+  <h1 align="center">PearOS</h1>
 </div>
 
 # PearOS PKGBUILDS
