@@ -1,4 +1,4 @@
-VERSION  := 26.6.8
+VERSION  := 26.6.9
 PKGNAME  := pearos-dock
 PKGREL   := 1
 DISTDIR  := dist
