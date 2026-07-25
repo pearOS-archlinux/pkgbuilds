@@ -16,6 +16,7 @@
 #include "../utils/types.h"
 
 class NotesWidget;
+class PearIDManager;
 
 /**
  * @brief Main application window - Frameless, transparent with blur (Classmorphism).
@@ -40,6 +41,7 @@ private:
     void setupSidebar();
     void setupContent();
     void loadPearIdDisplayName();
+    void applyPearIdState();
     void createMenuBar();
     void loadStyleSheet();
     QString themeOverlayFromPalette() const;
@@ -64,6 +66,8 @@ private:
     QListWidget* m_sideList = nullptr;
     QWidget* m_sidebarProfileWidget = nullptr;
     QLabel* m_sidebarProfileName = nullptr;
+    QLabel* m_sidebarProfileImg = nullptr;
+    PearIDManager* m_pearId = nullptr;
 
     NotesWidget* m_notesWidget = nullptr;
     QVector<NoteDocument> m_notes;
