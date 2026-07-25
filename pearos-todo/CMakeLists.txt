@@ -38,19 +38,25 @@ set(SOURCES
 
     # Utils
     src/utils/todo_storage.cpp
+
+    # Backend
+    src/backend/pearidmanager.cpp
 )
 
 # Header files
 set(HEADERS
     src/utils/logger.h
     src/utils/types.h
-    
+
     # GUI
     src/gui/mainwindow.h
     src/gui/todo_widget.h
 
     # Utils
     src/utils/todo_storage.h
+
+    # Backend
+    src/backend/pearidmanager.h
 )
 
 # Create executable
@@ -95,6 +101,12 @@ configure_file(
 # Install stylesheet
 install(FILES stylesheet.qss
     DESTINATION share/pearos-todo
+)
+
+# Install PearID scripts (login/session detection), preserving exec bits
+install(DIRECTORY pearID/
+    DESTINATION share/pearos-todo/pearID
+    USE_SOURCE_PERMISSIONS
 )
 
 # Create data directory for user-writable todos (no files, only directory with permissive perms)

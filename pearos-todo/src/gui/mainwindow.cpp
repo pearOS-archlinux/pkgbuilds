@@ -2,6 +2,7 @@
 #include "todo_widget.h"
 #include "../utils/logger.h"
 #include "../utils/todo_storage.h"
+#include "../backend/pearidmanager.h"
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
@@ -9,6 +10,7 @@
 #include <QDir>
 #include <QPainter>
 #include <QPainterPath>
+#include <QRegion>
 #include <QApplication>
 #include <QMessageBox>
 #include <QVBoxLayout>
@@ -24,6 +26,7 @@
 #include <QResizeEvent>
 #include <QPalette>
 #include <QTimer>
+#include <QPointer>
 #include <QtConcurrent>
 #include <QGraphicsBlurEffect>
 #include <QPixmap>
@@ -103,6 +106,9 @@ void MainWindow::setupUi() {
     m_reflectionDebounceTimer = new QTimer(this);
     m_reflectionDebounceTimer->setSingleShot(true);
     connect(m_reflectionDebounceTimer, &QTimer::timeout, this, &MainWindow::updateSidebarReflection);
+    // Blur region's rounded rect needs to track window size too; piggyback
+    // on the same debounce so resizing doesn't spam KWin with DBus calls.
+    connect(m_reflectionDebounceTimer, &QTimer::timeout, this, &MainWindow::enableBlurBehind);
     m_reflectionUpdateTimer = new QTimer(this);
     connect(m_reflectionUpdateTimer, &QTimer::timeout, this, &MainWindow::updateSidebarReflection);
     m_reflectionUpdateTimer->start(0); // 0 = cât de des permite event loop-ul, blur în timp real
@@ -230,9 +236,16 @@ void MainWindow::setupSidebar() {
             if (e->type() == QEvent::Enter) {
                 setHovered(true);
             } else if (e->type() == QEvent::Leave) {
-                QWidget* w = qApp->widgetAt(QCursor::pos());
-                bool stillInside = w && (w == circles || circles->isAncestorOf(w));
-                if (!stillInside) setHovered(false);
+                // QCursor::pos() is unreliable on Wayland (no global pointer
+                // query), which left hover stuck on. QWidget::underMouse() is
+                // tracked internally by Qt from delivered enter/leave events
+                // and works on both platforms; defer so the sibling's Enter
+                // (if the pointer moved to another traffic button) lands first.
+                QPointer<QWidget> circlesPtr = circles;
+                QTimer::singleShot(0, circlesPtr, [this, circlesPtr]() {
+                    if (circlesPtr && !circlesPtr->underMouse())
+                        setHovered(false);
+                });
             }
             return QObject::eventFilter(o, e);
         }
@@ -391,11 +404,11 @@ void MainWindow::setupSidebar() {
     profileLayout->setSpacing(12);
 
     const int avatarSize = 40;
-    QLabel* avatar = new QLabel(this);
-    avatar->setObjectName("sidebarProfileImg");
-    avatar->setFixedSize(avatarSize, avatarSize);
-    avatar->setAlignment(Qt::AlignCenter);
-    avatar->setScaledContents(false);
+    m_sidebarProfileImg = new QLabel(this);
+    m_sidebarProfileImg->setObjectName("sidebarProfileImg");
+    m_sidebarProfileImg->setFixedSize(avatarSize, avatarSize);
+    m_sidebarProfileImg->setAlignment(Qt::AlignCenter);
+    m_sidebarProfileImg->setScaledContents(false);
     QString facePath = QDir::homePath() + QStringLiteral("/.face.icon");
     if (QFile::exists(facePath)) {
         QPixmap face(facePath);
@@ -410,10 +423,10 @@ void MainWindow::setupSidebar() {
             p.setClipPath(path);
             p.drawPixmap(0, 0, avatarSize, avatarSize, face.scaled(avatarSize, avatarSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
             p.end();
-            avatar->setPixmap(rounded);
+            m_sidebarProfileImg->setPixmap(rounded);
         }
     }
-    profileLayout->addWidget(avatar);
+    profileLayout->addWidget(m_sidebarProfileImg);
     m_sidebarProfileName = new QLabel(tr("User"), this);
     m_sidebarProfileName->setObjectName("sidebarProfileName");
     m_sidebarProfileName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -438,40 +451,43 @@ void MainWindow::setupSidebar() {
 }
 
 void MainWindow::loadPearIdDisplayName() {
-    if (!m_sidebarProfileName) return;
-
-    QString scriptPath;
-    const QDir appDir(QCoreApplication::applicationDirPath());
-    const QStringList candidates = {
-        appDir.absoluteFilePath(QStringLiteral("../pearID/get_user_info.sh")),
-        appDir.absoluteFilePath(QStringLiteral("pearID/get_user_info.sh")),
-        QStringLiteral("/usr/share/pearos-appstore/pearID/get_user_info.sh"),
-        QStringLiteral("/usr/share/pearos-todo/pearID/get_user_info.sh")
-    };
-    for (const QString& path : candidates) {
-        if (QFile::exists(path)) {
-            scriptPath = path;
-            break;
-        }
+    if (!m_pearId) {
+        m_pearId = new PearIDManager(this);
+        connect(m_pearId, &PearIDManager::stateChanged, this, &MainWindow::applyPearIdState);
+        connect(m_pearId, &PearIDManager::userInfoChanged, this, &MainWindow::applyPearIdState);
     }
-    if (scriptPath.isEmpty()) return;
+    m_pearId->checkState();
+}
 
-    QProcess* process = new QProcess(this);
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
-        process->deleteLater();
-        if (exitCode != 0 || exitStatus != QProcess::NormalExit || !m_sidebarProfileName) return;
-        const QByteArray out = process->readAllStandardOutput().trimmed();
-        const QList<QByteArray> lines = out.split('\n');
-        QString first = QString::fromUtf8(lines.value(0).trimmed());
-        QString last = QString::fromUtf8(lines.value(1).trimmed());
-        if (!first.isEmpty() || !last.isEmpty()) {
-            m_sidebarProfileName->setText((first + QChar(' ') + last).trimmed());
+void MainWindow::applyPearIdState() {
+    if (!m_sidebarProfileName || !m_pearId)
+        return;
+
+    if (m_pearId->state() == "loggedin") {
+        const QString name = m_pearId->userName();
+        m_sidebarProfileName->setText(!name.isEmpty() ? name : m_pearId->userEmail());
+        const QString avatar = m_pearId->avatarPath();
+        if (m_sidebarProfileImg && !avatar.isEmpty()) {
+            QPixmap face(avatar);
+            if (!face.isNull()) {
+                const int avatarSize = m_sidebarProfileImg->width();
+                QPixmap rounded(avatarSize, avatarSize);
+                rounded.fill(Qt::transparent);
+                QPainter p(&rounded);
+                p.setRenderHint(QPainter::Antialiasing);
+                p.setRenderHint(QPainter::SmoothPixmapTransform);
+                QPainterPath path;
+                path.addEllipse(0, 0, avatarSize, avatarSize);
+                p.setClipPath(path);
+                p.drawPixmap(0, 0, avatarSize, avatarSize, face.scaled(avatarSize, avatarSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+                p.end();
+                m_sidebarProfileImg->setPixmap(rounded);
+            }
         }
-    });
-    process->start(scriptPath,
-                   {QStringLiteral("--first-name"), QStringLiteral("--last-name")},
-                   QProcess::ReadOnly);
+    } else if (m_pearId->state() == "loggedout") {
+        m_sidebarProfileName->setText(tr("Not logged in"));
+    }
+    // "loading": leave whatever was last shown until state resolves.
 }
 
 void MainWindow::setupContent() {
@@ -812,6 +828,8 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
                 return false;
             }
             m_centralWidget->unsetCursor();
+        } else if (event->type() == QEvent::Leave) {
+            m_centralWidget->unsetCursor();
         } else if (event->type() == QEvent::MouseButtonPress) {
             auto* me = static_cast<QMouseEvent*>(event);
             if (me->button() == Qt::LeftButton) {
@@ -819,6 +837,11 @@ bool MainWindow::eventFilter(QObject* watched, QEvent* event) {
                 if (edges != Qt::Edges()) {
                     QWindow* win = windowHandle();
                     if (win && win->startSystemResize(edges)) {
+                        // The compositor drives the actual drag from here and
+                        // shows its own resize cursor; no more MouseMove events
+                        // reach this widget, so our override would otherwise
+                        // stay stuck at whatever edge cursor was last set.
+                        m_centralWidget->unsetCursor();
                         return true;
                     }
                 }
@@ -861,7 +884,14 @@ void MainWindow::enableBlurBehind() {
     if (!win) return;
 #ifdef HAVE_KWINDOW_EFFECTS
     if (KWindowEffects::isEffectAvailable(KWindowEffects::BlurBehind)) {
-        KWindowEffects::enableBlurBehind(win, true);
+        // appContainer paints a 30px rounded rect (see stylesheet.qss), but
+        // KWin's blur region defaults to the full rectangular window bounds,
+        // so the blur (and the desktop behind it) shows through square at
+        // the corners even though the visible content is rounded.
+        QPainterPath path;
+        path.addRoundedRect(rect(), 30, 30);
+        const QRegion region(path.toFillPolygon().toPolygon());
+        KWindowEffects::enableBlurBehind(win, true, region);
         Logger::info("Blur behind enabled (KWindowEffects)");
     }
 #else

@@ -66,9 +66,3 @@ This project is distributed under the MIT License. Check LICENSE.
 - **This App**: pearOS ToDo (Qt6/C++) built on top of the same UI
 - **Community**: Arch Linux and Qt communities
 
-## Contact
-
-For issues, questions, or contributions, please visit:
-- GitHub: https://github.com/arch-linux-gui/pearos-todo
-- Website: https://arkalinuxgui.org
-- Discord: https://discord.com/invite/NgAFEw9Tkf
