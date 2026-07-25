@@ -38,6 +38,9 @@ set(SOURCES
 
     # Utils
     src/utils/contact_storage.cpp
+
+    # Backend
+    src/backend/pearidmanager.cpp
 )
 
 # Header files
@@ -51,6 +54,9 @@ set(HEADERS
 
     # Utils
     src/utils/contact_storage.h
+
+    # Backend
+    src/backend/pearidmanager.h
 )
 
 # Create executable
@@ -95,6 +101,12 @@ configure_file(
 # Install stylesheet
 install(FILES stylesheet.qss
     DESTINATION share/pearos-contacts
+)
+
+# Install PearID scripts (login/session detection), preserving exec bits
+install(DIRECTORY pearID/
+    DESTINATION share/pearos-contacts/pearID
+    USE_SOURCE_PERMISSIONS
 )
 
 # Create data directory for user-writable contacts (no files, only directory with permissive perms)

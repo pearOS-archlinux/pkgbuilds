@@ -16,6 +16,7 @@
 #include "../utils/types.h"
 
 class ContactWidget;
+class PearIDManager;
 
 /**
  * @brief Main application window - Frameless, transparent with blur (Classmorphism).
@@ -40,6 +41,7 @@ private:
     void setupSidebar();
     void setupContent();
     void loadPearIdDisplayName();
+    void applyPearIdState();
     void createMenuBar();
     void loadStyleSheet();
     QString themeOverlayFromPalette() const;
@@ -64,6 +66,8 @@ private:
     QListWidget* m_sideList = nullptr;
     QWidget* m_sidebarProfileWidget = nullptr;
     QLabel* m_sidebarProfileName = nullptr;
+    QLabel* m_sidebarProfileImg = nullptr;
+    PearIDManager* m_pearId = nullptr;
 
     ContactWidget* m_contactWidget = nullptr;
     QVector<ContactGroup> m_contactGroups;
