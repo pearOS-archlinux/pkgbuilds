@@ -1,0 +1,4 @@
+File=options.kcfg
+ClassName=PearosMagicLampConfig
+Singleton=true
+Mutators=true

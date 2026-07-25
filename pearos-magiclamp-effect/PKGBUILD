@@ -1,0 +1,24 @@
+# Maintainer: Alexandru Balan <alxb421@gmail.com>
+pkgname=pearos-magiclamp
+pkgver=26.6
+pkgrel=1
+pkgdesc="KWin window minimization effect - Pearos Magic Lamp"
+arch=('x86_64')
+url="https://github.com/koryboc/pearos-magiclamp"
+license=('GPL2')
+depends=('kwin' 'qt6-base' 'kconfig' 'kconfigwidgets' 'kcoreaddons'
+         'kcmutils' 'kwindowsystem' 'libdrm')
+makedepends=('cmake' 'extra-cmake-modules' 'vulkan-headers')
+source=()
+sha256sums=()
+
+build() {
+    cmake -S "$startdir" -B "$srcdir/build" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr
+    cmake --build "$srcdir/build" --parallel
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install "$srcdir/build"
+}

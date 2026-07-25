@@ -1,0 +1,21 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "vladzzag@gmail.com",
+                "Name": "Vlad Zagorodniy"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "Alternative magic lamp effect",
+        "EnabledByDefault": false,
+        "Icon": "preferences-system-windows-effect-pearosmagiclamp",
+        "Id": "kwin4_effect_pearosmagiclamp",
+        "License": "GPL",
+        "Name": "Pearos Magic Lamp"
+    },
+    "org.kde.kwin.effect": {
+        "exclusiveGroup": "minimize"
+    },
+    "X-KDE-ConfigModule": "kwin_pearosmagiclamp_config"
+}
