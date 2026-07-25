@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=org.kde.Shutdown
-Exec=/usr/bin/plasma-shutdown

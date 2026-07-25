@@ -1,8 +1,0 @@
---resource
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/.qt/rcc/qmake_org_pearos_shellshim.qrc
---resource
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/.qt/rcc/filer_shell_common_qml_raw_qml_0.qrc
-/qt/qml/org/pearos/shellshim/qml/PlasmoidHost.qml
-/qt/qml/org/pearos/shellshim/qml/ShellToolTipArea.qml
-/qt/qml/org/pearos/shellshim/qml/HighlightShim.qml
-/qt/qml/org/pearos/shellshim/qml/ExpandableListItemShim.qml

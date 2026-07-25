@@ -1,4 +1,0 @@
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/filer_shell_common_qml_autogen/include/../EWIEGA46WW/moc_dialogshim.cpp.json
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/filer_shell_common_qml_autogen/include/../EWIEGA46WW/moc_plasmatypesshim.cpp.json
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/filer_shell_common_qml_autogen/include/../EWIEGA46WW/moc_plasmoidattachroot.cpp.json
-/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/filer_shell_common_qml_autogen/include/filer_shell_common_qml_org_pearos_shellshimPlugin.moc.json

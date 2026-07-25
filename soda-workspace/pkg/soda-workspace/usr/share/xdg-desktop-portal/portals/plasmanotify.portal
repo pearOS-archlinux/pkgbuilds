@@ -1,4 +1,0 @@
-[portal]
-DBusName=org.freedesktop.impl.portal.desktop.plasmanotify
-Interfaces=org.freedesktop.impl.portal.Notification;
-UseIn=kde

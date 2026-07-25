@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/alxb421/Desktop/pkgbuilds/soda-filer/src/soda-filer-26.7.27/build/cmake_install.cmake",
-		"/home/alxb421/Desktop/pkgbuilds/soda-filer/src/soda-filer-26.7.27/build/src/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

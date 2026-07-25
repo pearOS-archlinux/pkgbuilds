@@ -1,9 +1,0 @@
-<RCC>
-  <qresource prefix="/qt/qml/org/pearos/shellshim/">
-    <file alias="qml/PlasmoidHost.qml">/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-shell-common/qml/PlasmoidHost.qml</file>
-    <file alias="qml/ShellToolTipArea.qml">/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-shell-common/qml/ShellToolTipArea.qml</file>
-    <file alias="qml/HighlightShim.qml">/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-shell-common/qml/HighlightShim.qml</file>
-    <file alias="qml/ExpandableListItemShim.qml">/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-shell-common/qml/ExpandableListItemShim.qml</file>
-  </qresource>
-</RCC>
-
