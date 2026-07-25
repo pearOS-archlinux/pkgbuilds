@@ -95,6 +95,12 @@ install(FILES stylesheet.qss
     DESTINATION share/pearos-calendar
 )
 
+# Install PearID scripts (login/session detection), preserving exec bits
+install(DIRECTORY pearID/
+    DESTINATION share/pearos-calendar/pearID
+    USE_SOURCE_PERMISSIONS
+)
+
 # Create data directory for user-writable events (no files, only directory with permissive perms)
 install(DIRECTORY DESTINATION share/extras/pearos-calendar
     DIRECTORY_PERMISSIONS

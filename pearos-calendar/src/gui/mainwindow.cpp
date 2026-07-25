@@ -769,12 +769,15 @@ void MainWindow::setupContent() {
     scrollLayout->setContentsMargins(0, 0, 0, 0);
     scrollLayout->setSpacing(16);
 
-    const int startYear = 1980;
-    const int endYear = 2040;
+    const QDate today = QDate::currentDate();
+    // Building a QCalendarWidget per month is not cheap (~700 of them for a
+    // 1980-2040 span made startup visibly slow). Keep a generous but bounded
+    // window around today instead of eagerly constructing six decades.
+    const int startYear = today.year() - 10;
+    const int endYear = today.year() + 10;
     m_monthCalendars.clear();
     m_monthCalendars.reserve((endYear - startYear + 1) * 12);
     int currentMonthIndex = -1;
-    const QDate today = QDate::currentDate();
 
     for (int y = startYear; y <= endYear; ++y) {
         for (int month = 1; month <= 12; ++month) {
