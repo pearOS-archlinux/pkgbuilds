@@ -1,0 +1,9 @@
+{
+    "KPackageStructure": "Plasma/Shell",
+    "KPlugin": {
+        "Description": "filer-dock host shell (adapted from plasma-sdk's plasmoidviewer shell)",
+        "Id": "com.pearos.filerdockshell",
+        "License": "GPL-2.0-or-later",
+        "Name": "FilerDockShell"
+    }
+}

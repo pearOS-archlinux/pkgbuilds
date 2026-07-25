@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/qt/qml/org/pearos/shellshim">
+    <file alias="qmldir">/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/bin/org/pearos/shellshim/qmldir</file>
+  </qresource>
+</RCC>
+

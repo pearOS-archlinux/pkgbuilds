@@ -1,0 +1,11 @@
+module org.pearos.shellshim
+linktarget filer_shell_common_qml
+optional plugin filer_shell_common_qml
+classname org_pearos_shellshimPlugin
+typeinfo filer_shell_common_qml.qmltypes
+prefer :/qt/qml/org/pearos/shellshim/
+PlasmoidHost 1.0 qml/PlasmoidHost.qml
+ShellToolTipArea 1.0 qml/ShellToolTipArea.qml
+HighlightShim 1.0 qml/HighlightShim.qml
+ExpandableListItemShim 1.0 qml/ExpandableListItemShim.qml
+

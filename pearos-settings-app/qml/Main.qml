@@ -592,29 +592,29 @@ ApplicationWindow {
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===2;  sourceComponent: Component { NetworkPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===3;  sourceComponent: Component { BatteryPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===4;  sourceComponent: Component { GeneralPage {} } }
-                StubPage { stubTitle: "Accessibility" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===5;  sourceComponent: Component { AccessibilityPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===6;  sourceComponent: Component { AppearancePage {} } }
-                StubPage { stubTitle: "Menu Bar" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===7;  sourceComponent: Component { MenuBarPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===8;  sourceComponent: Component { PearIntelligencePage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===9;  sourceComponent: Component { DesktopDockPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===10; sourceComponent: Component { DisplaysPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===11; sourceComponent: Component { WallpaperPage {} } }
-                StubPage { stubTitle: "Spotlight" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===12; sourceComponent: Component { SpotlightPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===13; sourceComponent: Component { NotificationsPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===14; sourceComponent: Component { SoundPage {} } }
-                StubPage { stubTitle: "Focus" }
-                StubPage { stubTitle: "Screen Time" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===15; sourceComponent: Component { FocusPage {} } }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===16; sourceComponent: Component { ScreenTimePage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===17; sourceComponent: Component { LockScreenPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===18; sourceComponent: Component { PrivacyPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===19; sourceComponent: Component { TouchIDPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===20; sourceComponent: Component { UsersPage {} } }
-                StubPage { stubTitle: "Internet Accounts" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===21; sourceComponent: Component { InternetAccountsPage {} } }
                 StubPage { stubTitle: "Game Center" }
                 StubPage { stubTitle: "pCloud" }
                 StubPage { stubTitle: "Wallet & Pear Pay" }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===25; sourceComponent: Component { KeyboardPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===26; sourceComponent: Component { TrackpadPage {} } }
-                StubPage { stubTitle: "Printers & Scanners" }
+                Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===27; sourceComponent: Component { PrintersPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===28; sourceComponent: Component { AboutPage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===29; sourceComponent: Component { SoftwareUpdatePage {} } }
                 Loader { Layout.fillWidth:true; Layout.fillHeight:true; active: Navigator.currentIdx===30; sourceComponent: Component { StoragePage {} } }

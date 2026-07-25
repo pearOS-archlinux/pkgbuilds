@@ -1,11 +1,73 @@
 #include "wallpapermanager.h"
 #include <QProcess>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QImage>
 #include <QColor>
+#include <QCryptographicHash>
 
 WallpaperManager::WallpaperManager(QObject *parent) : QObject(parent) {}
+
+QString WallpaperManager::thumbCacheDir() {
+    QString dir = QDir::homePath() + "/.cache/pearos-settings/wallpaper-thumbs";
+    QDir().mkpath(dir);
+    return dir;
+}
+
+QString WallpaperManager::thumbPathFor(const QString &fullPath) {
+    QString hash = QCryptographicHash::hash(fullPath.toUtf8(), QCryptographicHash::Md5).toHex();
+    return thumbCacheDir() + "/" + hash + ".jpg";
+}
+
+// Wallpaper packages ship multi-K originals (some 6000x6000+); decoding those
+// full-size just to show a 100x56 grid thumb is what made the page crawl.
+// Generate small cached JPEGs once in the background via ImageMagick, then
+// point the grid at those instead of the originals.
+void WallpaperManager::generateMissingThumbnails() {
+    QStringList missing;
+    for (const QVariant &v : m_wallpapers) {
+        QVariantMap m = v.toMap();
+        QString path = m["path"].toString();
+        QString thumb = thumbPathFor(path);
+        if (!QFile::exists(thumb)) missing << path;
+    }
+    if (missing.isEmpty()) return;
+
+    QStringList cmds;
+    for (const QString &path : missing) {
+        QString thumb = thumbPathFor(path);
+        QString escapedPath  = path;  escapedPath.replace("'", "'\\''");
+        QString escapedThumb = thumb; escapedThumb.replace("'", "'\\''");
+        cmds << QString("convert '%1[0]' -auto-orient -thumbnail '240x135^' "
+                         "-gravity center -extent 240x135 -quality 82 '%2' 2>/dev/null")
+                    .arg(escapedPath, escapedThumb);
+    }
+    // Run sequentially in one shell so we don't spawn 70 ImageMagick processes at once
+    run(cmds.join(" ; "), [this](QString) { refreshThumbPaths(); });
+}
+
+// Re-point already-loaded entries at newly generated thumbnails without
+// re-scanning the wallpaper directories.
+void WallpaperManager::refreshThumbPaths() {
+    auto patch = [](QVariantList &list) {
+        for (QVariant &v : list) {
+            QVariantMap m = v.toMap();
+            QString thumb = thumbPathFor(m["path"].toString());
+            if (QFile::exists(thumb)) m["thumb"] = thumb;
+            v = m;
+        }
+    };
+    patch(m_wallpapers);
+    for (QVariant &c : m_categories) {
+        QVariantMap cat = c.toMap();
+        QVariantList wps = cat["wallpapers"].toList();
+        patch(wps);
+        cat["wallpapers"] = wps;
+        c = cat;
+    }
+    emit wallpapersChanged();
+}
 
 void WallpaperManager::run(const QString &cmd, std::function<void(QString)> cb) {
     auto *proc = new QProcess(this);
@@ -35,6 +97,8 @@ void WallpaperManager::refreshWallpapers() {
             QVariantMap entry;
             entry["path"] = fi.absoluteFilePath();
             entry["name"] = fi.baseName();
+            QString thumb = thumbPathFor(entry["path"].toString());
+            entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
             m_wallpapers.append(entry);
             byCategory["General"].append(entry);
         }
@@ -47,15 +111,25 @@ void WallpaperManager::refreshWallpapers() {
                 QVariantMap entry;
                 entry["path"] = fi.absoluteFilePath();
                 entry["name"] = fi.baseName();
+                QString thumb = thumbPathFor(entry["path"].toString());
+                entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
                 m_wallpapers.append(entry);
                 byCategory[catName].append(entry);
             }
-            // KDE style: subdir/contents/images/
+            // KDE style: subdir/contents/images/ — pick the smallest variant as
+            // the thumbnail source since these packages ship 4K+ per resolution
             QDir imgDir(sub.absoluteFilePath() + "/contents/images");
-            for (const QFileInfo &fi : imgDir.entryInfoList({"*.jpg","*.jpeg","*.png"}, QDir::Files)) {
+            QFileInfoList imgVariants = imgDir.entryInfoList({"*.jpg","*.jpeg","*.png"}, QDir::Files);
+            if (!imgVariants.isEmpty()) {
+                QFileInfo smallest = imgVariants.first();
+                for (const QFileInfo &fi : imgVariants)
+                    if (fi.size() < smallest.size()) smallest = fi;
+
                 QVariantMap entry;
-                entry["path"] = fi.absoluteFilePath();
+                entry["path"] = smallest.absoluteFilePath();
                 entry["name"] = sub.baseName();
+                QString thumb = thumbPathFor(entry["path"].toString());
+                entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
                 m_wallpapers.append(entry);
                 byCategory[catName].append(entry);
             }
@@ -73,6 +147,7 @@ void WallpaperManager::refreshWallpapers() {
 
     emit wallpapersChanged();
     refreshTint();
+    generateMissingThumbnails();
 }
 
 void WallpaperManager::refreshTint() {

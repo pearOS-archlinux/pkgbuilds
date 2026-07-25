@@ -14,6 +14,11 @@ class BatteryManager : public QObject {
     Q_PROPERTY(bool lowPowerMode READ lowPowerMode NOTIFY statusChanged)
     Q_PROPERTY(QString healthStatus READ healthStatus NOTIFY statusChanged)
     Q_PROPERTY(int cycleCount READ cycleCount NOTIFY statusChanged)
+    Q_PROPERTY(bool cycleCountAvailable READ cycleCountAvailable NOTIFY statusChanged)
+    Q_PROPERTY(int healthPercent READ healthPercent NOTIFY statusChanged)
+    Q_PROPERTY(bool showImportantBatteryMessage READ showImportantBatteryMessage NOTIFY statusChanged)
+    Q_PROPERTY(bool optimizedChargingSupported READ optimizedChargingSupported NOTIFY statusChanged)
+    Q_PROPERTY(bool optimizedChargingEnabled   READ optimizedChargingEnabled   NOTIFY statusChanged)
     Q_PROPERTY(QVariantList chargeHistory READ chargeHistory NOTIFY historyChanged)
     Q_PROPERTY(QVariantList appUsage READ appUsage NOTIFY usageChanged)
 
@@ -28,6 +33,11 @@ public:
     bool lowPowerMode()     const { return m_lowPowerMode; }
     QString healthStatus()  const { return m_healthStatus; }
     int cycleCount()        const { return m_cycleCount; }
+    bool cycleCountAvailable() const { return m_cycleCount >= 0; }
+    int healthPercent()     const { return m_healthPercent; }
+    bool showImportantBatteryMessage() const { return m_healthPercent > 0 && m_healthPercent < 75; }
+    bool optimizedChargingSupported() const { return m_chargeThresholdSupported; }
+    bool optimizedChargingEnabled()   const { return m_optimizedChargingEnabled; }
     QVariantList chargeHistory() const { return m_chargeHistory; }
     QVariantList appUsage()      const { return m_appUsage; }
 
@@ -35,6 +45,7 @@ public:
     Q_INVOKABLE void refreshHistory();
     Q_INVOKABLE void refreshUsage();
     Q_INVOKABLE void setLowPowerMode(bool enabled);
+    Q_INVOKABLE void setOptimizedChargingEnabled(bool enabled);
 
 signals:
     void statusChanged();
@@ -51,7 +62,12 @@ private:
     bool m_lowPowerMode = false;
     QString m_healthStatus;
     int m_cycleCount = -1;
+    int m_healthPercent = 0;
+    QString m_devicePath;
+    bool m_chargeThresholdSupported = false;
+    bool m_optimizedChargingEnabled = false;
     QVariantList m_chargeHistory;
     QVariantList m_appUsage;
     void run(const QString &cmd, std::function<void(QString)> cb);
+    void findDevicePath();
 };

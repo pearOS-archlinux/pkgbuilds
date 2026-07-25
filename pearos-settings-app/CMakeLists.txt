@@ -8,6 +8,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus Widgets Concurrent QuickEffects Network)
 find_package(KF6WindowSystem QUIET)
+find_package(X11 REQUIRED)
 
 qt_standard_project_setup(REQUIRES 6.5)
 qt_policy(SET QTP0004 NEW)
@@ -34,6 +35,16 @@ set(BACKEND_SOURCES
     backend/dockmanager.cpp
     backend/touchidmanager.cpp
     backend/sidereflection.cpp
+    backend/accessibilitymanager.cpp
+    backend/menubarmanager.cpp
+    backend/notificationsmanager.cpp
+    backend/focusmanager.cpp
+    backend/screentimemanager.cpp
+    backend/scrollbarmanager.cpp
+    backend/printersmanager.cpp
+    backend/spotlightmanager.cpp
+    backend/internetaccountsmanager.cpp
+    backend/filerconfigmanager.cpp
 )
 
 qt_add_executable(SystemSettings
@@ -87,6 +98,13 @@ qt_add_qml_module(SystemSettings
         qml/pages/PearIntelligencePage.qml
         qml/pages/DesktopDockPage.qml
         qml/pages/TouchIDPage.qml
+        qml/pages/AccessibilityPage.qml
+        qml/pages/MenuBarPage.qml
+        qml/pages/FocusPage.qml
+        qml/pages/ScreenTimePage.qml
+        qml/pages/PrintersPage.qml
+        qml/pages/SpotlightPage.qml
+        qml/pages/InternetAccountsPage.qml
 )
 
 target_link_libraries(SystemSettings PRIVATE
@@ -99,7 +117,9 @@ target_link_libraries(SystemSettings PRIVATE
     Qt6::DBus
     Qt6::Widgets
     Qt6::Concurrent
+    ${X11_LIBRARIES}
 )
+target_include_directories(SystemSettings PRIVATE ${X11_INCLUDE_DIR})
 
 if(KF6WindowSystem_FOUND)
     target_link_libraries(SystemSettings PRIVATE KF6::WindowSystem)

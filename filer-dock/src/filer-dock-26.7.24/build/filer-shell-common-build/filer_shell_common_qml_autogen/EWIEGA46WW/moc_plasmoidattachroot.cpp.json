@@ -1,0 +1,36 @@
+{
+    "classes": [
+        {
+            "classInfos": [
+                {
+                    "name": "QML.Element",
+                    "value": "Plasmoid"
+                },
+                {
+                    "name": "QML.Creatable",
+                    "value": "false"
+                },
+                {
+                    "name": "QML.UncreatableReason",
+                    "value": "Attached property only"
+                },
+                {
+                    "name": "QML.Attached",
+                    "value": "PlasmoidShim"
+                }
+            ],
+            "className": "PlasmoidAttachedProvider",
+            "lineNumber": 22,
+            "object": true,
+            "qualifiedClassName": "PlasmoidAttachedProvider",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "plasmoidattachroot.h",
+    "outputRevision": 69
+}

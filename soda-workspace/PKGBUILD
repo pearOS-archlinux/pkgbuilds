@@ -1,0 +1,86 @@
+pkgname=soda-workspace
+pkgver=6.7.3
+pkgrel=1
+pkgdesc="Trimmed plasma-workspace fork for the Soda desktop environment (no plasmashell/kcms/krunner/activities/PIM -- Filer and its own applets replace them)"
+arch=('x86_64')
+url="https://github.com/pearOS-ArchLinux/Filer"
+license=('LGPL-2.1-or-later' 'LGPL-3.0-or-later')
+provides=('plasma-workspace')
+conflicts=('plasma-workspace')
+replaces=('plasma-workspace')
+depends=(
+    'accountsservice' 'appstream-qt' 'dbus' 'fontconfig' 'freetype2' 'glibc'
+    'icu' 'karchive' 'kauth' 'kbookmarks' 'kcmutils' 'kcolorscheme'
+    'kcompletion' 'kconfig' 'kconfigwidgets' 'kcoreaddons' 'kcrash'
+    'kde-cli-tools' 'kdeclarative' 'kded' 'kdbusaddons' 'kglobalaccel'
+    'kguiaddons' 'kholidays' 'ki18n' 'kiconthemes' 'kidletime' 'kio'
+    'kio-extras' 'kio-fuse' 'kirigami' 'kirigami-addons' 'kitemmodels'
+    'kjobwidgets' 'knewstuff' 'knighttime' 'knotifications' 'kpackage'
+    'kparts' 'kpipewire' 'kquickcharts' 'kscreenlocker' 'kservice'
+    'kstatusnotifieritem' 'ksvg' 'ksystemstats' 'ktexteditor' 'ktextwidgets'
+    'kuserfeedback' 'kwallet' 'kwayland' 'kwidgetsaddons' 'kwin'
+    'kwindowsystem' 'kxmlgui' 'layer-shell-qt' 'libcanberra' 'libice'
+    'libgcc' 'libkexiv2' 'libksysguard' 'libplasma' 'libqalculate' 'libsm'
+    'libstdc++' 'libx11' 'libxau' 'libxcb' 'libxcrypt' 'libxcursor'
+    'libxfixes' 'libxft' 'libxtst' 'ocean-sound-theme' 'plasma-activities'
+    'plasma-activities-stats' 'prison' 'qt6-5compat' 'qt6-base'
+    'qt6-declarative' 'qt6-location' 'qt6-positioning' 'qt6-svg' 'qt6-tools'
+    'qt6-virtualkeyboard' 'sh' 'solid' 'systemd-libs' 'wayland' 'xcb-util'
+    'xcb-util-cursor' 'xcb-util-image' 'xcb-util-wm' 'xorg-xmessage'
+    'xorg-xrdb' 'xorg-xwayland' 'zlib' 'plasma-integration'
+    # dropped vs. real plasma-workspace: kactivitymanagerd (Activities
+    # unused), krunner + milou (PearLauncher's kicker hosts its own
+    # KRunner::RunnerManager in-process, confirmed in
+    # plasma-workspace-components-src/kicker/runnermodel.cpp -- the
+    # daemon/UI is never called)
+)
+makedepends=(
+    'extra-cmake-modules' 'cmake' 'qt6-tools' 'git' 'plasma-wayland-protocols'
+    'kwindowsystem' 'networkmanager-qt'
+)
+optdepends=(
+    'appmenu-gtk-module: global menu support for some GTK3 applications'
+)
+source=("git+file:///home/alxb421/Desktop/pkgbuilds/soda-workspace-src/plasma-workspace#branch=soda-workspace-build")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/plasma-workspace"
+    # KDE_INSTALL_LIBEXECDIR=lib matches Arch's own KDE packaging
+    # convention (/usr/lib directly, no libexec/ subdirectory) -- left at
+    # ECM's own default, plasma-dbus-run-session-if-needed installs to
+    # /usr/lib/libexec/ instead, which soda.desktop's Exec= line (and
+    # start-soda before it, for anything else expecting the plain path)
+    # never finds. Confirmed live: SDDM launching soda.desktop silently
+    # failed and bounced straight back to the login screen because of
+    # this exact mismatch, while running start-soda directly from a tty
+    # (skipping the missing wrapper entirely) still worked.
+    cmake -B build \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=/usr \
+          -DKDE_INSTALL_LIBEXECDIR=lib \
+          -DBUILD_TESTING=OFF
+    cmake --build build -j$(nproc)
+}
+
+package() {
+    cd "$srcdir/plasma-workspace"
+    DESTDIR="$pkgdir" cmake --install build
+
+    # startplasma-wayland (built from startkde/ above, kept as-is) has its
+    # own internal StartUnit call on plasma-workspace(-wayland).target --
+    # still shipped as plain unit files by this same build, since we only
+    # trimmed their Wants=, we didn't remove the files. Left unmasked,
+    # start-soda's own soda-workspace-wayland.target and startplasma-wayland's
+    # internal one both start kglobalaccel/gmenudbusmenuproxy/etc at the same
+    # time -- confirmed live as a real crash, not just redundant: two
+    # kglobalacceld/gmenudbusmenuproxy instances raced for the same D-Bus
+    # name, one losing and aborting, and ksmserver (pulled in twice via
+    # plasma-core.target from both graphs) crashed the same way. Masking
+    # system-wide so startplasma-wayland's own attempt becomes an inert
+    # no-op, leaving only our own graph running.
+    install -dm755 "$pkgdir/etc/systemd/user"
+    ln -sf /dev/null "$pkgdir/etc/systemd/user/plasma-workspace.target"
+    ln -sf /dev/null "$pkgdir/etc/systemd/user/plasma-workspace-wayland.target"
+    ln -sf /dev/null "$pkgdir/etc/systemd/user/plasma-workspace-x11.target"
+}

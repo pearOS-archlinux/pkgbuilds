@@ -1,0 +1,61 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+<qresource prefix="/icons">
+    <file alias="forbidden.png">icons/forbidden.png</file>
+    <file alias="kext.png">icons/kext.png</file>
+    <!-- "Show as list" (actionDetailedList) toolbar icon, user-supplied. -->
+    <file alias="list-bullet.svg">icons/list-bullet.svg</file>
+    <!-- "Show as columns" (actionColumnView_) toolbar icon, user-supplied. -->
+    <file alias="rectangle-split-3x1.svg">icons/rectangle-split-3x1.svg</file>
+    <!-- "Gallery View" (actionGalleryView_) toolbar icon, user-supplied. -->
+    <file alias="squares-below-rectangle.svg">icons/squares-below-rectangle.svg</file>
+    <!-- "Share" (shareAction) toolbar icon, user-supplied. -->
+    <file alias="square-and-arrow-up.svg">icons/square-and-arrow-up.svg</file>
+    <!-- "Tags" (tagAction) toolbar icon, user-supplied. -->
+    <file alias="tag-outline.svg">icons/tag-outline.svg</file>
+    <!-- "More" (moreAction) toolbar icon, user-supplied. -->
+    <file alias="ellipsis.svg">icons/ellipsis.svg</file>
+    <!-- "Change the icon grouping" (groupByAction_) toolbar icon, user-supplied. -->
+    <file alias="square-grid-3x1-below-line-grid-1x2.svg">icons/square-grid-3x1-below-line-grid-1x2.svg</file>
+    <!-- Search (filterBar leading icon + searchButton_) toolbar icon, user-supplied. -->
+    <file alias="magnifyingglass.svg">icons/magnifyingglass.svg</file>
+    <!-- Collapsed view-mode button chevron (viewModeCollapsedButton_), user-supplied. -->
+    <file alias="chevron-up-chevron-down.svg">icons/chevron-up-chevron-down.svg</file>
+    <!-- "Show as icons" (ui.actionIconView) toolbar icon, user-supplied. -->
+    <file alias="square-grid-2x2.svg">icons/square-grid-2x2.svg</file>
+    <!-- Chevron composited into the Group By button (see groupByAction in
+         mainwindow.cpp), user-supplied. -->
+    <file alias="chevron-down.svg">icons/chevron-down.svg</file>
+    <!-- Sidebar "Applications" item icon, user-supplied. Its own white
+         background rect and blue gradient fill were stripped down to just
+         the "A" glyph shape so themedSidebarIcon(), which recolors via
+         the source's alpha mask, can tint it with the accent color like
+         the other Favorites-section icons. -->
+    <file alias="applications.svg">icons/applications.svg</file>
+    <!-- Traffic-light window buttons, taken from the system's own
+         pearOS-dark GTK theme (gtk-3.0/windows-assets) so Filer's custom
+         chrome matches GTK windows under the same theme exactly. -->
+    <file alias="titlebutton-close.png">icons/titlebuttons/titlebutton-close-dark@2.png</file>
+    <file alias="titlebutton-close-hover.png">icons/titlebuttons/titlebutton-close-hover-dark@2.png</file>
+    <file alias="titlebutton-close-active.png">icons/titlebuttons/titlebutton-close-active-dark@2.png</file>
+    <file alias="titlebutton-minimize.png">icons/titlebuttons/titlebutton-minimize-dark@2.png</file>
+    <file alias="titlebutton-minimize-hover.png">icons/titlebuttons/titlebutton-minimize-hover-dark@2.png</file>
+    <file alias="titlebutton-minimize-active.png">icons/titlebuttons/titlebutton-minimize-active-dark@2.png</file>
+    <file alias="titlebutton-maximize.png">icons/titlebuttons/titlebutton-maximize-dark@2.png</file>
+    <file alias="titlebutton-maximize-hover.png">icons/titlebuttons/titlebutton-maximize-hover-dark@2.png</file>
+    <file alias="titlebutton-maximize-active.png">icons/titlebuttons/titlebutton-maximize-active-dark@2.png</file>
+    <!-- Sidebar place icons, from the uikit design reference
+         (~/Desktop/uikit-svg): outline style, blue (#0078F0) fill,
+         matching the Finder-style sidebar mockup exactly. -->
+    <file alias="sidebar/recents.svg">icons/sidebar/recents.svg</file>
+    <file alias="sidebar/shared.svg">icons/sidebar/shared.svg</file>
+    <file alias="sidebar/desktop.svg">icons/sidebar/desktop.svg</file>
+    <file alias="sidebar/documents.svg">icons/sidebar/documents.svg</file>
+    <file alias="sidebar/downloads.svg">icons/sidebar/downloads.svg</file>
+    <file alias="sidebar/pcloud.svg">icons/sidebar/pcloud.svg</file>
+    <file alias="sidebar/userhome.svg">icons/sidebar/userhome.svg</file>
+    <file alias="sidebar/network.svg">icons/sidebar/network.svg</file>
+    <file alias="sidebar/trash.svg">icons/sidebar/trash.svg</file>
+    <file alias="sidebar/peardrop.svg">icons/sidebar/peardrop.svg</file>
+</qresource>
+</RCC>

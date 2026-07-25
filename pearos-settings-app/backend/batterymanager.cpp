@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QDir>
 #include <QRegularExpression>
+#include <QMap>
 #include <algorithm>
 
 BatteryManager::BatteryManager(QObject *parent) : QObject(parent) {}
@@ -17,53 +18,75 @@ void BatteryManager::run(const QString &cmd, std::function<void(QString)> cb) {
     proc->start("bash", {"-c", cmd});
 }
 
+void BatteryManager::findDevicePath() {
+    // Re-resolve every refresh — cheap, and survives battery_BAT0 disappearing/
+    // reappearing (e.g. hot-swap, suspend/resume edge cases on some laptops).
+    QProcess p;
+    p.start("bash", {"-c", "upower -e 2>/dev/null | grep -i battery | head -1"});
+    p.waitForFinished(2000);
+    m_devicePath = QString::fromUtf8(p.readAllStandardOutput()).trimmed();
+}
+
 void BatteryManager::refresh() {
-    run("ls /sys/class/power_supply/ 2>/dev/null", [this](QString out) {
-        QString bat;
-        for (const QString &name : out.split('\n')) {
-            QString n = name.trimmed();
-            if (n.startsWith("BAT") || n.startsWith("bat")) { bat = n; break; }
-        }
-        if (bat.isEmpty()) { m_present = false; emit statusChanged(); return; }
-        m_present = true;
+    findDevicePath();
+    if (m_devicePath.isEmpty()) {
+        m_present = false;
+        emit statusChanged();
+        return;
+    }
+    m_present = true;
 
-        QString base = "/sys/class/power_supply/" + bat + "/";
-        auto readFile = [](const QString &path) -> QString {
-            QFile f(path);
-            if (!f.open(QIODevice::ReadOnly)) return {};
-            return QString::fromUtf8(f.readAll()).trimmed();
-        };
+    run(QString("qdbus6 --system org.freedesktop.UPower '%1' "
+                "org.freedesktop.DBus.Properties.GetAll org.freedesktop.UPower.Device 2>/dev/null")
+            .arg(m_devicePath),
+        [this](QString out) {
+            QMap<QString, QString> props;
+            for (const QString &line : out.split('\n')) {
+                int sep = line.indexOf(':');
+                if (sep < 0) continue;
+                props[line.left(sep).trimmed()] = line.mid(sep + 1).trimmed();
+            }
+            if (props.isEmpty()) { emit statusChanged(); return; }
 
-        QString status = readFile(base + "status");
-        m_charging = status == "Charging" || status == "Full";
+            // UPower State enum: 1=Charging, 2=Discharging, 3=Empty, 4=FullyCharged,
+            // 5=PendingCharge, 6=PendingDischarge
+            int state = props.value("State", "0").toInt();
+            m_charging = (state == 1 || state == 4);
 
-        QString capStr = readFile(base + "capacity");
-        m_percentage = capStr.isEmpty() ? 0 : capStr.toInt();
+            m_percentage = qRound(props.value("Percentage", "0").toDouble());
 
-        QString designStr = readFile(base + "energy_full_design");
-        QString fullStr   = readFile(base + "energy_full");
-        m_designCapacity   = designStr.isEmpty() ? 0 : designStr.toInt() / 1000;
-        m_currentCapacity  = fullStr.isEmpty()   ? 0 : fullStr.toInt()   / 1000;
+            double energyFull       = props.value("EnergyFull", "0").toDouble();
+            double energyFullDesign = props.value("EnergyFullDesign", "0").toDouble();
+            m_currentCapacity = qRound(energyFull * 1000);        // Wh -> mWh
+            m_designCapacity  = qRound(energyFullDesign * 1000);
 
-        // cycle count
-        QString cycleStr = readFile(base + "cycle_count");
-        m_cycleCount = cycleStr.isEmpty() ? -1 : cycleStr.toInt();
+            if (m_designCapacity > 0 && m_currentCapacity > 0) {
+                m_healthPercent = qMin(100, qRound(100.0 * m_currentCapacity / m_designCapacity));
+                m_healthStatus  = m_healthPercent >= 80 ? "Good" : m_healthPercent >= 60 ? "Fair" : "Poor";
+            } else {
+                m_healthPercent = 0;
+            }
 
-        // health from sysfs (Good / Overheat / etc.)
-        QString sysHealth = readFile(base + "health");
-        if (!sysHealth.isEmpty()) {
-            m_healthStatus = sysHealth;
-        } else if (m_designCapacity > 0 && m_currentCapacity > 0) {
-            double pct = 100.0 * m_currentCapacity / m_designCapacity;
-            m_healthStatus = pct >= 80 ? "Good" : pct >= 60 ? "Fair" : "Poor";
-        }
+            bool ok;
+            int cycles = props.value("ChargeCycles", "-1").toInt(&ok);
+            m_cycleCount = (ok && cycles >= 0) ? cycles : -1;
 
-        run(QString("upower -i $(upower -e | grep -i bat | head -1) 2>/dev/null"
-                    " | grep 'time to' | head -1 | awk '{print $NF}'"), [this](QString t) {
-            m_timeRemaining = t.trimmed();
+            m_chargeThresholdSupported = props.value("ChargeThresholdSupported") == "true";
+            m_optimizedChargingEnabled = props.value("ChargeThresholdEnabled") == "true";
+
+            qint64 timeToEmpty = props.value("TimeToEmpty", "0").toLongLong();
+            qint64 timeToFull  = props.value("TimeToFull", "0").toLongLong();
+            qint64 secs = m_charging ? timeToFull : timeToEmpty;
+            if (secs > 0) {
+                int h = secs / 3600, mnt = (secs % 3600) / 60;
+                m_timeRemaining = h > 0 ? QString("%1:%2").arg(h).arg(mnt, 2, 10, QChar('0'))
+                                         : QString("%1 min").arg(mnt);
+            } else {
+                m_timeRemaining.clear();
+            }
+
             emit statusChanged();
         });
-    });
 
     // low power mode via powerprofilesctl or CPU governor
     run("powerprofilesctl get 2>/dev/null || cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null",
@@ -82,6 +105,19 @@ void BatteryManager::setLowPowerMode(bool enabled) {
         : "powerprofilesctl set balanced 2>/dev/null || "
           "for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do echo ondemand | pkexec tee \"$f\" >/dev/null 2>&1; done";
     run(cmd, [](QString) {});
+}
+
+void BatteryManager::setOptimizedChargingEnabled(bool enabled) {
+    if (!m_chargeThresholdSupported || m_devicePath.isEmpty()) return;
+    m_optimizedChargingEnabled = enabled;
+    emit statusChanged();
+    // UPower owns the hardware-specific sysfs knob (charge_control_end_threshold,
+    // charge_stop_threshold, etc. depending on driver) behind this one generic
+    // call, and already holds the polkit rule needed to write it.
+    run(QString("qdbus6 --system org.freedesktop.UPower '%1' "
+                "org.freedesktop.UPower.Device.EnableChargeThreshold %2 2>/dev/null")
+            .arg(m_devicePath, enabled ? "true" : "false"),
+        [this](QString) { refresh(); });
 }
 
 void BatteryManager::refreshHistory() {

@@ -23,7 +23,8 @@ PageBase {
                 anchors.fill: parent
                 source: Wallpaper.currentWallpaper ? "file://" + Wallpaper.currentWallpaper : ""
                 fillMode: Image.PreserveAspectCrop
-                smooth: true; mipmap: true
+                smooth: true; mipmap: true; asynchronous: true
+                sourceSize.width: 160; sourceSize.height: 90
             }
         }
 
@@ -229,9 +230,11 @@ PageBase {
             border.width: wallpaperData.path === Wallpaper.currentWallpaper ? 2 : 0
             Image {
                 anchors.fill: parent; anchors.margins: thumbWrap.border.width
-                source: "file://" + (wallpaperData.path || "")
+                source: "file://" + (wallpaperData.thumb || wallpaperData.path || "")
                 fillMode: Image.PreserveAspectCrop
                 smooth: true; mipmap: true; asynchronous: true
+                sourceSize.width: 100; sourceSize.height: 56
+                cache: true
             }
             MouseArea {
                 anchors.fill: parent; cursorShape: Qt.PointingHandCursor

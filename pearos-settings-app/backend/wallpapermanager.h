@@ -35,4 +35,8 @@ private:
     QString m_tintColor = "transparent";
     void run(const QString &cmd, std::function<void(QString)> cb);
     void computeTint(const QString &wallpaperPath);
+    static QString thumbCacheDir();
+    static QString thumbPathFor(const QString &fullPath);
+    void generateMissingThumbnails();
+    void refreshThumbPaths();
 };

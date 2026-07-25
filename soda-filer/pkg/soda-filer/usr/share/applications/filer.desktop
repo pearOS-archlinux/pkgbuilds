@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Filer
+GenericName=File Manager
+Comment=Browse and organize your files
+Exec=Filer %U
+Icon=filer
+Categories=System;FileTools;FileManager;
+MimeType=inode/directory;
+Terminal=false
+StartupNotify=true

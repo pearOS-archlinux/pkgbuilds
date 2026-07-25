@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/cmake_install.cmake",
+		"/home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/filer-shell-common-build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

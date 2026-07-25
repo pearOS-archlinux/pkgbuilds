@@ -1,0 +1,14 @@
+[Unit]
+Description=Soda Workspace
+Requires=plasma-core.target
+Requires=graphical-session.target
+Wants=plasma-powerdevil.service
+Wants=plasma-polkit-agent.service
+Wants=plasma-kwallet-pam.service
+Wants=plasma-kglobalaccel.service
+Wants=plasma-gmenudbusmenuproxy.service
+Wants=xdg-desktop-autostart.target
+BindsTo=graphical-session.target
+Before=graphical-session.target
+Before=xdg-desktop-autostart.target
+StopWhenUnneeded=true

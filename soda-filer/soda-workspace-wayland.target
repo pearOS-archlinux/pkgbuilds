@@ -1,0 +1,5 @@
+[Unit]
+Description=Soda Workspace (Wayland)
+Requires=soda-workspace.target
+Requires=plasma-kwin_wayland.service
+BindsTo=plasma-kwin_wayland.service

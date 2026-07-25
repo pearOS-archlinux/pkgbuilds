@@ -4,6 +4,15 @@
 #include <QFile>
 #include <QVariantMap>
 
+// Persisted "was last known logged in" marker, so a network hiccup on the
+// very first check of a session doesn't have to guess between logged-in and
+// logged-out — it can fall back to what was last confirmed by the server.
+static QString lastOkMarkerPath() {
+    QString dir = QDir::homePath() + "/.cache/pearos-settings";
+    QDir().mkpath(dir);
+    return dir + "/pearid_last_ok";
+}
+
 static QString findScriptDir() {
     QString installed = "/usr/share/extras/system-settings/pearID";
     if (QDir(installed).exists()) return installed;
@@ -42,10 +51,24 @@ void PearIDManager::checkState() {
         QString result = out.trimmed();
         if (result == "true") {
             m_state = "loggedin";
+            QFile marker(lastOkMarkerPath());
+            (void)marker.open(QIODevice::WriteOnly);
             emit stateChanged();
             fetchUserInfo();
-        } else {
+        } else if (result == "false") {
+            // Explicit rejection from the server (or no token at all) — really logged out.
             m_state = "loggedout";
+            QFile::remove(lastOkMarkerPath());
+            emit stateChanged();
+        } else {
+            // "300" (no network) / "500" (server error) / anything else: state.sh
+            // couldn't actually verify the token either way. Treating this the
+            // same as "false" is what made login look flaky — a slow API response
+            // or DNS hiccup would flip an otherwise valid session to "please log
+            // in". Keep whatever we last knew to be true instead of guessing.
+            if (m_state == "loading") {
+                m_state = QFile::exists(lastOkMarkerPath()) ? "loggedin" : "loggedout";
+            }
             emit stateChanged();
         }
     });
@@ -212,6 +235,8 @@ void PearIDManager::login(const QString &email, const QString &password) {
         bool ok = (code == 0) || out.contains("Authentication successful") || out.contains("Authenticated");
         if (ok) {
             m_state = "loggedin";
+            QFile marker(lastOkMarkerPath());
+            (void)marker.open(QIODevice::WriteOnly);
             emit stateChanged();
             fetchUserInfo();
         }
@@ -223,6 +248,7 @@ void PearIDManager::logout() {
     QString exitScript = m_scriptDir + "/exit.sh";
     auto finish = [this](QString, int) {
         m_state = "loggedout";
+        QFile::remove(lastOkMarkerPath());
         m_userName.clear();
         m_userEmail.clear();
         m_avatarPath.clear();

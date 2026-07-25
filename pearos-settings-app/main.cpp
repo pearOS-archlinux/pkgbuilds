@@ -29,6 +29,16 @@
 #include "backend/dockmanager.h"
 #include "backend/touchidmanager.h"
 #include "backend/sidereflection.h"
+#include "backend/accessibilitymanager.h"
+#include "backend/menubarmanager.h"
+#include "backend/notificationsmanager.h"
+#include "backend/focusmanager.h"
+#include "backend/screentimemanager.h"
+#include "backend/scrollbarmanager.h"
+#include "backend/printersmanager.h"
+#include "backend/spotlightmanager.h"
+#include "backend/internetaccountsmanager.h"
+#include "backend/filerconfigmanager.h"
 
 int main(int argc, char *argv[]) {
     qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &ctx, const QString &msg) {
@@ -37,6 +47,7 @@ int main(int argc, char *argv[]) {
             qPrintable(msg));
     });
     qputenv("QT_QPA_PLATFORM", "xcb");
+    qunsetenv("SESSION_MANAGER"); // avoid Qt's session-management socket connection attempt/warning
     QQuickWindow::setDefaultAlphaBuffer(true);
     QSurfaceFormat fmt = QSurfaceFormat::defaultFormat();
     fmt.setAlphaBufferSize(8);
@@ -74,6 +85,16 @@ int main(int argc, char *argv[]) {
     PiriManager      piri;
     DockManager      dock;
     TouchIDManager   touchid;
+    AccessibilityManager accessibility;
+    MenuBarManager   menubar;
+    NotificationsManager notifications;
+    FocusManager     focus;
+    ScreenTimeManager screentime;
+    ScrollbarManager scrollbars;
+    PrintersManager  printers;
+    SpotlightManager spotlight;
+    InternetAccountsManager inetaccounts;
+    FilerConfigManager filerConfig;
 
     SidebarReflection* siderefl = new SidebarReflection();
 
@@ -101,6 +122,16 @@ int main(int argc, char *argv[]) {
     ctx->setContextProperty("Piri",       &piri);
     ctx->setContextProperty("Dock",       &dock);
     ctx->setContextProperty("TouchID",    &touchid);
+    ctx->setContextProperty("Accessibility", &accessibility);
+    ctx->setContextProperty("MenuBarCfg", &menubar);
+    ctx->setContextProperty("Notifications", &notifications);
+    ctx->setContextProperty("Focus",      &focus);
+    ctx->setContextProperty("ScreenTime", &screentime);
+    ctx->setContextProperty("Scrollbars", &scrollbars);
+    ctx->setContextProperty("Printers",   &printers);
+    ctx->setContextProperty("Spotlight",  &spotlight);
+    ctx->setContextProperty("InetAccounts", &inetaccounts);
+    ctx->setContextProperty("FilerConfig", &filerConfig);
 
     engine.loadFromModule("PearOSSettings", "Main");
 

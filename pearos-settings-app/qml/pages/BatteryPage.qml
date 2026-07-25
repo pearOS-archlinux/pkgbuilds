@@ -82,6 +82,29 @@ PageBase {
     }
     Spacer {}
 
+    // ── Optimized Battery Charging ──────────────────────────────────────────
+    SettingsCard {
+        visible: Battery.optimizedChargingSupported
+        Column {
+            width: parent.width; spacing: 0
+            Item {
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Optimized Battery Charging"; font.pixelSize: 13; font.weight: Font.Medium; color: Theme.textPrimary }
+                LiquidToggle {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    checked: Battery.optimizedChargingEnabled
+                    onToggled: function(v) { Battery.setOptimizedChargingEnabled(v) }
+                }
+            }
+            Text {
+                width: parent.width; wrapMode: Text.WordWrap; bottomPadding: 10
+                text: "Limits charging to 80% to reduce battery wear. Requires kernel/firmware support for a charge threshold (not available on all hardware)."
+                font.pixelSize: 11; color: Theme.textSecondary
+            }
+        }
+    }
+    Spacer { visible: Battery.optimizedChargingSupported }
+
     // ── Battery Health ────────────────────────────────────────────────────
     SettingsCard {
         Column {
@@ -99,6 +122,36 @@ PageBase {
                          : Battery.healthStatus === "Fair" ? "#EAB308" : "#EF4444"
                 }
             }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider; visible: Battery.healthPercent > 0 }
+            Item {
+                width: parent.width; height: 36; visible: Battery.healthPercent > 0
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Maximum Capacity"; font.pixelSize: 12; color: Theme.textSecondary }
+                Text {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    text: Battery.healthPercent + "%"; font.pixelSize: 12
+                    color: Battery.healthPercent >= 80 ? "#22C55E" : Battery.healthPercent >= 60 ? "#EAB308" : "#EF4444"
+                }
+            }
+
+            // macOS-style warning once health drops below 75%
+            Item {
+                width: parent.width
+                height: Battery.showImportantBatteryMessage ? warnCol.implicitHeight + 24 : 0
+                visible: Battery.showImportantBatteryMessage
+                clip: true
+                Column {
+                    id: warnCol
+                    width: parent.width - 16; x: 8; y: 12; spacing: 4
+                    Text { text: "⚠ Important Battery Message"; font.pixelSize: 12; font.weight: Font.DemiBold; color: "#EF4444" }
+                    Text {
+                        width: parent.width; wrapMode: Text.WordWrap
+                        text: "Your battery's maximum capacity has degraded to " + Battery.healthPercent
+                              + "%. Consider having your battery serviced."
+                        font.pixelSize: 11; color: Theme.textSecondary
+                    }
+                }
+            }
+
             Rectangle { width: parent.width; height: 1; color: Theme.divider; visible: Battery.cycleCount >= 0 }
             Item {
                 width: parent.width; height: 36; visible: Battery.cycleCount >= 0

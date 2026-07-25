@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Filer Dock
+Comment=filer-dock hosts the PearDock task manager applet as filer-desktop's dock
+Exec=/usr/lib/Filer.app/filer-dock
+Icon=preferences-system-windows
+NoDisplay=true
+X-KDE-Wayland-Interfaces=org_kde_plasma_window_management

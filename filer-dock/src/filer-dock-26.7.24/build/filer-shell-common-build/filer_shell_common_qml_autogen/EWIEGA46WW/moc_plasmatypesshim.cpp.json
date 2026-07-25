@@ -1,0 +1,90 @@
+{
+    "classes": [
+        {
+            "classInfos": [
+                {
+                    "name": "QML.Element",
+                    "value": "Types"
+                }
+            ],
+            "className": "PlasmaTypesShim",
+            "enums": [
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "lineNumber": 22,
+                    "name": "FormFactor",
+                    "values": [
+                        "Planar",
+                        "MediaCenter",
+                        "Horizontal",
+                        "Vertical",
+                        "Application"
+                    ]
+                },
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "lineNumber": 31,
+                    "name": "Location",
+                    "values": [
+                        "Floating",
+                        "Desktop",
+                        "FullScreen",
+                        "TopEdge",
+                        "BottomEdge",
+                        "LeftEdge",
+                        "RightEdge"
+                    ]
+                },
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "lineNumber": 42,
+                    "name": "ItemStatus",
+                    "values": [
+                        "UnknownStatus",
+                        "PassiveStatus",
+                        "ActiveStatus",
+                        "NeedsAttentionStatus",
+                        "RequiresAttentionStatus",
+                        "AcceptingInputStatus",
+                        "HiddenStatus"
+                    ]
+                },
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "lineNumber": 53,
+                    "name": "BackgroundHints",
+                    "values": [
+                        "NoBackground",
+                        "StandardBackground",
+                        "TranslucentBackground",
+                        "ShadowBackground",
+                        "ConfigurableBackground",
+                        "DefaultBackground"
+                    ]
+                },
+                {
+                    "isClass": false,
+                    "isFlag": false,
+                    "lineNumber": 63,
+                    "name": "ContainmentDisplayHint",
+                    "values": [
+                        "NoContainmentDisplayHint",
+                        "ContainmentDrawsPlasmoidHeading",
+                        "ContainmentForcesSquarePlasmoids",
+                        "ContainmentPrefersOpaqueBackground",
+                        "ContainmentPrefersFloatingApplets"
+                    ]
+                }
+            ],
+            "lineNumber": 17,
+            "namespace": true,
+            "qualifiedClassName": "PlasmaTypesShim"
+        }
+    ],
+    "inputFile": "plasmatypesshim.h",
+    "outputRevision": 69
+}

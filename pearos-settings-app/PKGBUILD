@@ -3,7 +3,7 @@
 pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS System Settings application (Qt6/QML)"
-pkgver=26.6.3
+pkgver=26.6.4
 pkgrel=2
 arch=('x86_64')
 depends=('qt6-base' 'qt6-declarative' 'qt6-5compat'

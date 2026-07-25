@@ -1,0 +1,6 @@
+[Desktop Entry]
+Comment=The Soda desktop environment (pearOS)
+Exec=/usr/lib/plasma-dbus-run-session-if-needed /usr/bin/start-soda
+TryExec=/usr/bin/start-soda
+DesktopNames=KDE
+Name=Soda

@@ -1,0 +1,6 @@
+set(__QT_DEPLOY_TARGET_filer_shell_common_FILE /home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/bin/libfiler_shell_common.so)
+set(__QT_DEPLOY_TARGET_filer_shell_common_TYPE SHARED_LIBRARY)
+set(__QT_DEPLOY_TARGET_filer_shell_common_qml_FILE /home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/bin/org/pearos/shellshim/libfiler_shell_common_qml.so)
+set(__QT_DEPLOY_TARGET_filer_shell_common_qml_TYPE MODULE_LIBRARY)
+set(__QT_DEPLOY_TARGET_filer-dock_FILE /home/alxb421/Desktop/pkgbuilds/filer-dock/src/filer-dock-26.7.24/build/bin/filer-dock)
+set(__QT_DEPLOY_TARGET_filer-dock_TYPE EXECUTABLE)

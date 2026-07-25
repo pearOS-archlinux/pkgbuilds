@@ -13,22 +13,17 @@ Rectangle {
     radius: 5
     color: "transparent"
 
-    property bool hov: false
-
     // Background rect inset 5px each side — matches Electron sidenav { padding: 0 5px }
     Rectangle {
         x: 5; y: 0
         width: parent.width - 10
         height: parent.height
         radius: 5
-        color: root.selected ? Theme.activeBg : (root.hov ? Theme.hoverBg : "transparent")
+        color: root.selected ? Theme.activeBg : "transparent"
     }
 
     MouseArea {
         anchors.fill: parent
-        hoverEnabled: true
-        onEntered: root.hov = true
-        onExited:  root.hov = false
         onClicked: root.clicked()
         cursorShape: Qt.PointingHandCursor
     }

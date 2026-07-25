@@ -1,6 +1,6 @@
 pkgname=soda-filer
-pkgver=26.7.14
-pkgrel=1
+pkgver=26.7.27
+pkgrel=3
 pkgdesc="Filer file manager and desktop for the Soda desktop environment (pearOS), with xdg-desktop-portal FileChooser backend"
 arch=('x86_64')
 url="https://github.com/pearOS-ArchLinux/Filer"
@@ -19,6 +19,9 @@ depends=(
     'libxcb'
     'p7zip'              # zip extraction + Compress context-menu action
     'xdg-desktop-portal' # file chooser portal routing
+    'soda-workspace'     # trimmed plasma-workspace fork (see pkgbuilds/soda-workspace); soda.desktop's session Exec is startplasma-wayland
+    'aurorae'            # start-soda's default KWin decoration (org.kde.kwin.aurorae)
+    'pearos-settings'    # ships the __aurorae__svg__pearOS-dark theme start-soda defaults to
 )
 makedepends=(
     'cmake'
@@ -39,9 +42,15 @@ source=(
     'kde-portals.conf'
     'fastfetch-config.jsonc'
     'filer.desktop'
-    'filer-desktop-autostart.desktop'
+    'soda.desktop'
+    'start-soda'
+    'soda-workspace.target'
+    'soda-workspace-wayland.target'
 )
-sha256sums=('SHA256SUM_PLACEHOLDER'
+sha256sums=('c6e1be7aa901c76c178a8b29053112a859c604a356f8a0e4e1ba9fc7c9b17ba4'
+            'SKIP'
+            'SKIP'
+            'SKIP'
             'SKIP'
             'SKIP'
             'SKIP'
@@ -81,12 +90,66 @@ package() {
     install -Dm644 "$srcdir/fastfetch-config.jsonc" \
         "$pkgdir/etc/xdg/fastfetch/config.jsonc"
 
-    # app menu entry + desktop-manager autostart for the session
+    # app menu entry only -- NOT installed to /etc/xdg/autostart/ anymore
+    # (filer-desktop-autostart.desktop's own Exec=Filer used to run
+    # alongside start-soda's explicit `systemd-run ... Filer --desktop`,
+    # both launching Filer at roughly the same time and racing for the
+    # single-instance D-Bus name -- confirmed live: Filer aborted
+    # (SIGABRT) during that race, and whichever process actually ended up
+    # primary was whichever plain `Filer` (no --desktop) autostart handed
+    # the name to, never entering desktop mode at all -- "dock and top bar
+    # came up but no desktop icons/wallpaper". start-soda starting Filer
+    # itself (see its own header comment) was always meant to replace this
+    # entry, not run alongside it.
     install -Dm644 "$srcdir/filer.desktop" \
         "$pkgdir/usr/share/applications/filer.desktop"
-    install -Dm644 "$srcdir/filer-desktop-autostart.desktop" \
-        "$pkgdir/etc/xdg/autostart/filer-desktop.desktop"
 
     install -Dm644 src/icons/filer-128.png \
         "$pkgdir/usr/share/icons/hicolor/128x128/apps/filer.png"
+
+    # SDDM/greeter session entry: shows up as "Soda" in the login screen's
+    # session picker instead of plasma-workspace's own "Plasma (Wayland)".
+    # This is a second, separately-named session choice alongside
+    # plasma.desktop, not a replacement for it.
+    install -Dm644 "$srcdir/soda.desktop" \
+        "$pkgdir/usr/share/wayland-sessions/soda.desktop"
+    # soda.desktop's own Exec= -- see start-soda's own doc comment for why
+    # this exists instead of pointing at startplasma-wayland directly.
+    install -Dm755 "$srcdir/start-soda" \
+        "$pkgdir/usr/bin/start-soda"
+
+    # soda-workspace(-wayland).target: Soda's own trimmed stand-in for
+    # plasma-workspace(-wayland).target, used by start-soda instead of the
+    # real Plasma ones. Keeps kwin_wayland/kded6/ksmserver (via
+    # plasma-core.target) plus powerdevil/polkit-agent/kwallet-pam/
+    # kglobalaccel/gmenudbusmenuproxy/xdg-desktop-autostart.target, drops
+    # xembedsniproxy/kde-baloo/kactivitymanagerd/restoresession/kaccess/
+    # foreground-booster/startupsound -- none of which Soda uses.
+    install -Dm644 "$srcdir/soda-workspace.target" \
+        "$pkgdir/usr/lib/systemd/user/soda-workspace.target"
+    install -Dm644 "$srcdir/soda-workspace-wayland.target" \
+        "$pkgdir/usr/lib/systemd/user/soda-workspace-wayland.target"
+
+    # Mask specific autostart/session services xdg-desktop-autostart.target
+    # and plasma-core.target would otherwise still pull in (PIM/Akonadi,
+    # KDE Connect, geoclue demo agent, print applet, xapp status-notifier
+    # watcher, activity manager) -- none of these are wanted by Soda, and
+    # masking system-wide (not per-user) means a fresh user account gets
+    # the same trimmed session without needing to run `systemctl mask`
+    # themselves.
+    local _mask_unit
+    for _mask_unit in \
+        akonadi_control.service \
+        plasma-kactivitymanagerd.service \
+        kde-baloo.service \
+        'app-org.kde.kalendarac@autostart.service' \
+        'app-org.kde.kdeconnect.daemon@autostart.service' \
+        'app-geoclue\x2ddemo\x2dagent@autostart.service' \
+        'app-print\x2dapplet@autostart.service' \
+        'app-xapp\x2dsn\x2dwatcher@autostart.service' \
+        'app-msm_kde_notifier@autostart.service'
+    do
+        install -dm755 "$pkgdir/etc/systemd/user"
+        ln -sf /dev/null "$pkgdir/etc/systemd/user/$_mask_unit"
+    done
 }

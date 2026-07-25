@@ -1,8 +1,10 @@
 #include "trackpadmanager.h"
 #include <QProcess>
 
-static const QString KWIN_SERVICE = QStringLiteral("org.kde.KWin");
-static const QString KWIN_IFACE   = QStringLiteral("org.kde.KWin.InputDevice");
+static const QString KWIN_SERVICE     = QStringLiteral("org.kde.KWin");
+static const QString KWIN_IFACE       = QStringLiteral("org.kde.KWin.InputDevice");
+static const QString KWIN_MGR_PATH    = QStringLiteral("/org/kde/KWin/InputDevice");
+static const QString KWIN_MGR_IFACE   = QStringLiteral("org.kde.KWin.InputDeviceManager");
 
 TrackpadManager::TrackpadManager(QObject *parent) : QObject(parent) {}
 
@@ -20,16 +22,14 @@ void TrackpadManager::findDevicePath() {
     if (!m_devicePath.isEmpty()) return;
 
     QProcess p;
-    p.start("bash", {"-c",
-        "qdbus6 org.kde.KWin /org/kde/KWin/InputDevice 2>/dev/null"
-        " | grep -oE 'event[0-9]+'"
-    });
+    p.start("qdbus6", {KWIN_SERVICE, KWIN_MGR_PATH, KWIN_MGR_IFACE + ".ListPointers"});
     p.waitForFinished(3000);
 
     const QString out = QString::fromUtf8(p.readAllStandardOutput());
     for (const QString &line : out.split('\n', Qt::SkipEmptyParts)) {
         const QString dev = line.trimmed();
-        const QString path = "/org/kde/KWin/InputDevice/" + dev;
+        if (dev.isEmpty()) continue;
+        const QString path = KWIN_MGR_PATH + "/" + dev;
         QProcess q;
         q.start("qdbus6", {KWIN_SERVICE, path,
             "org.freedesktop.DBus.Properties.Get", KWIN_IFACE, "touchpad"});

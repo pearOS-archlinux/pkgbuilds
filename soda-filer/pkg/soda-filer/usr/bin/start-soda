@@ -1,0 +1,279 @@
+#!/bin/sh
+# Entry point for the Soda desktop environment (pearOS), referenced by
+# /usr/share/wayland-sessions/soda.desktop instead of startplasma-wayland
+# directly.
+#
+# Starts the same KWin + systemd plasma-workspace-wayland.target session
+# infrastructure Plasma itself uses (D-Bus services, xdg-desktop-portal,
+# polkit agent, kwallet, etc. -- all still genuinely useful, and what
+# filer-topbar's own KWin scripting/panel containment already builds on),
+# but does NOT leave launching the actual Soda shell to a separate XDG
+# autostart entry -- Filer is started explicitly, right here, so this
+# script alone is what "Soda starts Filer" means, not an indirect chain
+# that depends on some other package's autostart .desktop file also being
+# installed correctly. (plasmashell itself is disabled system-wide --
+# systemctl --user disable plasma-plasmashell.service -- since Filer
+# replaces it as the shell.)
+/usr/bin/startplasma-wayland &
+session_pid=$!
+
+# Block until KWin + the session's core D-Bus services are actually up
+# (this is what makes the session's own systemd user environment --
+# WAYLAND_DISPLAY, DISPLAY, DBUS_SESSION_BUS_ADDRESS, etc. -- ready);
+# launching Filer any earlier would race the compositor still starting.
+#
+# NOT `--wait`: confirmed live, twice, as the actual cause of a black
+# screen on boot -- `systemctl start --wait` on a *target* unit (as
+# opposed to an oneshot service) does not return once the target becomes
+# active, it waits for it to become active AND THEN TERMINATE AGAIN, and a
+# target never terminates on its own. The call hangs forever, this script
+# never reaches any line after it (including the Filer launch at the very
+# end), and the session sits there with nothing but KWin's black
+# background. Plain `start` (no --wait) already blocks until the target's
+# own start job finishes (i.e. reached active), which is all this script
+# actually needs.
+systemctl --user start plasma-workspace-wayland.target 2>/dev/null
+
+# The comment above assumes that wait is what makes WAYLAND_DISPLAY visible
+# session-wide -- confirmed live it is NOT: `systemctl --user
+# show-environment` had no WAYLAND_DISPLAY at all afterward, even though
+# the compositor was genuinely up and the socket existed. In a real Plasma
+# session something in its own startup chain exports it into the manager's
+# environment; Soda's doesn't. The practical fallout: any unit systemd
+# starts on its own from here on (as opposed to a process this script
+# forks directly, which still inherits *our* shell's environment) never
+# sees WAYLAND_DISPLAY and falls back toward X11 -- confirmed live as
+# plasma-ksmserver.service (session logout/reboot/shutdown's actual
+# backend, pulled in automatically by the target wait above) dying with
+# "Could not load the Qt platform plugin xcb", which is exactly that
+# fallback failing too (no real X server either). That's why Logout/
+# Restart/Shut Down in the pearmenu did nothing: ksmserver, the thing
+# actually implementing them, was never alive to ask.
+# Reading the real socket name from $XDG_RUNTIME_DIR instead of assuming
+# "wayland-0" -- multi-seat/multi-session setups can land on wayland-1 etc.
+# find, not ls: an aliased/decorated `ls` (e.g. the common `-F` classifier
+# suffix, which appends "=" to sockets) would poison this value silently.
+wayland_socket=$(find "$XDG_RUNTIME_DIR" -maxdepth 1 -type s -name 'wayland-[0-9]*' -printf '%f\n' 2>/dev/null | head -1)
+[ -n "$wayland_socket" ] && systemctl --user set-environment WAYLAND_DISPLAY="$wayland_socket"
+
+# startplasma-wayland sets XDG_CURRENT_DESKTOP=KDE itself (from soda.desktop's
+# own DesktopNames=KDE, needed so KDE-integration checks throughout the
+# session -- Qt's platform theme detection, KIconTheme, everything fixed
+# above -- actually see this as a KDE session). Tools like neofetch just take
+# the first ":"-separated value to name the desktop, so plain "KDE" reports
+# as "Plasma" instead of "Soda" -- prepending here rather than replacing:
+# the freedesktop spec explicitly allows a colon-separated list for exactly
+# this "custom desktop built on top of KDE" case, and anything checking
+# membership (`contains("KDE")`, the correct way per spec, not exact-match)
+# still finds it.
+systemctl --user set-environment XDG_CURRENT_DESKTOP="Soda:KDE"
+
+# Global menu regression: filer.cpp only sets QT_QPA_PLATFORMTHEME=kde
+# inside Filer's own process (see comment there -- it assumes "a full
+# Plasma session sets QT_QPA_PLATFORMTHEME=kde itself"). Soda isn't one
+# (plasmashell disabled), so nothing ever sets it for apps NOT forked
+# directly from Filer -- Konsole/Dolphin/kwrite launched via kicker/
+# systemd-run/KWin's own Exec= start with no KDE platform theme, Qt never
+# loads KDEPlasmaPlatformTheme6 for them, and QMenuBar falls back to its
+# default in-window rendering instead of exporting over DBusMenu to
+# filer-topbar's org.kde.plasma.appmenu applet. Setting it in the systemd
+# user manager's environment (like WAYLAND_DISPLAY above) makes every app
+# started under this session inherit it, not just Filer's own children.
+systemctl --user set-environment QT_QPA_PLATFORMTHEME=kde
+
+# Fixing WAYLAND_DISPLAY alone got ksmserver as far as trying XWayland
+# instead ("Could not load ... xcb" -> attempting :1), then failing twice
+# more, each confirmed live in turn: DISPLAY itself missing (same kind of
+# gap, same fix), then "Authorization required, but no authorization
+# protocol specified" once DISPLAY was set -- XAUTHORITY missing too, and
+# unlike WAYLAND_DISPLAY/DISPLAY this one can't be guessed at all (kwin
+# generates a random cookie file per session), only read from the running
+# compositor's own command line, where --xwayland-xauthority is one of its
+# actual arguments.
+kwin_pid=$(pgrep -x kwin_wayland | head -1)
+if [ -n "$kwin_pid" ] && [ -r "/proc/$kwin_pid/cmdline" ]; then
+    kwin_args=$(tr '\0' '\n' < "/proc/$kwin_pid/cmdline")
+    xwayland_display=$(printf '%s\n' "$kwin_args" | grep -A1 -x -- '--xwayland-display' | tail -1)
+    xwayland_authority=$(printf '%s\n' "$kwin_args" | grep -A1 -x -- '--xwayland-xauthority' | tail -1)
+    [ -n "$xwayland_display" ] && systemctl --user set-environment DISPLAY="$xwayland_display"
+    [ -n "$xwayland_authority" ] && systemctl --user set-environment XAUTHORITY="$xwayland_authority"
+fi
+
+# Not "start": plasma-ksmserver.service already tried and failed once,
+# during the target wait above, before any of the environment fixes just
+# happened -- start would be a no-op against a unit systemd still considers
+# (recently) failed. restart forces the retry now that the environment it
+# needed is actually there. (Without this, Logout/Restart/Shut Down in the
+# pearmenu do nothing at all: ksmserver is what actually implements them.)
+systemctl --user restart plasma-ksmserver.service 2>/dev/null
+
+# KWin decides whether filer-topbar/filer-dock get the
+# org_kde_plasma_window_management Wayland protocol (needed for the dock's
+# icons, the global menu, and anything else that needs to know the active
+# window) by matching the connecting client's PID against an installed
+# .desktop's Exec= via X-KDE-Wayland-Interfaces -- which means it's reading
+# from ksycoca, not the .desktop files directly. In a real Plasma session
+# something in the ksmserver/plasmashell startup chain keeps that cache
+# current; Soda doesn't run any of that, so a freshly-installed or -updated
+# .desktop entry (filer-topbar.desktop, org.pearos.filerdock.desktop) can
+# still be sitting behind a stale cache the first time this session starts
+# after such a change -- silently denying the protocol instead of erroring,
+# which reads as "the dock has no icons"/"the global menu never appears"
+# rather than an obvious failure. Rebuilding here, every session start,
+# right before anything that needs it connects, costs a fraction of a
+# second and closes that gap for good rather than only after a manual fix.
+kbuildsycoca6 2>/dev/null
+
+# Global menu no longer needs anything here at all (2026-07-23): the
+# real fix landed in filer-topbar itself -- AppMenuModel's constructor
+# (filer-topbar/backends/appmenu/appmenumodel.cpp) now owns the DBus
+# service name "org.kde.kappmenuview" for as long as it's running,
+# which is the exact (and only) thing kded's appmenu module
+# (org.kde.kappmenu, loaded via plasma-workspace-wayland.target) is
+# waiting for before it registers com.canonical.AppMenu.Registrar --
+# see AppMenuModule::AppMenuModule() in plasma-workspace/appmenu/
+# appmenu.cpp. That registrar is what every Qt app's QDBusMenuBar talks
+# to when exporting its QMenuBar. In a real Plasma session plasmashell
+# owns that name itself (the global-menu applet lives inside it); Soda
+# never runs plasmashell, so this used to never happen at all.
+#
+# History, for anyone reading blame: this used to be a "briefly start
+# plasmashell, wait, kill it" workaround. Confirmed live that doesn't
+# actually work as a *fix* (only as a way to discover the real
+# trigger) -- the registrar's lifetime is tied to whoever owns
+# org.kde.kappmenuview, so it died again the instant plasmashell was
+# killed. filer-topbar owning the name itself removes the dependency
+# on plasmashell entirely instead of just hiding it.
+
+# Regular (KWin-decorated) windows -- Konsole and anything else that isn't
+# Filer's own frameless windows -- rendered with huge close/minimize/
+# maximize buttons every time a fresh Soda session came up, even after
+# writing Library/Theme below and reconfiguring KWin. Root cause, confirmed
+# live via `qdbus6 org.kde.KWin /KWin supportInformation` (which prints the
+# decoration KWin is *actually* running, independent of what kwinrc claims):
+# it reported "Plugin: breezeenhanced, Theme: pearOS" the whole time -- i.e.
+# KWin 6.6's kdecoration3 bridge reads *lowercase* `library`/`theme` keys in
+# the [org.kde.kdecoration2] group, not the capitalized `Library`/`Theme`
+# keys this script was writing (those are dead KDecoration2-era key names,
+# still shipped as a stray leftover default in /etc/skel/.config/kwinrc
+# alongside the real lowercase ones, which is what made this so easy to
+# miss). ButtonsOnLeft/ButtonsOnRight have no live equivalent read from
+# kwinrc at all (supportInformation shows numeric decorationButtonsLeft/
+# Right codes with no matching kwinrc key), so they're left unset here.
+# Only *written* as a default, once -- if library is already non-empty, a
+# user (or the theme switcher) already made a real choice here and this
+# must not overwrite it on every login.
+if [ -z "$(kreadconfig6 --file kwinrc --group org.kde.kdecoration2 --key library 2>/dev/null)" ]; then
+    kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key library "org.kde.kwin.aurorae"
+    kwriteconfig6 --file kwinrc --group org.kde.kdecoration2 --key theme "__aurorae__svg__pearOS-dark"
+fi
+
+# Same "write a default once, never overwrite a real choice" pattern as
+# the decoration block above, for the same underlying reason: /etc/skel
+# ships no kdeglobals at all, so [Icon Theme] Theme= is empty for every
+# fresh user. That's silently fine on its own (Qt/KIconTheme just falls
+# back to a reasonable default) -- confirmed live it stops being fine
+# the moment QT_QPA_PLATFORMTHEME=kde is set session-wide (see above):
+# KIconTheme then requires an explicit theme name and every icon in
+# filer-dock/the launcher grid renders as a "?" placeholder instead of
+# falling back to anything. pearOS-blue-dark specifically because the
+# plain pearOS/pearOS-dark/pearOS-light variants ship no index.theme of
+# their own and don't count as valid themes on their own.
+if [ -z "$(kreadconfig6 --file kdeglobals --group "Icon Theme" --key Theme 2>/dev/null)" ]; then
+    kwriteconfig6 --file kdeglobals --group "Icon Theme" --key Theme "pearOS-blue-dark"
+fi
+
+# Unconditional and outside the block above on purpose: confirmed live that
+# a value *already* sitting in kwinrc from a previous session is not enough
+# on its own -- KWin still rendered oversized fallback decoration buttons
+# and a global menu stuck on the wrong app name at this session's own
+# startup, until this exact reconfigure was issued by hand. Whatever
+# ordering/race makes a freshly-started KWin not fully apply kwinrc's
+# decoration (and refresh the appmenu model) on its own in this session
+# type, kicking it once here after the config is known-current papers over
+# it -- same idea as the kbuildsycoca6 call above, a race Plasma's own
+# startup chain doesn't have to worry about but Soda's does.
+# Wait for org.kde.KWin to actually be registered on the session bus
+# before poking it -- systemd marking plasma-workspace-wayland.target
+# "active" is not proof KWin has finished QDBusConnection registration
+# yet (confirmed live, twice now, as the root of this exact class of bug
+# for kbuildsycoca6/ksmserver above); firing reconfigure one instant too
+# early is a silent no-op (stderr is discarded), leaving the fallback
+# decoration's oversized buttons in place with no error to notice.
+for _ in $(seq 1 50); do
+    qdbus6 org.kde.KWin /KWin supportInformation >/dev/null 2>&1 && break
+    sleep 0.1
+done
+qdbus6 org.kde.KWin /KWin reconfigure 2>/dev/null
+
+# systemd-run (not a plain background job) so Filer picks up that
+# just-updated session environment from the systemd user manager itself,
+# rather than whatever environment this script happened to start with
+# before the compositor set WAYLAND_DISPLAY et al.
+systemd-run --user --scope --slice=session.slice --unit=soda-filer-desktop -- Filer --desktop &
+
+# Confirmed live (2026-07-23), the full history, for whoever touches this
+# next:
+# 1) A single kbuildsycoca6+reconfigure kick at a fixed 15s delay wasn't
+#    reliable -- the actual moment dock icons need this varies (system
+#    load from whatever else is starting up at the same time, confirmed
+#    live to include an unrelated baloo indexer crash-loop on one boot).
+# 2) Explicit logging showed the same kick repeated at 15/30/60/120s DOES
+#    run successfully every time (exit 0) -- but dock icons were still
+#    broken right after reboot regardless of all four having fired. So it
+#    wasn't purely a timing problem either.
+# 3) `qdbus6 org.kde.KWin /KWin reconfigure` only reloads KWin's own
+#    config -- it was never telling filer-dock (a separate, already-
+#    running process) anything about its icon theme, so on reflection (2)
+#    isn't surprising. Dropped.
+# 4) Tried also restarting filer-dock itself (pkill, relying on
+#    Application's crash-respawn from earlier today to bring it back
+#    clean) alongside kbuildsycoca6 -- confirmed live this is DANGEROUS,
+#    not just ineffective: repeated forced kills of filer-dock across
+#    several kick delays tripped Application's own crash-loop backoff
+#    (more than 5 unintentional exits in 60s = give up respawning), and
+#    on top of that seems to have somehow taken the parent Filer process
+#    down with it too (reproduced: black screen, only the top bar left
+#    running, Filer itself gone -- confirmed via coredumpctl, SIGSEGV
+#    inside libfm's own GObject folder-monitoring signal handling, a
+#    pre-existing bug nothing here directly touches, but evidently
+#    sensitive to whatever load/timing this kick loop was adding).
+#    Removed entirely -- do NOT resurrect a pkill of filer-dock here
+#    without separately, thoroughly fixing that libfm crash first.
+#
+# Left in place: just kbuildsycoca6, spread across several delays, in case
+# (2) was actually right and it just needs a late-enough retry -- this
+# alone was never observed to cause any harm, unlike (4).
+#
+# Logging re-added (2026-07-23, read-only, no pkill -- safe): every time
+# this has been tested, the user running kbuildsycoca6 manually themselves
+# afterward fixed the icons; the automated version here never demonstrably
+# has. Same command, same effective delay by the time someone notices and
+# runs it by hand -- the one concrete difference is the environment this
+# background job inherits (this script's own, captured at start-soda's own
+# startup) versus a real interactive shell's (which gets the session's
+# current environment straight from the systemd user manager). Logging
+# DBUS_SESSION_BUS_ADDRESS here checked that theory directly -- ruled out,
+# identical in both contexts. What actually settled it: confirmed live
+# that running the exact combo used elsewhere in this script just to
+# unblock spectacle's OWN screenshot permission -- kbuildsycoca6 AND
+# qdbus6 .../KWin reconfigure, together -- is what was fixing the dock
+# icons too, every single time, immediately, watched happen live. Every
+# earlier "screenshot shows it's fine" report was true but misleading: the
+# screenshot itself could only be taken *after* running that exact combo
+# to unblock spectacle first, so it always incidentally captured the
+# already-fixed state. Not a remote-capture-vs-real-display mismatch after
+# all -- reconfigure, wrongly dropped earlier reasoning it "only reloads
+# KWin's own config, does nothing for filer-dock," goes back in.
+for delay in 15 45 90 180; do
+    (
+        sleep "$delay"
+        {
+            echo "[$(date +%T)] delay=${delay}s DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
+            out=$(kbuildsycoca6 2>&1); echo "[$(date +%T)] kbuildsycoca6 rc=$? out=$out"
+            out=$(qdbus6 org.kde.KWin /KWin reconfigure 2>&1); echo "[$(date +%T)] KWin reconfigure rc=$? out=$out"
+        } >> "$XDG_RUNTIME_DIR/soda-icon-kick.log" 2>&1
+    ) &
+done
+
+wait "$session_pid"
