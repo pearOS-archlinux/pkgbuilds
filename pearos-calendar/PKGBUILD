@@ -1,5 +1,5 @@
 pkgname=pearos-calendar
-pkgver=1.0.0
+pkgver=26.7
 pkgrel=1
 pkgdesc="pearOS Calendar - modern Qt6 calendar application for pearOS"
 arch=('x86_64')

@@ -34,15 +34,21 @@ set(SOURCES
 
     # GUI
     src/gui/mainwindow.cpp
+
+    # Backend
+    src/backend/pearidmanager.cpp
 )
 
 # Header files
 set(HEADERS
     src/utils/logger.h
     src/utils/types.h
-    
+
     # GUI
     src/gui/mainwindow.h
+
+    # Backend
+    src/backend/pearidmanager.h
 )
 
 # Create executable

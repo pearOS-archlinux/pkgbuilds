@@ -18,6 +18,7 @@ class QTabBar;
 class QScrollArea;
 class QCalendarWidget;
 class QPropertyAnimation;
+class PearIDManager;
 #include "../utils/types.h"
 
 struct CalendarEvent {
@@ -56,6 +57,7 @@ private:
     void setupSidebar();
     void setupContent();
     void loadPearIdDisplayName();
+    void applyPearIdState();
     void createMenuBar();
     void loadStyleSheet();
     QString themeOverlayFromPalette() const;
@@ -76,11 +78,12 @@ private:
     QVBoxLayout* m_contentLayout = nullptr;
     QLabel* m_sidebarReflection = nullptr;
     QTimer* m_reflectionDebounceTimer = nullptr;
-    QTimer* m_reflectionUpdateTimer = nullptr;
 
     QLineEdit* m_sidebarSearch = nullptr;
     QListWidget* m_sideList = nullptr;
     QLabel* m_sidebarProfileName = nullptr;
+    QLabel* m_sidebarProfileImg = nullptr;
+    PearIDManager* m_pearId = nullptr;
 
     QWidget* m_headerTrafficWidget = nullptr;
     QWidget* m_sidebarTrafficWidget = nullptr;

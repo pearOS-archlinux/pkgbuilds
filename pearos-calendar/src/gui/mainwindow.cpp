@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "../utils/logger.h"
+#include "../backend/pearidmanager.h"
 #include <algorithm>
 #include <QMenuBar>
 #include <QMenu>
@@ -83,6 +84,10 @@ public:
         m_bgLabel = new QLabel(this);
         m_bgLabel->setScaledContents(true);
         m_bgLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        m_blurDebounceTimer = new QTimer(this);
+        m_blurDebounceTimer->setSingleShot(true);
+        m_blurDebounceTimer->setInterval(120);
+        connect(m_blurDebounceTimer, &QTimer::timeout, this, [this]() { updateBlur(); });
     }
     void setContentWidgets(QLabel* title, QWidget* weekdayRow) {
         m_title = title;
@@ -115,7 +120,7 @@ protected:
             m_weekdayRow->setGeometry(0, titleH, width(), 28);
             m_weekdayRow->raise();
         }
-        QTimer::singleShot(0, this, [this]() { updateBlur(); });
+        m_blurDebounceTimer->start();
     }
     void showEvent(QShowEvent* e) override {
         QWidget::showEvent(e);
@@ -126,6 +131,7 @@ private:
     QLabel* m_bgLabel = nullptr;
     QLabel* m_title = nullptr;
     QWidget* m_weekdayRow = nullptr;
+    QTimer* m_blurDebounceTimer = nullptr;
 };
 
 static CalendarHeaderOverlay* s_calendarHeaderOverlay = nullptr;
@@ -325,9 +331,9 @@ void MainWindow::setupUi() {
     m_reflectionDebounceTimer = new QTimer(this);
     m_reflectionDebounceTimer->setSingleShot(true);
     connect(m_reflectionDebounceTimer, &QTimer::timeout, this, &MainWindow::updateSidebarReflection);
-    m_reflectionUpdateTimer = new QTimer(this);
-    connect(m_reflectionUpdateTimer, &QTimer::timeout, this, &MainWindow::updateSidebarReflection);
-    m_reflectionUpdateTimer->start(0); // 0 = cât de des permite event loop-ul, blur în timp real
+    // Reflection only needs to track the sidebar's own width animation now
+    // (connected in doSidebarToggle), not a runaway interval-0 timer that
+    // was grab()-ing the whole content column on every idle event-loop tick.
     QTimer::singleShot(500, this, &MainWindow::updateSidebarReflection);
 
     appLayout->addWidget(wrapper, 1);
@@ -650,10 +656,10 @@ void MainWindow::setupSidebar() {
     profileLayout->setSpacing(10);
 
     const int faceSize = 40;
-    QLabel* profileImg = new QLabel(profileWidget);
-    profileImg->setObjectName("sidebarProfileImg");
-    profileImg->setFixedSize(faceSize, faceSize);
-    profileImg->setScaledContents(true);
+    m_sidebarProfileImg = new QLabel(profileWidget);
+    m_sidebarProfileImg->setObjectName("sidebarProfileImg");
+    m_sidebarProfileImg->setFixedSize(faceSize, faceSize);
+    m_sidebarProfileImg->setScaledContents(true);
     QString facePath = QDir::homePath() + QStringLiteral("/.face.icon");
     if (!QFile::exists(facePath))
         facePath = QDir::homePath() + QStringLiteral("/.face");
@@ -661,11 +667,11 @@ void MainWindow::setupSidebar() {
         QPixmap pm(facePath);
         if (!pm.isNull()) {
             pm = pm.scaled(faceSize, faceSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-            profileImg->setPixmap(pm);
+            m_sidebarProfileImg->setPixmap(pm);
         }
     }
-    profileImg->setMask(QRegion(0, 0, faceSize, faceSize, QRegion::Ellipse));
-    profileLayout->addWidget(profileImg, 0);
+    m_sidebarProfileImg->setMask(QRegion(0, 0, faceSize, faceSize, QRegion::Ellipse));
+    profileLayout->addWidget(m_sidebarProfileImg, 0);
 
     m_sidebarProfileName = new QLabel(tr("Unknown"), profileWidget);
     m_sidebarProfileName->setObjectName("sidebarProfileName");
@@ -679,43 +685,34 @@ void MainWindow::setupSidebar() {
 }
 
 void MainWindow::loadPearIdDisplayName() {
-    if (!m_sidebarProfileName)
-        return;
-
-    QString scriptPath;
-    const QDir appDir(QCoreApplication::applicationDirPath());
-    const QStringList candidates = {
-        appDir.absoluteFilePath(QStringLiteral("../pearID/get_user_info.sh")),
-        appDir.absoluteFilePath(QStringLiteral("pearID/get_user_info.sh")),
-        QStringLiteral("/usr/share/pearos-appstore/pearID/get_user_info.sh"),
-        QStringLiteral("/usr/share/pearos-calendar/pearID/get_user_info.sh")
-    };
-    for (const QString& path : candidates) {
-        if (QFile::exists(path)) {
-            scriptPath = path;
-            break;
-        }
+    if (!m_pearId) {
+        m_pearId = new PearIDManager(this);
+        connect(m_pearId, &PearIDManager::stateChanged, this, &MainWindow::applyPearIdState);
+        connect(m_pearId, &PearIDManager::userInfoChanged, this, &MainWindow::applyPearIdState);
     }
-    if (scriptPath.isEmpty())
+    m_pearId->checkState();
+}
+
+void MainWindow::applyPearIdState() {
+    if (!m_sidebarProfileName || !m_pearId)
         return;
 
-    QProcess* process = new QProcess(this);
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            this, [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
-        process->deleteLater();
-        if (exitCode != 0 || exitStatus != QProcess::NormalExit || !m_sidebarProfileName)
-            return;
-        const QByteArray out = process->readAllStandardOutput().trimmed();
-        const QList<QByteArray> lines = out.split('\n');
-        QString first = QString::fromUtf8(lines.value(0).trimmed());
-        QString last = QString::fromUtf8(lines.value(1).trimmed());
-        if (!first.isEmpty() || !last.isEmpty()) {
-            m_sidebarProfileName->setText((first + QChar(' ') + last).trimmed());
+    if (m_pearId->state() == "loggedin") {
+        const QString name = m_pearId->userName();
+        m_sidebarProfileName->setText(!name.isEmpty() ? name : m_pearId->userEmail());
+        const QString avatar = m_pearId->avatarPath();
+        if (m_sidebarProfileImg && !avatar.isEmpty()) {
+            QPixmap pm(avatar);
+            if (!pm.isNull()) {
+                const int faceSize = m_sidebarProfileImg->width();
+                pm = pm.scaled(faceSize, faceSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+                m_sidebarProfileImg->setPixmap(pm);
+            }
         }
-    });
-    process->start(scriptPath,
-                   {QStringLiteral("--first-name"), QStringLiteral("--last-name")},
-                   QProcess::ReadOnly);
+    } else if (m_pearId->state() == "loggedout") {
+        m_sidebarProfileName->setText(tr("Not logged in"));
+    }
+    // "loading": leave whatever was last shown until state resolves.
 }
 
 void MainWindow::setupContent() {
@@ -935,12 +932,34 @@ void MainWindow::setupContent() {
             m_sidebarAnimation = new QPropertyAnimation(m_leftSideWidget, "maximumWidth", this);
             m_sidebarAnimation->setDuration(220);
             m_sidebarAnimation->setEasingCurve(QEasingCurve::InOutCubic);
+            connect(m_sidebarAnimation, &QPropertyAnimation::valueChanged, this, [this]() {
+                updateSidebarReflection();
+            });
+            // The month view holds ~700 QCalendarWidgets (1980-2040) in a
+            // widgetResizable QScrollArea. Left uncontrolled, every width
+            // tick of this animation re-layouts all of them. Freeze the
+            // scroll content's width for the duration and let it snap back
+            // to tracking the viewport in one shot when the animation ends.
+            connect(m_sidebarAnimation, &QPropertyAnimation::finished, this, [this]() {
+                if (!m_monthScrollArea) return;
+                if (QWidget* sc = m_monthScrollArea->widget()) {
+                    sc->setMinimumWidth(0);
+                    sc->setMaximumWidth(QWIDGETSIZE_MAX);
+                    m_monthScrollArea->setWidgetResizable(true);
+                }
+            });
         }
         m_sidebarVisible = !m_sidebarVisible;
         int start = m_leftSideWidget->maximumWidth();
         int end = m_sidebarVisible ? 240 : 0;
         if (!m_sidebarVisible)
             m_leftSideWidget->setMinimumWidth(0);
+        if (m_monthScrollArea) {
+            if (QWidget* sc = m_monthScrollArea->widget()) {
+                m_monthScrollArea->setWidgetResizable(false);
+                sc->setFixedWidth(sc->width());
+            }
+        }
         m_sidebarAnimation->stop();
         m_sidebarAnimation->setStartValue(start);
         m_sidebarAnimation->setEndValue(end);
