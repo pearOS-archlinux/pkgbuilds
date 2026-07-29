@@ -3,7 +3,7 @@
 
 pkgname='pearos-bootloader-installer'
 pkgver=26.7
-pkgrel=2
+pkgrel=4
 pkgdesc="pearOS Bootloader (Ploader) GUI installer"
 arch=('any')
 url='https://github.com/pearOS-archlinux/pearos-bootloader'

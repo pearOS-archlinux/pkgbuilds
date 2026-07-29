@@ -289,6 +289,26 @@ cli_install() {
     echo "Setting boot timeout to 10s..."
     sed -i 's/timeout 20/timeout 10/' "$refind_efi_path"
 
+    # Ploader can't read non-FAT root filesystems (e.g. Arch's default
+    # btrfs layout) directly -- rather than depend on a filesystem driver,
+    # mirror the kernel+initramfs+linux.conf onto the ESP itself (same
+    # approach systemd-boot uses) and point Ploader's scanner at that copy.
+    if ! grep -q '^also_scan_dirs EFI\\ploader\\boot' "$refind_efi_path"; then
+        echo "Pointing Ploader at EFI\\ploader\\boot for the ESP-mirrored kernel..."
+        sed -i '/^#also_scan_dirs boot,@\/boot/a also_scan_dirs EFI\\ploader\\boot' "$refind_efi_path"
+    fi
+
+    if [[ -f /etc/os-release ]] && ! grep -q '^label "' "$refind_efi_path"; then
+        echo "Setting boot menu label from /etc/os-release..."
+        os_label=$(. /etc/os-release; echo "$PRETTY_NAME $VERSION")
+        # escape sed metacharacters that could plausibly show up in os-release strings
+        os_label_escaped=$(printf '%s' "$os_label" | sed -e 's/[\/&]/\\&/g')
+        sed -i "s/#label \"pearOS NiceC0re 26.7\"/label \"$os_label_escaped\"/" "$refind_efi_path"
+    fi
+
+    echo "Copying kernel/initramfs onto the ESP..."
+    ploader-sync-kernel
+
     echo "Done. Config: $refind_efi_path"
 }
 
@@ -362,6 +382,22 @@ sed -i 's/#use_graphics_for osx,linux/use_graphics_for linux/' $refind_efi_path
 
 # make boot time to 10
 sed -i 's/timeout 20/timeout 10/' $refind_efi_path
+
+# Ploader can't read non-FAT root filesystems (e.g. Arch's default btrfs
+# layout) directly -- mirror the kernel+initramfs+linux.conf onto the ESP
+# itself (same approach systemd-boot uses) instead of depending on a
+# filesystem driver.
+if ! grep -q '^also_scan_dirs EFI\\ploader\\boot' "$refind_efi_path"; then
+    sed -i '/^#also_scan_dirs boot,@\/boot/a also_scan_dirs EFI\\ploader\\boot' "$refind_efi_path"
+fi
+
+if [[ -f /etc/os-release ]] && ! grep -q '^label "' "$refind_efi_path"; then
+    os_label=$(. /etc/os-release; echo "$PRETTY_NAME $VERSION")
+    os_label_escaped=$(printf '%s' "$os_label" | sed -e 's/[\/&]/\\&/g')
+    sed -i "s/#label \"pearOS NiceC0re 26.7\"/label \"$os_label_escaped\"/" "$refind_efi_path"
+fi
+
+ploader-sync-kernel > /dev/null 2>&1
 
 while true; do
 # manage ploader config

@@ -24,6 +24,8 @@ if [[ ! -z $@ ]]; then
 	touch /boot/*$1.$2*
 	touch /boot/*$1$2*
 	ploader-install
+	ploader-mkrlconf --force
+	ploader-sync-kernel
 	## save the kernel number
 	echo "$1 $2" > /.ploader_kernel
 	exit 1
@@ -38,6 +40,8 @@ if [[ -s '/.ploader_kernel' ]]; then
 	touch /boot/*$a.$b*
 	touch /boot/*$a$b*
 	ploader-install
+	ploader-mkrlconf --force
+	ploader-sync-kernel
 	## save the kernel number
 	echo "$a $b" > /.ploader_kernel
 fi
