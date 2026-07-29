@@ -1,0 +1,10 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Package
+Target=memtest86-efi
+
+[Action]
+Description = Install memtest86 for EFI
+When=PostTransaction
+Exec=/usr/share/libalpm/scripts/memtest-efi-install

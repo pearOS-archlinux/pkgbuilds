@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Copy relevant files into EFI folder and change name as needed
+cp -Rf /usr/share/memtest86-efi/* /boot/efi/EFI/tools/
+
+# Rename binary
+mv -f /boot/efi/EFI/tools/bootx64.efi /boot/efi/EFI/tools/shellx64.efi
+
+# Remove unused stuff
+rm -f /boot/efi/EFI/tools/boot*.efi
+
+#Done

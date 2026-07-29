@@ -1,0 +1,9 @@
+[Trigger]
+Operation=Upgrade
+Type=Package
+Target=pearos-bootloader
+
+[Action]
+Description = Updating Ploader on ESP
+When=PostTransaction
+Exec=/usr/bin/ploader-install

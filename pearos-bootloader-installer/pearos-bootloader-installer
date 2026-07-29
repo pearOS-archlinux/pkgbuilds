@@ -1,0 +1,387 @@
+#!/bin/bash
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# This program is optimized for pearOS
+
+usage() {
+    cat <<EOF
+Usage: pearos-bootloader-installer [-i|--install [KERNEL]] [-l|--list]
+                                    [-d|--delete NUM] [-h|--help]
+
+  -i, --install [KERNEL]  Install/update Ploader with no GUI. KERNEL is a
+                          kernel string as printed by 'mhwd-kernel -li'
+                          (e.g. "linux615"); if omitted and more than one
+                          kernel is installed, the first detected one is
+                          used as the default boot kernel.
+  -l, --list              List all bootloaders found on this system: NVRAM
+                          boot entries (efibootmgr) and known bootloaders
+                          present on the ESP -- not just Ploader.
+  -d, --delete NUM        Delete the bootloader numbered NUM in '--list'
+                          (e.g. "001"). NVRAM entries are deregistered with
+                          efibootmgr; ESP-only entries have their .efi file
+                          removed from disk. Asks for confirmation first.
+  -h, --help              Show this help.
+
+With no options, launches the graphical (yad) installer.
+EOF
+}
+
+# Populates the parallel arrays BL_TYPE/BL_ID/BL_NAME/BL_DETAIL (index 0 =
+# entry "001", etc) with the same enumeration cli_list() prints, so -l and
+# -d always agree on what number means what. BL_TYPE is "nvram" or "esp".
+declare -a BL_TYPE=() BL_ID=() BL_NAME=() BL_DETAIL=()
+
+# EFI/BOOT/BOOTX64.EFI is the generic removable-media fallback path -- any
+# bootloader can be dropped there (many installers copy their own binary
+# to it), so unlike the other known_paths its filename tells us nothing
+# about what's actually inside. Sniff it via distinctive strings instead.
+identify_efi_binary() {
+    local f="$1"
+    command -v strings >/dev/null 2>&1 || { echo "unknown"; return; }
+    local s
+    s=$(strings "$f" 2>/dev/null)
+    if grep -q '^grub_' <<< "$s"; then
+        echo "GRUB"
+    elif grep -qi 'ploader' <<< "$s"; then
+        echo "Ploader"
+    elif grep -qi 'refind' <<< "$s"; then
+        echo "rEFInd"
+    elif grep -qi 'Microsoft Corporation' <<< "$s"; then
+        echo "Windows Boot Manager"
+    elif grep -qi 'systemd-boot' <<< "$s"; then
+        echo "systemd-boot"
+    else
+        echo "unknown"
+    fi
+}
+
+build_bootloader_list() {
+    local esp="/boot/efi"
+    BL_TYPE=() BL_ID=() BL_NAME=() BL_DETAIL=()
+
+    if command -v efibootmgr >/dev/null 2>&1; then
+        local nv_out
+        nv_out=$(efibootmgr -v 2>/dev/null)
+        if [[ -n "$nv_out" ]]; then
+            while IFS= read -r line; do
+                [[ "$line" =~ ^Boot([0-9A-Fa-f]{4})(\*?)[[:space:]]+(.*)$ ]] || continue
+                local id="${BASH_REMATCH[1]}"
+                local active="active"
+                [[ "${BASH_REMATCH[2]}" != "*" ]] && active="inactive"
+                local rest="${BASH_REMATCH[3]}"
+                local label="${rest%%$'\t'*}"
+                BL_TYPE+=("nvram")
+                BL_ID+=("$id")
+                BL_NAME+=("$label")
+                BL_DETAIL+=("Boot$id, $active")
+            done <<< "$nv_out"
+        fi
+    fi
+
+    if [[ -d "$esp" ]]; then
+        # ordered on purpose (bash assoc arrays don't preserve insertion
+        # order, and the numbering needs to stay stable across runs)
+        local -a known_paths=(
+            "EFI/ploader/ploader_x64.efi"
+            "EFI/refind/refind_x64.efi"
+            "EFI/grub/grubx64.efi"
+            "EFI/GRUB/grubx64.efi"
+            "EFI/fedora/grubx64.efi"
+            "EFI/opensuse/grubx64.efi"
+            "EFI/debian/grubx64.efi"
+            "EFI/ubuntu/grubx64.efi"
+            "EFI/systemd/systemd-bootx64.efi"
+            "EFI/Microsoft/Boot/bootmgfw.efi"
+            "EFI/BOOT/BOOTX64.EFI"
+        )
+        local -a known_names=(
+            "pearOS Ploader"
+            "rEFInd"
+            "GRUB"
+            "GRUB"
+            "GRUB (Fedora)"
+            "GRUB (openSUSE)"
+            "GRUB (Debian)"
+            "GRUB (Ubuntu)"
+            "systemd-boot"
+            "Windows Boot Manager"
+            "Fallback boot entry"
+        )
+        local i name
+        for i in "${!known_paths[@]}"; do
+            if [[ -f "$esp/${known_paths[$i]}" ]]; then
+                name="${known_names[$i]}"
+                if [[ "${known_paths[$i]}" == "EFI/BOOT/BOOTX64.EFI" ]]; then
+                    name="Fallback boot entry ($(identify_efi_binary "$esp/${known_paths[$i]}"))"
+                fi
+                BL_TYPE+=("esp")
+                BL_ID+=("$esp/${known_paths[$i]}")
+                BL_NAME+=("$name")
+                BL_DETAIL+=("$esp/${known_paths[$i]}")
+            fi
+        done
+
+        # grub-install (and friends) take an arbitrary --bootloader-id, so
+        # the install dir isn't always "grub"/"GRUB"/a known distro name --
+        # scan for it instead of relying only on the fixed list above.
+        local f already dir
+        for f in "$esp"/EFI/*/grubx64.efi "$esp"/EFI/*/grubia32.efi "$esp"/EFI/*/grubaa64.efi; do
+            [[ -f "$f" ]] || continue
+            already=0
+            for i in "${!BL_ID[@]}"; do
+                [[ "${BL_ID[$i]}" == "$f" ]] && already=1 && break
+            done
+            [[ $already -eq 1 ]] && continue
+            dir=$(basename "$(dirname "$f")")
+            BL_TYPE+=("esp")
+            BL_ID+=("$f")
+            BL_NAME+=("GRUB ($dir)")
+            BL_DETAIL+=("$f")
+        done
+    fi
+}
+
+cli_list() {
+    build_bootloader_list
+    printf "%-4s %-24s %-10s %s\n" "#" "NAME" "SOURCE" "DETAILS"
+
+    if [[ ${#BL_TYPE[@]} -eq 0 ]]; then
+        echo "(no bootloaders found in NVRAM or on /boot/efi)" >&2
+        return
+    fi
+
+    local i
+    for i in "${!BL_TYPE[@]}"; do
+        local src="ESP"
+        [[ "${BL_TYPE[$i]}" == "nvram" ]] && src="NVRAM"
+        printf "%03d  %-24s %-10s %s\n" "$((i + 1))" "${BL_NAME[$i]}" "$src" "${BL_DETAIL[$i]}"
+    done
+}
+
+cli_delete() {
+    local num="$1"
+    if [[ -z "$num" ]]; then
+        echo "Usage: pearos-bootloader-installer -d NUM (see --list for NUM)" >&2
+        exit 1
+    fi
+    # accept "001", "1", etc.
+    num=$((10#$num))
+
+    build_bootloader_list
+    local idx=$((num - 1))
+    if [[ $idx -lt 0 || $idx -ge ${#BL_TYPE[@]} ]]; then
+        echo "No entry $1 -- run --list first to see valid numbers." >&2
+        exit 1
+    fi
+
+    local type="${BL_TYPE[$idx]}" name="${BL_NAME[$idx]}" id="${BL_ID[$idx]}"
+
+    if [[ "$type" == "nvram" ]]; then
+        echo "About to remove NVRAM boot entry $((idx + 1)): $name (Boot$id)."
+        echo "This only deregisters the entry; it does NOT delete any files from the ESP."
+    else
+        echo "About to DELETE the file for $((idx + 1)): $name"
+        echo "  $id"
+        echo "This permanently removes that bootloader's .efi file from the ESP."
+    fi
+    read -rp "Type 'yes' to confirm: " confirm
+    if [[ "$confirm" != "yes" ]]; then
+        echo "Aborted, nothing changed."
+        exit 1
+    fi
+
+    if [[ "$type" == "nvram" ]]; then
+        efibootmgr -b "$id" -B
+    else
+        rm -f -- "$id"
+    fi
+    echo "Done."
+}
+
+# --help and --list never need root, handle them before self-elevating.
+case "$1" in
+    -h|--help)
+        usage
+        exit 0
+        ;;
+    -l|--list)
+        cli_list
+        exit 0
+        ;;
+esac
+
+# CLI modes (-i/--install, -d/--delete) are meant for scripts/terminals:
+# they must NOT pull up a pkexec auth prompt on their own. Require the
+# caller to already be root (i.e. run with sudo) and fail loudly otherwise.
+if [[ "$1" == "-i" || "$1" == "--install" ]]; then
+    if [[ $EUID -ne 0 ]]; then
+        echo "pearos-bootloader-installer -i must be run as root (use sudo)." >&2
+        exit 1
+    fi
+fi
+
+if [[ "$1" == "-d" || "$1" == "--delete" ]]; then
+    if [[ $EUID -ne 0 ]]; then
+        echo "pearos-bootloader-installer -d must be run as root (use sudo)." >&2
+        exit 1
+    fi
+    cli_delete "$2"
+    exit $?
+fi
+
+# GUI mode self-elevates via pkexec, explicitly forwarding the
+# display/session env vars pkexec otherwise drops. DISPLAY/XAUTHORITY
+# survive by themselves, but WAYLAND_DISPLAY and XDG_RUNTIME_DIR do not --
+# without them GDK can't find the Wayland socket under root and silently
+# falls back to XWayland, where the cursor goes invisible (root has no
+# cursor theme of its own). Root can read the invoking user's
+# XDG_RUNTIME_DIR/socket fine (root bypasses the 0700 permission), it just
+# needs to be told where it is.
+if [[ $EUID -ne 0 ]]; then
+    exec pkexec env \
+        DISPLAY="$DISPLAY" \
+        XAUTHORITY="$XAUTHORITY" \
+        WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+        XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+        GDK_BACKEND="${GDK_BACKEND:-wayland,x11}" \
+        "$0" "$@"
+fi
+
+url=https://github.com/pearOS-archlinux/pearos-bootloader
+refind_efi_path=/boot/efi/EFI/ploader/ploader.conf
+conf=$(mktemp)
+
+cli_install() {
+    local requested="$1"
+    inst_kernel=($(mhwd-kernel -li | grep "*" | awk '{print $2}' | tr '\n' ' '))
+    num_kern=$(echo "${inst_kernel[@]}" | wc -w)
+
+    if [[ -n "$requested" ]]; then
+        def_kern=$(echo "$requested" | sed 's/./& /')
+        echo "Setting default kernel to $requested..."
+        default-kernel $def_kern
+    elif [[ $num_kern -ge 2 ]]; then
+        def_kern=$(echo "${inst_kernel[0]:5}" | sed 's/./& /')
+        echo "Multiple kernels found, defaulting to ${inst_kernel[0]} (pass a kernel string to pick another one; see --help)."
+        default-kernel $def_kern
+    else
+        echo "Installing Ploader..."
+        ploader-install
+    fi
+
+    # Without this, Ploader's kernel scan finds vmlinuz but has no root=/
+    # rootflags= to boot it with (esp. needed for btrfs subvolumes) --
+    # this is what actually made the menu look "empty"/unbootable before.
+    echo "Generating ploader_linux.conf boot options..."
+    ploader-mkrlconf --force
+
+    echo "Enabling graphics mode for Linux entries..."
+    sed -i 's/#use_graphics_for osx,linux/use_graphics_for linux/' "$refind_efi_path"
+
+    echo "Setting boot timeout to 10s..."
+    sed -i 's/timeout 20/timeout 10/' "$refind_efi_path"
+
+    echo "Done. Config: $refind_efi_path"
+}
+
+if [[ "$1" == "-i" || "$1" == "--install" ]]; then
+    cli_install "$2"
+    exit $?
+fi
+
+# pkexec drops to a bare root environment (no GTK theme, no cursor theme),
+# which is why the dialog showed up light-themed. GTK_THEME=pearOS-dark is
+# fine (system-wide under /usr/share/themes). XCURSOR_THEME/SIZE are set as
+# a fallback for the x11 path, but they don't fix the actual invisible-cursor
+# bug: the original script hardcoded GDK_BACKEND=x11, forcing yad through
+# XWayland, where the cursor is drawn client-side by the app. Under native
+# Wayland the compositor draws the cursor itself, independent of root's
+# (missing) cursor theme -- so prefer wayland and only fall back to x11.
+export GTK_THEME="${GTK_THEME:-pearOS-dark}"
+export XCURSOR_THEME="${XCURSOR_THEME:-Adwaita}"
+export XCURSOR_SIZE="${XCURSOR_SIZE:-24}"
+export GDK_BACKEND="${GDK_BACKEND:-wayland,x11}"
+
+gui() {
+    local icon=/usr/share/pixmaps/pearos-bootloader-installer.png
+    local window_icon=/usr/share/pixmaps/pearos-bootloader-installer.png
+
+    if [ -r "$icon" ] ; then
+        /usr/bin/yad --center --window-icon="$icon" --image="$window_icon" --title="pearOS Bootloader Installer" "$@"
+    else
+        /usr/bin/yad --center --title="pearOS Bootloader Installer" "$@"
+    fi
+}
+
+txt_editor() {
+     txt_ed=$(gui --image=info --image-on-top --text="Write your text editor" --entry)
+}
+
+# Welcome
+gui --text="\n\n<b>Welcome to pearOS Bootloader installer.</b>
+
+If you only have one kernel you have finished
+otherwise select in the next step the default
+kernel to use." --button=_Cancel:1 --button=_OK:0
+[[ $? == 1 ]] && exit 1
+
+############################
+# Check installed kernel
+inst_kernel=($(mhwd-kernel -li | grep "*" | awk '{print $2}' | tr '\n' ' '))
+
+# Set kernel to use with ploader and set it
+num_kern=$(echo "${inst_kernel[@]}" | wc -w)
+
+if [[ $num_kern -ge 2 ]]; then
+    kern=$(gui --entry \
+    --button="Select" \
+    --text "Please choose default kernel to use:" \
+    --entry-text \
+    "${inst_kernel[@]}")
+    def_kern=$(echo "${kern:5}" | sed 's/./& /')
+    default-kernel $def_kern > /dev/null 2>&1
+else
+    ploader-install > /dev/null 2>&1
+fi
+
+# Without this, Ploader's kernel scan finds vmlinuz but has no root=/
+# rootflags= to boot it with (esp. needed for btrfs subvolumes).
+ploader-mkrlconf --force > /dev/null 2>&1
+
+# make linux graphic by default
+sed -i 's/#use_graphics_for osx,linux/use_graphics_for linux/' $refind_efi_path
+
+
+# make boot time to 10
+sed -i 's/timeout 20/timeout 10/' $refind_efi_path
+
+while true; do
+# manage ploader config
+cat $refind_efi_path > $conf
+
+# last check
+gui --text="\n\nWell done Ploader boot manager is installed and
+<b>kernel $def_kern</b> is set to default.
+
+Now you can set optional settings in <b>ploader.conf</b> file
+like timeout for boot or set the default OS to start.
+
+Select in the next step if open the project page, the settings or exit" \
+    --button="Finish":0 --button="Man Page":1 --button="Settings":2
+    opt=$?
+    case $opt in
+        0) exit 0 ;;
+        1) sudo -u $(logname) xdg-open $url ;;
+        2) txt_ed=$(gui --text="Write your text editor\n(enter to continue)" --no-buttons --entry) ; $txt_ed $conf ; cp -f $conf $refind_efi_path ;;
+    esac
+done
+
+# Done

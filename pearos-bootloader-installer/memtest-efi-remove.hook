@@ -1,0 +1,9 @@
+[Trigger]
+Operation=Remove
+Type=Package
+Target=memtest86-efi
+
+[Action]
+Description = Remove memtest86 for EFI
+When=PreTransaction
+Exec=/usr/share/libalpm/scripts/memtest-efi-remove

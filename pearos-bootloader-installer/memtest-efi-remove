@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Remove unused stuff
+rm -Rf /boot/efi/EFI/tools/*
+
+#Done

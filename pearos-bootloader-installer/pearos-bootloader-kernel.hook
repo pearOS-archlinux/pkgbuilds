@@ -1,0 +1,12 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Type=Path
+Target = usr/lib/modules/*/vmlinuz
+Target = usr/lib/initcpio/*
+
+[Action]
+Description = Keep Ploader default kernel
+When=PostTransaction
+Exec=/usr/bin/default-kernel
+NeedsTargets

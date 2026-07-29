@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=pearOS Bootloader GUI installer
+Comment=Installer for pearOS Bootloader (Ploader)
+Exec=/usr/bin/pearos-bootloader-installer
+Icon=/usr/share/pixmaps/pearos-bootloader-installer.png
+Categories=System
+StartupNotify=false

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 3 of the License.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+## set timestamp for kernel-files in /boot and update ploader.conf
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+if [[ ! -z $@ ]]; then
+	echo "-------------------------------------"
+	echo "set kernel $1.$2 to default boot"
+	echo "-------------------------------------"
+	echo
+	touch /boot/*$1.$2*
+	touch /boot/*$1$2*
+	ploader-install
+	## save the kernel number
+	echo "$1 $2" > /.ploader_kernel
+	exit 1
+fi
+
+if [[ -s '/.ploader_kernel' ]]; then
+	read a b < /.ploader_kernel
+	echo "-------------------------------------"
+	echo "set kernel $a.$b to default boot"
+	echo "-------------------------------------"
+	echo
+	touch /boot/*$a.$b*
+	touch /boot/*$a$b*
+	ploader-install
+	## save the kernel number
+	echo "$a $b" > /.ploader_kernel
+fi

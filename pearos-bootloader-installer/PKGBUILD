@@ -1,0 +1,43 @@
+# Maintainer: Stefano Capitani <stefanoatmanjarodotorg>
+# Adapted for pearOS by: pearOS-archlinux
+
+pkgname='pearos-bootloader-installer'
+pkgver=26.7
+pkgrel=2
+pkgdesc="pearOS Bootloader (Ploader) GUI installer"
+arch=('any')
+url='https://github.com/pearOS-archlinux/pearos-bootloader'
+license=('GPL3')
+depends=('pearos-bootloader' 'yad' 'mhwd' 'memtest86-efi')
+source=("$pkgname"
+        "default-kernel"
+        "memtest-efi-install"
+        "memtest-efi-remove"
+        "pearos-bootloader.hook"
+        "pearos-bootloader-kernel.hook"
+        "memtest-efi-install.hook"
+        "memtest-efi-remove.hook"
+        "$pkgname.desktop"
+        "org.$pkgname.policy"
+        "$pkgname-icon.png")
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+package() {
+
+	install -Dm755 $pkgname $pkgdir/usr/bin/$pkgname
+	install -Dm755 default-kernel $pkgdir/usr/bin/default-kernel
+	install -Dm755 memtest-efi-install $pkgdir/usr/share/libalpm/scripts/memtest-efi-install
+	install -Dm755 memtest-efi-remove $pkgdir/usr/share/libalpm/scripts/memtest-efi-remove
+
+	install -Dm644 pearos-bootloader.hook $pkgdir/usr/share/libalpm/hooks/pearos-bootloader.hook
+	install -Dm644 pearos-bootloader-kernel.hook $pkgdir/usr/share/libalpm/hooks/pearos-bootloader-kernel.hook
+	install -Dm644 memtest-efi-install.hook $pkgdir/usr/share/libalpm/hooks/memtest-efi-install.hook
+	install -Dm644 memtest-efi-remove.hook $pkgdir/usr/share/libalpm/hooks/memtest-efi-remove.hook
+
+	install -Dm644 $pkgname.desktop $pkgdir/usr/share/applications/$pkgname.desktop
+
+	install -Dm644 org.$pkgname.policy $pkgdir/usr/share/polkit-1/actions/org.$pkgname.policy
+
+	install -Dm644 "$pkgname-icon.png" $pkgdir/usr/share/pixmaps/$pkgname.png
+
+}
