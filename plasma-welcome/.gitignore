@@ -1,0 +1,7 @@
+build/
+pkg/
+src/
+*.pkg.tar.zst
+*.pkg.tar.xz
+.cache/
+compile_commands.json

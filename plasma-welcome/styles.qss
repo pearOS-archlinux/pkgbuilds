@@ -1,15 +1,19 @@
-/* Qt Stylesheet for Welcome to pearOS Application */
+/* Qt Stylesheet for Welcome to pearOS Application
+ * Visual language copied from Filer's own frameless file-manager window
+ * (src/mainwindow.cpp): kWindowCornerRadius=16, frosted sidebar column,
+ * toolbar-as-titlebar, and a breadcrumb bar living in the *status bar*
+ * (bottom of the window), not under the toolbar. */
 
 /* Main Window - Semi-transparent for KDE blur effect */
 QMainWindow {
-    background-color: rgba(42, 42, 42, 180);
-    border-radius: 10px;
+    background-color: rgba(30, 30, 31, 200);
+    border-radius: 16px;
 }
 
 /* Central widget - semi-transparent for blur */
 QWidget#centralwidget {
-    background-color: rgba(42, 42, 42, 180);
-    border-radius: 10px;
+    background-color: rgba(30, 30, 31, 200);
+    border-radius: 16px;
 }
 
 QWidget {
@@ -20,6 +24,69 @@ QWidget {
 QLabel {
     font-size: 16px;
     font-weight: normal;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* Topbar (Filer's toolbar, doubling as the titlebar) */
+QToolBar#topbar {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    spacing: 10px;
+    padding: 0px 16px;
+}
+
+QToolBar#topbar::separator {
+    width: 0px;
+}
+
+QLabel#topbarTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+QLabel#topbarVersion {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Breadcrumb bar = the QMainWindow status bar, bottom of the window --
+ * matches Filer parenting breadcrumbBar_ to ui.statusbar, not the toolbar. */
+QStatusBar#breadcrumbBar {
+    background-color: rgba(255, 255, 255, 0.025);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+QLabel#breadcrumbLabel {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* Sidebar container only -- square bottom (the breadcrumb/status bar owns
+ * the window's bottom corners since it spans the full width). Per-item
+ * rules (selection pill, row height, font) are NOT here: they're set
+ * directly on the widget in WelcomeWindow::buildSidebarStyleSheet(), same
+ * as Filer's own sidebar (Fm::buildSidePaneStyleSheet() in sidepane.cpp,
+ * applied via pv->setStyleSheet()) -- a global-cascade rule with the same
+ * selector specificity as a local one can silently win over it, which is
+ * exactly what happened here before this was split out (see the traffic-
+ * light dots' own comment for the same bug on QPushButton). */
+QListWidget#sidebar {
+    background-color: rgba(255, 255, 255, 0.025);
+    border: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 8px 0px;
+    outline: none;
+}
+
+/* Content area to the right of the sidebar */
+QStackedWidget#contentArea {
+    background-color: rgba(255, 255, 255, 0.01);
 }
 
 /* Buttons */
@@ -68,21 +135,11 @@ QCheckBox {
 QCheckBox::indicator {
     width: 42px;
     height: 22px;
-    border-radius: 11px;
-    background-color: #d0d0d0;
-    border: none;
-}
-
-QCheckBox::indicator:hover {
-    background-color: #c0c0c0;
+    image: url(assets/switch-off.svg);
 }
 
 QCheckBox::indicator:checked {
-    background-color: #4a86e8;
-}
-
-QCheckBox::indicator:checked:hover {
-    background-color: #3a76d8;
+    image: url(assets/switch-on.svg);
 }
 
 /* Frame
