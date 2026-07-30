@@ -1,6 +1,6 @@
 # Maintainer: Alexandru Balan <alxb421@gmail.com>
 pkgname=kscreenlocker
-pkgver=26.7.0
+pkgver=26.7.2
 pkgrel=1
 pkgdesc="pearOS dark theme for KDE Screen Locker"
 arch=('x86_64')
@@ -34,8 +34,9 @@ build() {
 package() {
     DESTDIR="$pkgdir" ninja -C "$srcdir/build" install
 
-    # PAM service — cmake doesn't install this, must be shipped manually
+    # PAM services — cmake doesn't install these, must be shipped manually
     install -Dm644 "$startdir/kde.pam" "$pkgdir/etc/pam.d/kde"
+    install -Dm644 "$startdir/kde-fingerprint.pam" "$pkgdir/etc/pam.d/kde-fingerprint"
 
     # Store theme files in /usr/share/pearos/lockscreen/
     # The pacman hook copies them to plasma-desktop's lockscreen path.

@@ -16,6 +16,7 @@
 #include <security/pam_appl.h>
 
 #include "kscreenlocker_greet_logging.h"
+#include "screenlocklog.h"
 
 using namespace Qt::StringLiterals;
 
@@ -146,6 +147,7 @@ int PamWorker::converse(int n, const struct pam_message **msg, struct pam_respon
         case PAM_ERROR_MSG: {
             const QString error = QString::fromLocal8Bit(pamMessage->msg);
             qCDebug(KSCREENLOCKER_GREET, "[PAM worker %s] Message: Error message: %s", qUtf8Printable(c->m_service), qUtf8Printable(error));
+            screenlockLog(QStringLiteral("[%1] PAM_ERROR_MSG: %2").arg(c->m_service, error));
             Q_EMIT c->errorMessage(error);
             break;
         }
@@ -153,6 +155,7 @@ int PamWorker::converse(int n, const struct pam_message **msg, struct pam_respon
             // if there's only the info message, let's predict the prompts too
             const QString info = QString::fromLocal8Bit(pamMessage->msg);
             qCDebug(KSCREENLOCKER_GREET, "[PAM worker %s] Message: Info message: %s", qUtf8Printable(c->m_service), qUtf8Printable(info));
+            screenlockLog(QStringLiteral("[%1] PAM_TEXT_INFO: %2").arg(c->m_service, info));
             Q_EMIT c->infoMessage(info);
             break;
         }
@@ -187,21 +190,26 @@ void PamWorker::authenticate()
     m_inAuthenticate = true;
     Q_EMIT inAuthenticateChanged(m_inAuthenticate);
     qCDebug(KSCREENLOCKER_GREET, "[PAM worker %s] Authenticate: Starting authentication", qUtf8Printable(m_service));
+    screenlockLog(QStringLiteral("[%1] authenticate: starting").arg(m_service));
     int rc = pam_authenticate(m_handle, 0); // PAM_SILENT);
     qCDebug(KSCREENLOCKER_GREET,
             "[PAM worker %s] Authenticate: Authentication done, result code: %d (%s)",
             qUtf8Printable(m_service),
             rc,
             pam_strerror(m_handle, rc));
+    screenlockLog(QStringLiteral("[%1] authenticate: done rc=%2 (%3)").arg(m_service).arg(rc).arg(QString::fromLocal8Bit(pam_strerror(m_handle, rc))));
 
     if (rc == PAM_SUCCESS) {
         pam_setcred(m_handle, PAM_REFRESH_CRED);
         /* ignore errors on refresh credentials. If this did not work we use the old ones. */
+        screenlockLog(QStringLiteral("[%1] authenticate: SUCCESS").arg(m_service));
         Q_EMIT succeeded();
     } else if (rc == PAM_AUTHINFO_UNAVAIL || rc == PAM_MODULE_UNKNOWN) {
         m_unavailable = true;
+        screenlockLog(QStringLiteral("[%1] authenticate: UNAVAILABLE (module/service missing)").arg(m_service));
         Q_EMIT unavailabilityChanged(m_unavailable);
     } else {
+        screenlockLog(QStringLiteral("[%1] authenticate: FAILED rc=%2").arg(m_service).arg(rc));
         Q_EMIT failed();
     }
     Q_EMIT busyChanged(false);
@@ -211,6 +219,7 @@ void PamWorker::authenticate()
 
 void PamWorker::startFailedDelay(uint useconds)
 {
+    screenlockLog(QStringLiteral("[%1] fail_delay: %2 usec (likely pam_faillock/tally lockout)").arg(m_service).arg(useconds));
     m_nextAttemptAllowedTime = std::chrono::steady_clock::now() + std::chrono::microseconds(useconds);
     Q_EMIT inPasswordDelayChanged(true);
     QTimer::singleShot(useconds / 1000, this, [this]() {
@@ -254,9 +263,14 @@ void PamWorker::start(const QString &service, const QString &user)
                   qUtf8Printable(m_service),
                   m_result,
                   pam_strerror(m_handle, m_result));
+        screenlockLog(QStringLiteral("[%1] pam_start FAILED rc=%2 (%3) — check /etc/pam.d/%1 exists")
+                          .arg(m_service)
+                          .arg(m_result)
+                          .arg(QString::fromLocal8Bit(pam_strerror(m_handle, m_result))));
         return;
     } else {
         qCDebug(KSCREENLOCKER_GREET, "[PAM worker %s] start: successfully started", qUtf8Printable(m_service));
+        screenlockLog(QStringLiteral("[%1] pam_start OK (user=%2)").arg(m_service, user.isEmpty() ? QStringLiteral("<current>") : user));
     }
 }
 

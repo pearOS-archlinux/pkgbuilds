@@ -10,6 +10,7 @@
 #include "kscreenlocker_greet_logging.h"
 #include "pamauthenticator.h"
 #include "pamauthenticators.h"
+#include "screenlocklog.h"
 
 struct PamAuthenticators::Private {
     std::unique_ptr<PamAuthenticator> interactive;
@@ -45,10 +46,12 @@ PamAuthenticators::PamAuthenticators(std::unique_ptr<PamAuthenticator> &&interac
 {
     connect(d->interactive.get(), &PamAuthenticator::succeeded, this, [this] {
         qCDebug(KSCREENLOCKER_GREET) << "PamAuthenticators: Success from interactive authenticator" << qUtf8Printable(d->interactive->service());
+        screenlockLog(QStringLiteral("aggregate: interactive '%1' SUCCEEDED").arg(d->interactive->service()));
         Q_EMIT succeeded();
     });
     connect(d->interactive.get(), &PamAuthenticator::failed, this, [this] {
         qCDebug(KSCREENLOCKER_GREET) << "PamAuthenticators: Failure from interactive authenticator" << qUtf8Printable(d->interactive->service());
+        screenlockLog(QStringLiteral("aggregate: interactive '%1' FAILED — cancelling noninteractive authenticators, emitting failed()").arg(d->interactive->service()));
         setState(AuthenticatorsState::Idle);
         d->cancelNoninteractive();
         Q_EMIT failed(PamAuthenticator::NoninteractiveAuthenticatorType::None, d->interactive.get());
@@ -61,6 +64,7 @@ PamAuthenticators::PamAuthenticators(std::unique_ptr<PamAuthenticator> &&interac
     for (auto &&noninteractive : d->noninteractive) {
         connect(noninteractive.get(), &PamAuthenticator::succeeded, this, [this, &noninteractive] {
             qCDebug(KSCREENLOCKER_GREET) << "PamAuthenticators: Success from non-interactive authenticator" << qUtf8Printable(noninteractive->service());
+            screenlockLog(QStringLiteral("aggregate: noninteractive '%1' SUCCEEDED").arg(noninteractive->service()));
             Q_EMIT succeeded();
         });
         connect(noninteractive.get(), &PamAuthenticator::availableChanged, this, [this, &noninteractive] {
@@ -71,6 +75,7 @@ PamAuthenticators::PamAuthenticators(std::unique_ptr<PamAuthenticator> &&interac
         });
         connect(noninteractive.get(), &PamAuthenticator::failed, this, [this, &noninteractive] {
             qCDebug(KSCREENLOCKER_GREET) << "PamAuthenticators: Non-interactive authenticator" << qUtf8Printable(noninteractive->service()) << "failed";
+            screenlockLog(QStringLiteral("aggregate: noninteractive '%1' FAILED (not shown to user, filtered by kind)").arg(noninteractive->service()));
             Q_EMIT failed(noninteractive->authenticatorType(), noninteractive.get());
         });
         connect(noninteractive.get(), &PamAuthenticator::loginFailedDelayStarted, this, [this, &noninteractive](const uint uSecDelay) noexcept -> void {
@@ -150,6 +155,7 @@ void PamAuthenticators::startAuthenticating()
     }
 
     qCDebug(KSCREENLOCKER_GREET) << "PamAuthenticators: starting authenticators";
+    screenlockLog(QStringLiteral("aggregate: startAuthenticating (interactive='%1', %2 noninteractive)").arg(d->interactive->service()).arg(d->noninteractive.size()));
     d->interactive->tryUnlock();
     for (auto &&noninteractive : d->noninteractive) {
         noninteractive->tryUnlock();
