@@ -52,8 +52,11 @@ PageBase {
                     ComboBox {
                         id: fillCombo
                         anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                        readonly property var modes: [2, 1, 0, 6, 3] // PreserveAspectCrop, PreserveAspectFit, Stretch, Pad, Tile
                         model: ["Fill screen", "Fit to screen", "Stretch to Fill Screen", "Center", "Tile"]
+                        currentIndex: Math.max(0, modes.indexOf(Wallpaper.fillMode))
                         width: 120; height: 28; font.pixelSize: 11
+                        onActivated: Wallpaper.setFillMode(modes[currentIndex])
                     }
                 }
 
@@ -230,7 +233,7 @@ PageBase {
             border.width: wallpaperData.path === Wallpaper.currentWallpaper ? 2 : 0
             Image {
                 anchors.fill: parent; anchors.margins: thumbWrap.border.width
-                source: "file://" + (wallpaperData.thumb || wallpaperData.path || "")
+                source: wallpaperData.thumb ? ("file://" + wallpaperData.thumb) : ""
                 fillMode: Image.PreserveAspectCrop
                 smooth: true; mipmap: true; asynchronous: true
                 sourceSize.width: 100; sourceSize.height: 56

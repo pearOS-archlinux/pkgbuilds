@@ -25,6 +25,9 @@ class AppearanceManager : public QObject {
     Q_PROPERTY(int  lgRefractionEdgeSize READ lgRefractionEdgeSize NOTIFY appearanceChanged)
     Q_PROPERTY(int  lgRGBFringing        READ lgRGBFringing        NOTIFY appearanceChanged)
 
+    // Global UI animation speed factor (0 = off, 1 = normal)
+    Q_PROPERTY(double animationSpeed     READ animationSpeed       NOTIFY appearanceChanged)
+
 public:
     explicit AppearanceManager(QObject *parent = nullptr);
     QString colorScheme()       const { return m_colorScheme; }
@@ -42,8 +45,10 @@ public:
     int  lgRefractionStrength() const { return m_lgRefractionStrength; }
     int  lgRefractionEdgeSize() const { return m_lgRefractionEdgeSize; }
     int  lgRGBFringing()        const { return m_lgRGBFringing; }
+    double animationSpeed()     const { return m_animationSpeed; }
 
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE void setAnimationSpeed(double factor);
     Q_INVOKABLE void setColorScheme(const QString &mode);
     Q_INVOKABLE void setAccent(const QString &accentName);
     Q_INVOKABLE void setFontSize(const QString &size);
@@ -76,6 +81,7 @@ private:
     int  m_lgRefractionStrength = 0;
     int  m_lgRefractionEdgeSize = 20;
     int  m_lgRGBFringing        = 1;
+    double m_animationSpeed     = 1.0;
 
     void run(const QString &cmd, std::function<void(QString)> cb);
     void writeLgKey(const QString &key, const QString &value);

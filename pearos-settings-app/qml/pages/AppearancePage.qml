@@ -54,7 +54,11 @@ PageBase {
                             MouseArea {
                                 anchors.fill: parent
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: Appearance.setColorScheme(modelData.name)
+                                onClicked: {
+                                    Appearance.setColorScheme(modelData.name)
+                                    if (modelData.name === "dark") Dock.set("skinName", "Tahoe Dark")
+                                    else if (modelData.name === "light") Dock.set("skinName", "Tahoe")
+                                }
                             }
                         }
                         Text { text: modelData.label; font.pixelSize: 10; color: Theme.textPrimary; anchors.horizontalCenter: parent.horizontalCenter }
@@ -172,6 +176,26 @@ PageBase {
                     anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
                     checked: Appearance.tintEnabled
                     onToggled: function(v) { Appearance.setTintEnabled(v) }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            Item {
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Animation speed"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                SettingsComboBox {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    readonly property var factors: [0, 0.5, 1, 2]
+                    model: ["Off", "Fast", "Normal", "Slow"]
+                    currentIndex: {
+                        var f = Appearance.animationSpeed
+                        if (f <= 0) return 0
+                        if (f <= 0.5) return 1
+                        if (f <= 1) return 2
+                        return 3
+                    }
+                    width: 100; height: 28; font.pixelSize: 12
+                    onActivated: Appearance.setAnimationSpeed(factors[currentIndex])
                 }
             }
         }

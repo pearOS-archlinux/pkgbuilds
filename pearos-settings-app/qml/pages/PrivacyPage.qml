@@ -6,6 +6,7 @@ import "../components"
 PageBase {
     title: "Privacy & Security"
     readonly property string ap: "file:///usr/share/extras/system-settings/assets/"
+    Component.onCompleted: KWallet.refresh()
 
     // Header card
     SettingsCard {
@@ -119,6 +120,60 @@ PageBase {
                 anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
                 model: ["Everyone"]
                 currentIndex: 0; width: 120; height: 28; font.pixelSize: 12
+            }
+        }
+    }
+    Spacer {}
+
+    SectionTitle { text: "KWallet" }
+    SettingsCard {
+        Column {
+            width: parent.width; spacing: 0
+
+            Item {
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Enable Password Manager"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                LiquidToggle {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    checked: KWallet.enabled
+                    onToggled: function(v) { KWallet.set("enabled", v) }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider; visible: KWallet.enabled }
+
+            Item {
+                visible: KWallet.enabled
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Close when idle for"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                ComboBox {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    model: ["1 minute", "5 minutes", "10 minutes", "30 minutes"]
+                    currentIndex: {
+                        var v = KWallet.idleTimeout
+                        if (v <= 1) return 0
+                        if (v <= 5) return 1
+                        if (v <= 10) return 2
+                        return 3
+                    }
+                    width: 120; height: 28; font.pixelSize: 12
+                    onActivated: {
+                        var vals = [1, 5, 10, 30]
+                        KWallet.set("closeWhenIdle", true)
+                        KWallet.set("idleTimeout", vals[currentIndex])
+                    }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider; visible: KWallet.enabled }
+
+            Item {
+                visible: KWallet.enabled
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Launch manager on login"; font.pixelSize: 12; font.weight: Font.DemiBold; color: Theme.textPrimary }
+                LiquidToggle {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    checked: KWallet.launchManager
+                    onToggled: function(v) { KWallet.set("launchManager", v) }
+                }
             }
         }
     }

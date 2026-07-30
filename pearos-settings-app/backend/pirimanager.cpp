@@ -7,8 +7,8 @@
 
 const QString PiriManager::MODEL_URL      = "https://cdn.pearos.xyz/vosk-model-en-us-0.42-gigaspeech.zip";
 const QString PiriManager::MODEL_DIR      = "/usr/share/extras/piri/model";
-const QString PiriManager::ZIP_TMP        = "/tmp/piri-model.zip";
-const QString PiriManager::EXTRACT_TMP    = "/tmp/piri-extract";
+const QString PiriManager::ZIP_TMP        = "/var/tmp/piri-model.zip";
+const QString PiriManager::EXTRACT_TMP    = "/var/tmp/piri-extract";
 const QString PiriManager::SHOW_ICON_FILE = "/usr/share/extras/piri/show_icon";
 
 PiriManager::PiriManager(QObject *parent) : QObject(parent) {

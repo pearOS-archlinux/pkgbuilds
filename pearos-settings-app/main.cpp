@@ -39,6 +39,10 @@
 #include "backend/spotlightmanager.h"
 #include "backend/internetaccountsmanager.h"
 #include "backend/filerconfigmanager.h"
+#include "backend/hotcornersmanager.h"
+#include "backend/missioncontrolmanager.h"
+#include "backend/proxymanager.h"
+#include "backend/kwalletmanager.h"
 
 int main(int argc, char *argv[]) {
     qInstallMessageHandler([](QtMsgType type, const QMessageLogContext &ctx, const QString &msg) {
@@ -95,6 +99,10 @@ int main(int argc, char *argv[]) {
     SpotlightManager spotlight;
     InternetAccountsManager inetaccounts;
     FilerConfigManager filerConfig;
+    HotCornersManager hotcorners;
+    MissionControlManager missioncontrol;
+    ProxyManager     proxy;
+    KWalletManager   kwallet;
 
     SidebarReflection* siderefl = new SidebarReflection();
 
@@ -132,6 +140,10 @@ int main(int argc, char *argv[]) {
     ctx->setContextProperty("Spotlight",  &spotlight);
     ctx->setContextProperty("InetAccounts", &inetaccounts);
     ctx->setContextProperty("FilerConfig", &filerConfig);
+    ctx->setContextProperty("HotCorners", &hotcorners);
+    ctx->setContextProperty("MissionControl", &missioncontrol);
+    ctx->setContextProperty("Proxy",      &proxy);
+    ctx->setContextProperty("KWallet",    &kwallet);
 
     engine.loadFromModule("PearOSSettings", "Main");
 

@@ -182,6 +182,23 @@ void AppearanceManager::refresh() {
             if (vals.size() >= 6) { int v = vals[5].trimmed().toInt(&ok); if (ok) m_lgRGBFringing = v; }
             emit appearanceChanged();
         });
+
+    run("kreadconfig6 --file kwinrc --group KDE --key AnimationDurationFactor --default 1",
+        [this](QString out) {
+            bool ok = false;
+            double v = out.trimmed().toDouble(&ok);
+            if (ok) m_animationSpeed = v;
+            emit appearanceChanged();
+        });
+}
+
+void AppearanceManager::setAnimationSpeed(double factor) {
+    m_animationSpeed = factor;
+    emit appearanceChanged();
+    run(QString("kwriteconfig6 --file kwinrc --group KDE --key AnimationDurationFactor %1 && "
+                "qdbus6 org.kde.KWin /KWin reconfigure")
+            .arg(factor),
+        [](QString) {});
 }
 
 void AppearanceManager::applyIconThemeForAccent(const QString &accent, const QString &colorScheme) {

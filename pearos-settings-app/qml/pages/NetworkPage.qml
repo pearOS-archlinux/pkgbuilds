@@ -1,10 +1,11 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
 
 PageBase {
     title: "Network"
-    Component.onCompleted: Network.refreshActiveConnections()
+    Component.onCompleted: { Network.refreshActiveConnections(); Proxy.refresh() }
 
     SettingsCard {
         Column {
@@ -41,6 +42,48 @@ PageBase {
                 Text { anchors.centerIn: parent; text: "Loading connections..."; font.pixelSize: 13; color: Theme.textSecondary }
             }
             Item { width: parent.width; height: 8 }
+        }
+    }
+    Spacer {}
+
+    SectionTitle { text: "Proxy" }
+    SettingsCard {
+        Column {
+            width: parent.width; spacing: 0
+
+            Item {
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Use HTTP Proxy"; font.pixelSize: 13; color: Theme.textPrimary }
+                LiquidToggle {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    checked: Proxy.enabled
+                    onToggled: function(v) { Proxy.setEnabled(v) }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider; visible: Proxy.enabled }
+
+            Item {
+                visible: Proxy.enabled
+                width: parent.width; height: 44
+                Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Server"; font.pixelSize: 13; color: Theme.textPrimary }
+                Row {
+                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
+                    spacing: 6
+                    TextField {
+                        id: proxyHost
+                        width: 150; height: 28; font.pixelSize: 12
+                        text: Proxy.host; placeholderText: "host"
+                        onEditingFinished: Proxy.setProxy(text, parseInt(proxyPort.text) || 8080)
+                    }
+                    TextField {
+                        id: proxyPort
+                        width: 60; height: 28; font.pixelSize: 12
+                        text: Proxy.port; placeholderText: "port"
+                        validator: IntValidator { bottom: 1; top: 65535 }
+                        onEditingFinished: Proxy.setProxy(proxyHost.text, parseInt(text) || 8080)
+                    }
+                }
+            }
         }
     }
     Spacer {}

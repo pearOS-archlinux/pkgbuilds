@@ -45,6 +45,10 @@ set(BACKEND_SOURCES
     backend/spotlightmanager.cpp
     backend/internetaccountsmanager.cpp
     backend/filerconfigmanager.cpp
+    backend/hotcornersmanager.cpp
+    backend/missioncontrolmanager.cpp
+    backend/proxymanager.cpp
+    backend/kwalletmanager.cpp
 )
 
 qt_add_executable(SystemSettings

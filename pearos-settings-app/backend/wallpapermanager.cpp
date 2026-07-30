@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
+#include <QImageReader>
 #include <QColor>
 #include <QCryptographicHash>
 
@@ -98,7 +99,7 @@ void WallpaperManager::refreshWallpapers() {
             entry["path"] = fi.absoluteFilePath();
             entry["name"] = fi.baseName();
             QString thumb = thumbPathFor(entry["path"].toString());
-            entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
+            entry["thumb"] = QFile::exists(thumb) ? thumb : QString();
             m_wallpapers.append(entry);
             byCategory["General"].append(entry);
         }
@@ -112,7 +113,7 @@ void WallpaperManager::refreshWallpapers() {
                 entry["path"] = fi.absoluteFilePath();
                 entry["name"] = fi.baseName();
                 QString thumb = thumbPathFor(entry["path"].toString());
-                entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
+                entry["thumb"] = QFile::exists(thumb) ? thumb : QString();
                 m_wallpapers.append(entry);
                 byCategory[catName].append(entry);
             }
@@ -129,7 +130,7 @@ void WallpaperManager::refreshWallpapers() {
                 entry["path"] = smallest.absoluteFilePath();
                 entry["name"] = sub.baseName();
                 QString thumb = thumbPathFor(entry["path"].toString());
-                entry["thumb"] = QFile::exists(thumb) ? thumb : entry["path"];
+                entry["thumb"] = QFile::exists(thumb) ? thumb : QString();
                 m_wallpapers.append(entry);
                 byCategory[catName].append(entry);
             }
@@ -147,7 +148,35 @@ void WallpaperManager::refreshWallpapers() {
 
     emit wallpapersChanged();
     refreshTint();
+    refreshFillMode();
     generateMissingThumbnails();
+}
+
+void WallpaperManager::refreshFillMode() {
+    run("awk -F= '/\\[Wallpaper\\]\\[org.kde.image\\]\\[General\\]/{f=1;next} "
+        "f && /^FillMode/{print $2; exit}' "
+        "\"$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc\" 2>/dev/null",
+        [this](QString out) {
+        bool ok = false;
+        int mode = out.trimmed().toInt(&ok);
+        if (ok && mode != m_fillMode) { m_fillMode = mode; emit fillModeChanged(); }
+    });
+}
+
+void WallpaperManager::setFillMode(int mode) {
+    if (m_fillMode == mode) return;
+    m_fillMode = mode;
+    emit fillModeChanged();
+    QString script = QString(
+        "var ds = desktops();"
+        "for (var i = 0; i < ds.length; i++) {"
+        "  ds[i].wallpaperPlugin = 'org.kde.image';"
+        "  ds[i].currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];"
+        "  ds[i].writeConfig('FillMode', %1);"
+        "}"
+    ).arg(mode);
+    run(QString("qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '%1'")
+        .arg(script), [](QString) {});
 }
 
 void WallpaperManager::refreshTint() {
@@ -179,12 +208,10 @@ void WallpaperManager::computeTint(const QString &wallpaperPath) {
     if (path.startsWith("file://")) path = path.mid(7);
     if (path.isEmpty()) { m_tintColor = "transparent"; emit tintColorChanged(); return; }
 
-    QImage img(path);
-    if (img.isNull()) { m_tintColor = "transparent"; emit tintColorChanged(); return; }
-
-    // Scale down to 50x50 for fast average
-    QImage small = img.scaled(50, 50, Qt::IgnoreAspectRatio, Qt::FastTransformation)
-                      .convertToFormat(QImage::Format_RGB888);
+    QImageReader reader(path);
+    reader.setScaledSize(QSize(50, 50));
+    QImage small = reader.read().convertToFormat(QImage::Format_RGB888);
+    if (small.isNull()) { m_tintColor = "transparent"; emit tintColorChanged(); return; }
     long r = 0, g = 0, b = 0;
     int n = small.width() * small.height();
     for (int y = 0; y < small.height(); ++y) {

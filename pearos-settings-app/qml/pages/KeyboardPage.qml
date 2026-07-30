@@ -90,10 +90,11 @@ PageBase {
             }
             SettingsComboBox {
                 anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                model: Keyboard.layouts.length > 0 ? Keyboard.layouts : ["US", "UK", "German", "French", "Spanish", "Italian", "Romanian", "Russian"]
+                enabled: Keyboard.layouts.length > 0
+                model: Keyboard.layouts.length > 0 ? Keyboard.layouts : ["Loading…"]
                 currentIndex: Math.max(0, model.indexOf(Keyboard.layout))
                 width: 150; height: 28; font.pixelSize: 12
-                onActivated: Keyboard.setLayout(currentText)
+                onActivated: if (Keyboard.layouts.length > 0) Keyboard.setLayout(currentText)
             }
         }
     }

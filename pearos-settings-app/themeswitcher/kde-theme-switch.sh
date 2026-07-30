@@ -50,17 +50,27 @@ set_wallpaper_if_pearos() {
   current="${current#file://}"
   msg "DEBUG wallpaper current: '${current}'"
   [ -z "$current" ] && return 0
-  local wp_dark="/usr/share/wallpapers/pearOS-dark/default.jpg"
-  local wp_light="/usr/share/wallpapers/pearOS/default.jpg"
-  # Only touch wallpaper if current one is one of the pearOS defaults
-  if [ "$current" != "$wp_dark" ] && [ "$current" != "$wp_light" ]; then
-    msg "DEBUG wallpaper is not a pearOS default (skip wallpaper change)"
-    return 0
-  fi
-  local target="$wp_dark"
-  if [ "$mode" = "light" ]; then
-    target="$wp_light"
-  fi
+  # Match by basename, not full path (mirrors AppearanceManager::maybeUpdateWallpaper
+  # in the Settings app's C++ backend) - fresh accounts from /etc/skel start on
+  # /usr/share/extras/wallpapers/Default/{dark,light}-mode.jpg, while older/manually
+  # configured desktops may still be on /usr/share/wallpapers/pearOS[-dark]/default.jpg.
+  local current_base
+  current_base="$(basename "$current")"
+  local target
+  case "$current_base" in
+    dark-mode.jpg|light-mode.jpg)
+      target="/usr/share/extras/wallpapers/Default/dark-mode.jpg"
+      [ "$mode" = "light" ] && target="/usr/share/extras/wallpapers/Default/light-mode.jpg"
+      ;;
+    default.jpg)
+      target="/usr/share/wallpapers/pearOS-dark/default.jpg"
+      [ "$mode" = "light" ] && target="/usr/share/wallpapers/pearOS/default.jpg"
+      ;;
+    *)
+      msg "DEBUG wallpaper is not a pearOS default (skip wallpaper change)"
+      return 0
+      ;;
+  esac
   msg "DEBUG mode: '$mode', target wallpaper: '$target'"
   msg "DEBUG plasma-apply-wallpaperimage path: '$(command -v plasma-apply-wallpaperimage || echo NOT_FOUND)'"
   if have plasma-apply-wallpaperimage; then

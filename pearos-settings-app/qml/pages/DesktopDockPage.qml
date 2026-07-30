@@ -4,7 +4,7 @@ import "../components"
 
 PageBase {
     title: "Desktop and Dock"
-    Component.onCompleted: Dock.refresh()
+    Component.onCompleted: { Dock.refresh(); HotCorners.refresh(); MissionControl.refresh() }
 
     // ── Helper components ─────────────────────────────────────────────────
     component Toggle: LiquidToggle {}
@@ -88,24 +88,6 @@ PageBase {
     SettingsCard {
         Column {
             width: parent.width; spacing: 0
-
-            // Skin
-            Item {
-                width: parent.width; height: 44
-                Text {
-                    anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter
-                    text: "Skin"; font.pixelSize: 13; color: Theme.textPrimary
-                }
-                ComboBox {
-                    anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
-                    model: Dock.availableSkins
-                    width: 150; height: 28; font.pixelSize: 12
-                    currentIndex: Dock.availableSkins.indexOf(Dock.skinName)
-                    onActivated: Dock.set("skinName", model[currentIndex])
-                }
-            }
-
-            Rectangle { width: parent.width; height: 1; color: Theme.divider }
 
             // Icon Size
             SliderRow {
@@ -527,6 +509,78 @@ PageBase {
                 Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; text: "Unhide when window needs attention"; font.pixelSize: 13; color: Theme.textPrimary }
                 Toggle { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; value: Dock.unhideOnAttention; onToggled: (v) => Dock.set("unhideOnAttention", v) }
             }
+        }
+    }
+
+    Spacer {}
+
+    // ── Mission Control ─────────────────────────────────────────────────
+    SectionTitle { text: "Mission Control" }
+    SettingsCard {
+        Column {
+            width: parent.width; spacing: 0
+
+            SettingRow {
+                label: "Number of Desktops"
+                Row {
+                    spacing: 10
+                    Text { text: MissionControl.desktopCount; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 16; horizontalAlignment: Text.AlignRight }
+                    Slider { from: 1; to: 16; stepSize: 1; value: MissionControl.desktopCount; width: 140; anchors.verticalCenter: parent.verticalCenter
+                        onMoved: MissionControl.setDesktopCount(Math.round(value)) }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            SettingRow {
+                label: "Rows"
+                Row {
+                    spacing: 10
+                    Text { text: MissionControl.desktopRows; font.pixelSize: 12; color: Theme.textSecondary; anchors.verticalCenter: parent.verticalCenter; width: 16; horizontalAlignment: Text.AlignRight }
+                    Slider { from: 1; to: 4; stepSize: 1; value: MissionControl.desktopRows; width: 140; anchors.verticalCenter: parent.verticalCenter
+                        onMoved: MissionControl.setDesktopRows(Math.round(value)) }
+                }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            SettingRow {
+                label: "Wrap around when switching desktops"
+                Toggle { value: MissionControl.wrapNavigation; onToggled: (v) => MissionControl.setWrapNavigation(v) }
+            }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+
+            SettingRow {
+                label: "Displays have separate Spaces"
+                Toggle { value: MissionControl.separateSpacesPerDisplay; onToggled: (v) => MissionControl.setSeparateSpacesPerDisplay(v) }
+            }
+        }
+    }
+
+    Spacer {}
+
+    // ── Hot Corners ──────────────────────────────────────────────────────
+    SectionTitle { text: "Hot Corners" }
+    SettingsCard {
+        Column {
+            width: parent.width; spacing: 0
+
+            component CornerRow: SettingRow {
+                property string cornerKey: ""
+                property string currentAction: ""
+                ComboBox {
+                    model: HotCorners.availableActions
+                    currentIndex: Math.max(0, model.indexOf(currentAction))
+                    width: 170; height: 28; font.pixelSize: 12
+                    onActivated: HotCorners.setCorner(cornerKey, currentText)
+                }
+            }
+
+            CornerRow { label: "Top Left";     cornerKey: "TopLeft";     currentAction: HotCorners.topLeft }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+            CornerRow { label: "Top Right";    cornerKey: "TopRight";    currentAction: HotCorners.topRight }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+            CornerRow { label: "Bottom Left";  cornerKey: "BottomLeft";  currentAction: HotCorners.bottomLeft }
+            Rectangle { width: parent.width; height: 1; color: Theme.divider }
+            CornerRow { label: "Bottom Right"; cornerKey: "BottomRight"; currentAction: HotCorners.bottomRight }
         }
     }
 
