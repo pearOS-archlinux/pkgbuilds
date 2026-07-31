@@ -1,23 +1,22 @@
 pkgname=pearos-keyring
-pkgver=26.3
+pkgver=26.7
 pkgrel=1
 pkgdesc="GPG keys for the pearOS package repository"
 arch=('any')
-url="https://pearos.xyz" # Schimbă cu URL-ul tău real
+url="https://pearos.xyz"
 license=('GPL')
 install=$pkgname.install
 source=("pearos.gpg"
-        "pearos-trusted")
-sha256sums=('d1894ac3f50b7350439cb6adeca41d489a050a93f1af183fd4686904065236a5'
-            '0e29a071a436b5e0a8941c11046f67e2792ecceb0a25011599fe1af54c53ac45')
+        "pearos-trusted"
+        "pearos-revoked")
+sha256sums=('4360f0f106de082666fbd76bcf67b9ac3e289d1b470fd4a1eabb78fd501a1ad0'
+            'a5a13e0d6e1a1680364003034d2c2d79d57c43f2753bf6c6dd59ef9c1f3b8a2f'
+            'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855')
 
 package() {
-    # Creăm directoarele necesare
     install -d "${pkgdir}/usr/share/pacman/keyrings/"
 
-    # Instalăm cheia publică
     install -m644 "${srcdir}/pearos.gpg" "${pkgdir}/usr/share/pacman/keyrings/pearos.gpg"
-    
-    # Instalăm fișierul de trust (opțional, dar bun pentru evidență)
     install -m644 "${srcdir}/pearos-trusted" "${pkgdir}/usr/share/pacman/keyrings/pearos-trusted"
+    install -m644 "${srcdir}/pearos-revoked" "${pkgdir}/usr/share/pacman/keyrings/pearos-revoked"
 }
