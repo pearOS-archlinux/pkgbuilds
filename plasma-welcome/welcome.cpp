@@ -95,9 +95,8 @@ void toggle_autostart(bool enable) {
 }
 
 void screen_resolution(const QString &) {
-    QProcess::startDetached("electron", QStringList()
-        << QStringLiteral("/usr/share/extras/system-settings")
-        << QStringLiteral("--page=displays"));
+    QProcess::startDetached(QStringLiteral("systemsettings"),
+        QStringList() << QStringLiteral("kcm_kscreen"));
 }
 
 static QString bash_single_quoted(const QString &s) {

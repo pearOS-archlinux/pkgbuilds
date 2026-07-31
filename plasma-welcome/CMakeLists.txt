@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(filer-shell-qt5 CXX)
+project(pearos-welcome CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt5 5.12 REQUIRED COMPONENTS Widgets DBus Network)
 find_package(KF5WindowSystem REQUIRED)
 
-add_executable(filer-shell-qt5
+add_executable(pearos-welcome
     main.cpp
     mainwindow.cpp
     welcome.cpp
@@ -22,7 +22,7 @@ add_executable(filer-shell-qt5
     titlebar_buttons.cpp
     filer_sidebar.cpp
 )
-target_link_libraries(filer-shell-qt5 PRIVATE Qt5::Widgets Qt5::DBus Qt5::Network KF5::WindowSystem)
+target_link_libraries(pearos-welcome PRIVATE Qt5::Widgets Qt5::DBus Qt5::Network KF5::WindowSystem)
 
 # Wayland-side counterpart to MainWindow::updateSidebarWallpaperTint()'s
 # X11 frameGeometry() path -- see main.cpp's WindowGeometryRelay/
@@ -31,8 +31,8 @@ target_link_libraries(filer-shell-qt5 PRIVATE Qt5::Widgets Qt5::DBus Qt5::Networ
 # CMAKE_INSTALL_PREFIX.
 set(KWIN_SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/kwin-scripts")
 if(EXISTS "${KWIN_SCRIPTS_DIR}")
-  add_custom_command(TARGET filer-shell-qt5 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${KWIN_SCRIPTS_DIR}" "$<TARGET_FILE_DIR:filer-shell-qt5>/kwin-scripts"
+  add_custom_command(TARGET pearos-welcome POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${KWIN_SCRIPTS_DIR}" "$<TARGET_FILE_DIR:pearos-welcome>/kwin-scripts"
   )
 endif()
 
@@ -41,8 +41,8 @@ endif()
 # whether run from build/ or anywhere else.
 set(SHARED_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 if(EXISTS "${SHARED_ASSETS_DIR}")
-  add_custom_command(TARGET filer-shell-qt5 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${SHARED_ASSETS_DIR}" "$<TARGET_FILE_DIR:filer-shell-qt5>/assets"
+  add_custom_command(TARGET pearos-welcome POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${SHARED_ASSETS_DIR}" "$<TARGET_FILE_DIR:pearos-welcome>/assets"
   )
 endif()
 
@@ -51,15 +51,15 @@ endif()
 # executable, same reasoning as SHARED_ASSETS_DIR above.
 set(SHARED_STYLES_QSS "${CMAKE_CURRENT_SOURCE_DIR}/styles.qss")
 if(EXISTS "${SHARED_STYLES_QSS}")
-  add_custom_command(TARGET filer-shell-qt5 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${SHARED_STYLES_QSS}" "$<TARGET_FILE_DIR:filer-shell-qt5>/styles.qss"
+  add_custom_command(TARGET pearos-welcome POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${SHARED_STYLES_QSS}" "$<TARGET_FILE_DIR:pearos-welcome>/styles.qss"
   )
 endif()
 
 # updater.sh -- see update_system_prep_and_upgrade_cmd() in welcome.cpp,
 # reads it relative to get_base_path().
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/updater.sh")
-  add_custom_command(TARGET filer-shell-qt5 POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/updater.sh" "$<TARGET_FILE_DIR:filer-shell-qt5>/updater.sh"
+  add_custom_command(TARGET pearos-welcome POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/updater.sh" "$<TARGET_FILE_DIR:pearos-welcome>/updater.sh"
   )
 endif()
