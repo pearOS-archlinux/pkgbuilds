@@ -1,0 +1,35 @@
+# Maintainer: pearOS-archlinux <https://github.com/pearOS-archlinux>
+pkgname=pearos-builder
+pkgver=26.8
+pkgrel=1
+pkgdesc="pearOS ISO builder source tree (build-binary, ISO Builder GUI, airootfs profile), installed at /usr/share/pearOS/dev"
+arch=('any')
+url="https://github.com/pearOS-archlinux/iso"
+license=('GPL3')
+depends=('bash' 'python' 'python-gobject' 'gtk3' 'vte3' 'gtk-vnc' 'arch-install-scripts'
+         'mtools' 'squashfs-tools' 'xorriso' 'e2fsprogs' 'git' 'pv' 'gnu-efi' 'rclone')
+optdepends=('gtksourceview3: syntax highlighting in the ISO Builder GUI'
+            'qemu-full: Test in QEMU page of the ISO Builder GUI')
+makedepends=('git')
+provides=('pearos-iso-dev')
+source=("git+${url}.git")
+sha256sums=('SKIP')
+
+package() {
+  cd "$srcdir/iso"
+
+  install -dm755 "$pkgdir/usr/share/pearOS/dev"
+  cp -a . "$pkgdir/usr/share/pearOS/dev/"
+  rm -rf "$pkgdir/usr/share/pearOS/dev/.git" "$pkgdir/usr/share/pearOS/dev/arch-package"
+
+  chmod 755 "$pkgdir/usr/share/pearOS/dev/build-binary"
+  chmod 755 "$pkgdir/usr/share/pearOS/dev/iso-builder/pearos-builder"
+
+  install -dm755 "$pkgdir/usr/bin"
+  ln -s /usr/share/pearOS/dev/iso-builder/pearos-builder "$pkgdir/usr/bin/pearos-builder"
+
+  install -Dm644 "$pkgdir/usr/share/pearOS/dev/iso-builder/pearos-builder.desktop" \
+    "$pkgdir/usr/share/applications/pearos-builder.desktop"
+  install -Dm644 "$pkgdir/usr/share/pearOS/dev/iso-builder/icons/pearos-builder.png" \
+    "$pkgdir/usr/share/icons/hicolor/512x512/apps/pearos-builder.png"
+}
