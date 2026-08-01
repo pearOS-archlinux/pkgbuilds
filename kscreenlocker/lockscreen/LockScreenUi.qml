@@ -133,9 +133,6 @@ Item {
         target: authenticator
         function onFailed(kind) {
             if (kind !== 0) return
-            lockScreenUi.handleMessage(
-                i18ndc("plasma_shell_org.kde.plasma.desktop", "@info:status", "Unlocking failed"))
-            notificationRemoveTimer.restart()
             rejectAnim.start()
         }
         function onSucceeded() { Qt.quit() }
@@ -151,24 +148,6 @@ Item {
         id: solidBackground
         anchors.fill: parent
         color: "#000000"
-    }
-
-    // ── wallpaper item — renders the wallpaper plugin set via System Settings ─
-    // kscreenlocker injects `wallpaper` (a QQuickItem from the configured plugin).
-    // We reparent it here and size via Qt.binding (anchors can't be set imperatively).
-    // → Changing wallpaper in System Settings → Screen Locking works automatically.
-    Item {
-        id: wallpaperItem
-        anchors.fill: parent
-        Component.onCompleted: {
-            if (typeof wallpaper !== "undefined" && wallpaper) {
-                wallpaper.parent = wallpaperItem
-                wallpaper.x = 0
-                wallpaper.y = 0
-                wallpaper.width  = Qt.binding(function() { return wallpaperItem.width })
-                wallpaper.height = Qt.binding(function() { return wallpaperItem.height })
-            }
-        }
     }
 
     // ── wallpaper background image (fallback: used when desktopWallpaperPath is set) ──
@@ -282,29 +261,11 @@ Item {
         z: 5
     }
 
-    // ── top-right: shutdown ───────────────────────────────────────────────────
-    Image {
-        id: shutdownBtn
-        anchors.top: parent.top; anchors.topMargin: 15
-        anchors.right: parent.right; anchors.rightMargin: 40
-        width: 22; height: 22
-        z: 5
-        source: Qt.resolvedUrl("images/system-shutdown.svg")
-        fillMode: Image.PreserveAspectFit
-        visible: sessionManagement.canShutdown
-        MouseArea {
-            anchors.fill: parent; hoverEnabled: true
-            onEntered: shutdownBtn.source = Qt.resolvedUrl("images/system-shutdown-hover.svg")
-            onExited:  shutdownBtn.source = Qt.resolvedUrl("images/system-shutdown.svg")
-            onClicked: { shutdownBtn.source = Qt.resolvedUrl("images/system-shutdown-pressed.svg"); sessionManagement.requestShutdown() }
-        }
-    }
-
     // ── top-right: reboot ────────────────────────────────────────────────────
     Image {
         id: rebootBtn
         anchors.top: parent.top; anchors.topMargin: 15
-        anchors.right: parent.right; anchors.rightMargin: 70
+        anchors.right: parent.right; anchors.rightMargin: 40
         width: 22; height: 22
         z: 5
         source: Qt.resolvedUrl("images/system-reboot.svg")
@@ -314,6 +275,7 @@ Item {
             anchors.fill: parent; hoverEnabled: true
             onEntered: rebootBtn.source = Qt.resolvedUrl("images/system-reboot-hover.svg")
             onExited:  rebootBtn.source = Qt.resolvedUrl("images/system-reboot.svg")
+            onPressed: Window.window.requestActivate()
             onClicked: { rebootBtn.source = Qt.resolvedUrl("images/system-reboot-pressed.svg"); sessionManagement.requestReboot() }
         }
     }
@@ -324,8 +286,20 @@ Item {
         anchors.fill: parent
         hoverEnabled: true; cursorShape: Qt.ArrowCursor
 
-        onPressed: { Window.window.requestActivate(); passwordField.forceActiveFocus() }
-        Keys.onPressed: event => { event.accepted = false }
+        onPressed: {
+            Window.window.requestActivate()
+            passwordField.forceActiveFocus()
+            authenticator.startAuthenticating()
+        }
+        onPositionChanged: {
+            Window.window.requestActivate()
+            authenticator.startAuthenticating()
+        }
+        Keys.onPressed: event => {
+            Window.window.requestActivate()
+            authenticator.startAuthenticating()
+            event.accepted = false
+        }
 
         // loginArea: direct child — NO StackView (removed to prevent height override)
         Item {
@@ -401,6 +375,7 @@ Item {
                 anchors.topMargin: loginArea.sizeAvatar_scaled + 15
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 150; height: 32
+                clip: true
 
                 enabled: !authenticator.graceLocked
 

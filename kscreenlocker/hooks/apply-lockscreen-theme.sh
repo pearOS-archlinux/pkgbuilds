@@ -4,6 +4,7 @@ set -e
 LOCKSCREEN=/usr/share/plasma/shells/org.kde.plasma.desktop/contents/lockscreen
 THEME=/usr/share/pearos/lockscreen
 
+mkdir -p "$LOCKSCREEN"
 cp "$THEME/LockScreenUi.qml" "$LOCKSCREEN/LockScreenUi.qml"
 
 mkdir -p "$LOCKSCREEN/fonts"
