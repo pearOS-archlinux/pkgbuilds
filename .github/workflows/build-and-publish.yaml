@@ -166,6 +166,11 @@ jobs:
           chmod +x ./sign.sh
           ./sign.sh --pull
 
+      - name: Restore sign.sh (pull may overwrite it with the R2 copy)
+        run: |
+          git checkout -- sign.sh
+          chmod +x sign.sh
+
       - name: Drop built package(s) into repo dir
         run: cp /tmp/built-pkgs/*.pkg.tar.zst .
 
