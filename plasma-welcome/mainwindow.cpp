@@ -517,6 +517,14 @@ void MainWindow::setupWelcomeContent() {
                 QMessageBox::warning(this, tr("Fix Layout"),
                     tr("Some files could not be copied:\n") + failed.join(QLatin1Char('\n')));
         }));
+        place(addButton(tr("Wifi Drivers "), QStringLiteral("network-wireless"), false, []() {
+            QProcess::startDetached(QStringLiteral("konsole"),
+                QStringList() << QStringLiteral("-e") << QStringLiteral("bash") << QStringLiteral("-c")
+                    << QStringLiteral("pkexec wifiutil --list; read -n1 -p 'Press any key to close...'"));
+        }));
+        place(addButton(tr("GPU Drivers "), QStringLiteral("video-display"), false, []() {
+            QProcess::startDetached(QStringLiteral("hyprvisor-gui"), QStringList());
+        }));
         if (!isLiveIso_)
             place(addButton(tr("YouTube "), QStringLiteral("assets/youtube.svg"), true,
                              []() { open_url(QStringLiteral("https://youtube.com/pearOS")); }));
