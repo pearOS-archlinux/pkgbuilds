@@ -119,6 +119,13 @@ jobs:
           echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
           chown -R builduser:builduser "$GITHUB_WORKSPACE"
 
+      - name: Import source PGP keys declared in PKGBUILD
+        run: |
+          cd "${{ matrix.pkgdir }}"
+          keys=$(bash -c "source PKGBUILD; printf '%s\n' \"\${validpgpkeys[@]}\"" 2>/dev/null)
+          [[ -z "$keys" ]] && exit 0
+          sudo -u builduser gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys $keys
+
       - name: Build package
         run: |
           cd "${{ matrix.pkgdir }}"
