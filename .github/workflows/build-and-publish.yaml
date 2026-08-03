@@ -135,14 +135,24 @@ jobs:
           mkdir -p /tmp/built-pkgs
           cp "${pkgs[@]}" /tmp/built-pkgs/
 
+      - name: Stage sign.sh in an isolated working dir
+        run: |
+          # sign.sh runs `rclone sync --delete-after`, which would delete
+          # anything under $GITHUB_WORKSPACE not matching its allowlist
+          # (including .git!) if run against the git checkout directly.
+          # Run it in an empty scratch dir instead.
+          mkdir -p /tmp/r2-stage
+          cp sign.sh /tmp/r2-stage/sign.sh
+          chmod +x /tmp/r2-stage/sign.sh
+
       - name: Import signing key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          echo "$GPG_PASSPHRASE" > "$GITHUB_WORKSPACE/.gpg-passphrase"
-          chmod 600 "$GITHUB_WORKSPACE/.gpg-passphrase"
+          echo "$GPG_PASSPHRASE" > /tmp/r2-stage/.gpg-passphrase
+          chmod 600 /tmp/r2-stage/.gpg-passphrase
 
       - name: Configure rclone (R2)
         env:
@@ -162,21 +172,21 @@ jobs:
           EOF
 
       - name: Pull current repo state from R2
-        run: |
-          chmod +x ./sign.sh
-          ./sign.sh --pull
+        working-directory: /tmp/r2-stage
+        run: ./sign.sh --pull
 
       - name: Restore sign.sh (pull may overwrite it with the R2 copy)
         run: |
-          git checkout -- sign.sh
-          chmod +x sign.sh
+          cp sign.sh /tmp/r2-stage/sign.sh
+          chmod +x /tmp/r2-stage/sign.sh
 
-      - name: Drop built package(s) into repo dir
-        run: cp /tmp/built-pkgs/*.pkg.tar.zst .
+      - name: Drop built package(s) into staging dir
+        run: cp /tmp/built-pkgs/*.pkg.tar.zst /tmp/r2-stage/
 
       - name: Sign, rebuild db, push to R2
+        working-directory: /tmp/r2-stage
         run: ./sign.sh
 
       - name: Clean up passphrase
         if: always()
-        run: rm -f "$GITHUB_WORKSPACE/.gpg-passphrase"
+        run: rm -f /tmp/r2-stage/.gpg-passphrase
