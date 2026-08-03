@@ -1,7 +1,7 @@
 # Maintainer: pearOS-archlinux <https://github.com/pearOS-archlinux>
 pkgname=pearos-builder
 pkgver=26.8
-pkgrel=5
+pkgrel=6
 pkgdesc="pearOS ISO builder source tree (build-binary, ISO Builder GUI, airootfs profile), installed at /usr/share/pearOS/dev"
 arch=('any')
 url="https://github.com/pearOS-archlinux/iso"
