@@ -1,0 +1,35 @@
+# Maintainer: Alexandru Balan <alex@pear-software.com>
+pkgname=utils
+pkgver=26.8
+pkgrel=1
+pkgdesc="GPU driver hypervisor CLI + GTK GUI, bundled with wifiutil"
+arch=('x86_64')
+url="https://github.com/alxb421/hyprvisor"
+license=('MIT')
+depends=('gcc-libs' 'python' 'python-gobject' 'gtk3')
+makedepends=('cmake')
+options=('!strip')
+
+build() {
+    cmake -S "$startdir/hyprvisor" -B "$srcdir/build-hyprvisor" \
+        -DCMAKE_BUILD_TYPE=Release
+    cmake --build "$srcdir/build-hyprvisor"
+
+    cmake -S "$startdir/wifiutil" -B "$srcdir/build-wifiutil" \
+        -DCMAKE_BUILD_TYPE=Release
+    cmake --build "$srcdir/build-wifiutil"
+}
+
+package() {
+    # hyprvisor binary
+    install -Dm755 "$srcdir/build-hyprvisor/hyprvisor" \
+        "$pkgdir/usr/local/bin/hyprvisor"
+
+    # hyprvisor-gui.py installed without .py extension
+    install -Dm755 "$startdir/hyprvisor/gui/hyprvisor-gui.py" \
+        "$pkgdir/usr/local/bin/hyprvisor-gui"
+
+    # wifiutil binary
+    install -Dm755 "$srcdir/build-wifiutil/wifiutil" \
+        "$pkgdir/usr/local/bin/wifiutil"
+}
