@@ -11,9 +11,9 @@ source=()
 sha256sums=()
 
 build() {
-  # PKGBUILD is expected to live in the CMake build directory.
-  # The real source tree is one level up from startdir.
-  local srcroot="${startdir}/.."
+  # Build out-of-tree so packaging never touches the source tree.
+  # Source (CMakeLists.txt, src/) lives directly in startdir.
+  local srcroot="${startdir}"
 
   mkdir -p "${startdir}/cmake-pkg"
   cd "${startdir}/cmake-pkg"
