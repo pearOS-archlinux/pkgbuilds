@@ -1,6 +1,6 @@
 pkgname=pearos-notes
 pkgver=26.7.0
-pkgrel=1
+pkgrel=2
 pkgdesc="pearOS Notes - modern Qt6 notes application for pearOS"
 arch=('x86_64')
 url="https://github.com/arch-linux-gui/pearos-notes"
