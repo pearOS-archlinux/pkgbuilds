@@ -7,7 +7,7 @@ pkgver=26.8.0
 pkgrel=1
 arch=('x86_64')
 depends=('qt5-base' 'kwindowsystem5' 'plasma5-integration' 'kwayland-integration' 'pearos-liquidgel')
-makedepends=('cmake')
+makedepends=('cmake' 'rsync')
 url="https://pear-software.com"
 license=('MIT')
 
