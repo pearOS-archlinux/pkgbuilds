@@ -1,0 +1,173 @@
+name: Build changed packages and publish to R2
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.changed.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find package dirs with a version bump
+        id: changed
+        run: |
+          before="${{ github.event.before }}"
+          if [[ -z "$before" ]] || [[ "$before" == "0000000000000000000000000000000000000000" ]]; then
+            before=$(git rev-parse HEAD~1 2>/dev/null || echo "")
+          fi
+
+          if [[ -z "$before" ]]; then
+            candidates=$(find . -maxdepth 2 -name PKGBUILD -printf '%h\n' | sed 's#^\./##' | sort -u)
+          else
+            candidates=$(git diff --name-only "$before" HEAD -- '*/PKGBUILD' | xargs -n1 dirname 2>/dev/null | sort -u)
+          fi
+
+          read_version() {
+            # $1 = PKGBUILD contents, echoes "pkgver-pkgrel"
+            ( set -e
+              eval "$(printf '%s\n' "$1" | grep -E '^\s*pkgver=|^\s*pkgrel=')"
+              printf '%s-%s' "$pkgver" "$pkgrel"
+            )
+          }
+
+          result=()
+          for dir in $candidates; do
+            [[ -f "$dir/PKGBUILD" ]] || continue
+            newcontents=$(cat "$dir/PKGBUILD")
+            newver=$(read_version "$newcontents") || { echo "Skip $dir: cannot parse new PKGBUILD" >&2; continue; }
+
+            oldcontents=$(git show "$before:$dir/PKGBUILD" 2>/dev/null || true)
+            if [[ -z "$oldcontents" ]]; then
+              echo "New package dir: $dir ($newver)"
+              result+=("$dir")
+              continue
+            fi
+
+            oldver=$(read_version "$oldcontents") || { echo "Skip $dir: cannot parse old PKGBUILD" >&2; continue; }
+
+            if [[ "$newver" == "$oldver" ]]; then
+              echo "Skip $dir: version unchanged ($newver)"
+              continue
+            fi
+
+            if dpkg --compare-versions "$newver" gt "$oldver"; then
+              echo "Bumped: $dir ($oldver -> $newver)"
+              result+=("$dir")
+            else
+              echo "Skip $dir: version did not increase ($oldver -> $newver)"
+            fi
+          done
+
+          json=$(printf '%s\n' "${result[@]}" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "Package dirs to build:"
+          echo "$json"
+          echo "dirs=$json" >> "$GITHUB_OUTPUT"
+
+  build-and-publish:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.dirs != '[]' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgdir: ${{ fromJson(needs.detect-changes.outputs.dirs) }}
+
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pacman.conf + mirrorlist
+        run: |
+          cp gh-actions/pacman.conf /etc/pacman.conf
+          cp gh-actions/mirrorlist /etc/pacman.d/mirrorlist
+
+      - name: Init pacman keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+          sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Never/;s/^#\?RemoteFileSigLevel.*/RemoteFileSigLevel = Never/' /etc/pacman.conf
+          pacman -U --noconfirm \
+            "https://mirror1.sox.rs/manjaro/testing/core/x86_64/manjaro-keyring-20251003-1-any.pkg.tar.zst"
+          sed -i 's/^LocalFileSigLevel.*/LocalFileSigLevel = Optional/;s/^RemoteFileSigLevel.*/#RemoteFileSigLevel = Required/' /etc/pacman.conf
+          pacman-key --populate manjaro
+
+          pacman-key -a gh-actions/keys/pearos.gpg
+          pacman-key --lsign-key 4C1A9F3C131ACA95
+
+          pacman-key -a gh-actions/keys/inled.gpg
+          pacman-key --lsign-key 89F828A9675B63CD0077CE9965AA57CF36E2018F
+
+      - name: Install build tools
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm --needed base-devel sudo git rclone
+
+      - name: Create unprivileged build user
+        run: |
+          useradd -m builduser
+          echo "builduser ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/builduser
+          chown -R builduser:builduser "$GITHUB_WORKSPACE"
+
+      - name: Build package
+        run: |
+          cd "${{ matrix.pkgdir }}"
+          sudo -u builduser makepkg -s --noconfirm --needed
+
+      - name: Import signing key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "$GPG_PASSPHRASE" > "$GITHUB_WORKSPACE/.gpg-passphrase"
+          chmod 600 "$GITHUB_WORKSPACE/.gpg-passphrase"
+
+      - name: Configure rclone (R2)
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+        run: |
+          mkdir -p "${HOME}/.config/rclone"
+          cat > "${HOME}/.config/rclone/rclone.conf" <<EOF
+          [r2-pearos]
+          type = s3
+          provider = Cloudflare
+          access_key_id = ${R2_ACCESS_KEY_ID}
+          secret_access_key = ${R2_SECRET_ACCESS_KEY}
+          endpoint = ${R2_ENDPOINT_URL}
+          acl = private
+          EOF
+
+      - name: Pull current repo state from R2
+        run: |
+          chmod +x ./sign.sh
+          ./sign.sh --pull
+
+      - name: Drop built package(s) into repo dir
+        run: |
+          shopt -s nullglob
+          pkgs=("${{ matrix.pkgdir }}"/*.pkg.tar.zst)
+          if (( ${#pkgs[@]} == 0 )); then
+            echo "No package produced in ${{ matrix.pkgdir }}, skipping." >&2
+            exit 1
+          fi
+          cp "${pkgs[@]}" .
+
+      - name: Sign, rebuild db, push to R2
+        run: ./sign.sh
+
+      - name: Clean up passphrase
+        if: always()
+        run: rm -f "$GITHUB_WORKSPACE/.gpg-passphrase"

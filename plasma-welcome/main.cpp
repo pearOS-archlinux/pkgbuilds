@@ -8,6 +8,7 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QDebug>
+#include <QIcon>
 
 namespace {
 
@@ -48,10 +49,11 @@ private:
 // (src/application.cpp:969-1020) -- same isScriptLoaded()/unloadScript()
 // idempotency dance (KWin keeps scripts loaded across separate process
 // launches, so a stale instance from a previous run has to be unloaded
-// first or loadScript() on the same name returns -1), same distinct plugin
-// name pattern to sidestep the same wedged-script issue documented there if
-// it ever recurs.
-void loadWindowTrackerKwinScript() {
+// first or loadScript() on the same name returns -1).
+//
+// Returns the plugin name actually loaded under (empty on failure) so main()
+// can unload it again on clean shutdown -- see aboutToQuit below.
+QString loadWindowTrackerKwinScript() {
     QString scriptPath = QCoreApplication::applicationDirPath()
         + QStringLiteral("/kwin-scripts/filer-shell-qt5-window-tracker.js");
     if (!QFile::exists(scriptPath)) {
@@ -65,29 +67,31 @@ void loadWindowTrackerKwinScript() {
     }
     if (!QFile::exists(scriptPath)) {
         qWarning() << "filer-shell-qt5-window-tracker.js not found, sidebar wallpaper tint won't track window position. Looked at" << scriptPath;
-        return;
+        return QString();
     }
 
     QDBusInterface scripting(QStringLiteral("org.kde.KWin"), QStringLiteral("/Scripting"),
                               QStringLiteral("org.kde.kwin.Scripting"));
     if (!scripting.isValid()) {
         qWarning() << "org.kde.kwin.Scripting D-Bus interface not available, sidebar wallpaper tint won't track window position.";
-        return;
+        return QString();
     }
-    // Versioned suffix ("-v4", bumped again -- "-v3" wedged after this
-    // project's own debugging session relaunched the binary many times
-    // back-to-back): after enough unload/reload cycles in one KWin session,
-    // a given plugin name was observed to end up permanently stuck -- still
-    // reporting isScriptLoaded() true and accepting a fresh loadScript()+run()
-    // with no error, but its JS body silently never executing again. Since
-    // KWin's own scripting engine (not this file) owns whatever internal
-    // state got stuck, and there's no unwedge API to call, the name itself
-    // is the only lever available -- same fix, same reasoning as real
-    // Filer's own "-v2" suffix (src/application.cpp:998-1008). Bump this
-    // suffix again if it ever recurs -- and avoid repeatedly relaunching
-    // this binary back-to-back during development, since that's exactly
-    // what triggers it.
-    const QString pluginName = QStringLiteral("filer-shell-qt5-window-tracker-v5");
+    // PID-scoped name instead of a hand-bumped versioned suffix ("-v3"
+    // through "-v5" wedged in turn during this project's own debugging
+    // sessions, each after relaunching the binary many times back-to-back
+    // in one KWin session): KWin was observed to permanently wedge a script
+    // name after enough unload/reload cycles of that *same* name -- still
+    // reporting isScriptLoaded() true and accepting a fresh loadScript()+
+    // run() with no error, but its JS body silently never executing again.
+    // A name that's never reused within a KWin session can't accumulate
+    // those cycles in the first place, so it can't wedge -- no more manual
+    // suffix bumps needed. aboutToQuit below unloads it again on clean exit
+    // so relaunches don't pile up orphaned scripts in a long-lived KWin
+    // session; the isScriptLoaded()/unloadScript() dance right here still
+    // covers the crash/SIGKILL case where a same-PID name recurs after PIDs
+    // wrap around.
+    const QString pluginName = QStringLiteral("filer-shell-qt5-window-tracker-%1")
+        .arg(QCoreApplication::applicationPid());
     QDBusReply<bool> alreadyLoaded = scripting.call(QStringLiteral("isScriptLoaded"), pluginName);
     if (alreadyLoaded.isValid() && alreadyLoaded.value())
         scripting.call(QStringLiteral("unloadScript"), pluginName);
@@ -95,10 +99,11 @@ void loadWindowTrackerKwinScript() {
     QDBusReply<int> scriptId = scripting.call(QStringLiteral("loadScript"), scriptPath, pluginName);
     if (!scriptId.isValid() || scriptId.value() < 0) {
         qWarning() << "Failed to load filer-shell-qt5-window-tracker.js:" << scriptId.error().message();
-        return;
+        return QString();
     }
     QDBusInterface(QStringLiteral("org.kde.KWin"), QStringLiteral("/Scripting/Script%1").arg(scriptId.value()),
                     QStringLiteral("org.kde.kwin.Script")).call(QStringLiteral("run"));
+    return pluginName;
 }
 
 }
@@ -111,6 +116,24 @@ int main(int argc, char* argv[]) {
     QGuiApplication::setDesktopFileName(QStringLiteral("filer-shell-qt5"));
 
     QApplication app(argc, argv);
+
+    // The pearOS variant icon themes (pearOS-<color>[-dark|-light]) declare
+    // Inherits=hicolor,breeze in their index.theme, so QIcon::fromTheme()
+    // falls through to the standard freedesktop icon names setupWelcomeContent()
+    // uses (system-software-install, emblem-favorite, ...). The bare "pearOS"
+    // theme itself ships with no index.theme at all -- QIcon::themeName()
+    // still resolves to it correctly from kdeglobals regardless of platform-
+    // theme integration, but with no Inherits chain every fromTheme() call
+    // silently returns a null icon (confirmed via QIcon::hasThemeIcon()
+    // returning false for a sentinel name on an affected install). Detect
+    // that and fall back to pearOS-dark instead -- a real installed pearOS
+    // variant with the missing Inherits chain, so the icon set stays
+    // on-brand instead of jumping to generic breeze artwork.
+    if (!QIcon::hasThemeIcon(QStringLiteral("system-software-install"))) {
+        qWarning() << "Icon theme" << QIcon::themeName()
+                   << "has no usable icons (missing index.theme/Inherits?), falling back to pearOS-dark";
+        QIcon::setThemeName(QStringLiteral("pearOS-dark"));
+    }
 
     MainWindow window;
 
@@ -135,7 +158,20 @@ int main(int argc, char* argv[]) {
     // loading after show() means the initial forEach() always finds and
     // wires up the real window directly, no windowAdded round-trip needed.
     window.show();
-    loadWindowTrackerKwinScript();
+    const QString trackerPluginName = loadWindowTrackerKwinScript();
+
+    // Unload our own PID-scoped script on clean shutdown so relaunches
+    // across a long-lived KWin session don't pile up orphaned scripts --
+    // see loadWindowTrackerKwinScript()'s own comment. Best-effort only:
+    // skipped entirely on a crash/SIGKILL, same as any other cleanup here.
+    if (!trackerPluginName.isEmpty()) {
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [trackerPluginName]() {
+            QDBusInterface scripting(QStringLiteral("org.kde.KWin"), QStringLiteral("/Scripting"),
+                                      QStringLiteral("org.kde.kwin.Scripting"));
+            if (scripting.isValid())
+                scripting.call(QStringLiteral("unloadScript"), trackerPluginName);
+        });
+    }
 
     return app.exec();
 }

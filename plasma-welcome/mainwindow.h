@@ -288,6 +288,19 @@ private:
     bool transparency_ = true;
     int transparencyPower_ = 25;
 
+    // [FolderView] SidePane* keys -- same file, defaults match Settings'
+    // own ctor defaults (src/settings.cpp:374-387). Previously hardcoded
+    // literals at buildSidebar()'s one Fm::buildSidePaneStyleSheet() call
+    // site despite filer_sidebar.h's own header comment claiming these were
+    // read from config.
+    int sidePaneIconSize_ = 20;
+    int sidePaneItemSpacing_ = 0;
+    int sidePaneItemHorizontalPadding_ = 6;
+    int sidePaneItemFontSize_ = 11;
+    int sidePaneFontWeight_ = 600;
+    QColor sidePaneSelectorColor_ = QColor(0x42, 0x42, 0x42);
+    int sidePaneSelectorOpacity_ = 255;
+
     // Sidebar blend-target color -- MainWindow's own sidebarTint_ member
     // (src/mainwindow.h:448ish), (28, 28, 28) fallback until
     // updateSidebarWallpaperTint() has real wallpaper pixels to sample.

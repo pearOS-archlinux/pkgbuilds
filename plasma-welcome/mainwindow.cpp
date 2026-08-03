@@ -275,12 +275,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     sidebar_->setObjectName(QStringLiteral("sidebar"));
     sidebar_->setMinimumWidth(1);
     sidebar_->setFrameShape(QFrame::NoFrame);
-    sidebar_->setIconSize(QSize(16, 16));
+    sidebar_->setIconSize(QSize(sidePaneIconSize_, sidePaneIconSize_));
     sidebar_->setFocusPolicy(Qt::NoFocus);
     sidebar_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     sidebar_->setAttribute(Qt::WA_TranslucentBackground);
     {
-        QString qss = Fm::buildSidePaneStyleSheet(1, 10, 500, QColor(66, 66, 66), 255);
+        QString qss = Fm::buildSidePaneStyleSheet(sidePaneItemSpacing_, sidePaneItemHorizontalPadding_,
+                                                    sidePaneFontWeight_, sidePaneSelectorColor_, sidePaneSelectorOpacity_,
+                                                    sidePaneItemFontSize_);
         qss += QStringLiteral("QListWidget { background: transparent; border: none; }");
         sidebar_->setStyleSheet(qss);
     }
@@ -711,6 +713,18 @@ void MainWindow::loadSettings() {
     mainWindowTint_ = qBound(0, settings.value(QStringLiteral("MainWindowTint"), mainWindowTint_).toInt(), 100);
     transparency_ = settings.value(QStringLiteral("Transparency"), transparency_ ? 1 : 0).toInt() != 0;
     transparencyPower_ = qBound(0, settings.value(QStringLiteral("TransparencyPower"), transparencyPower_).toInt(), 100);
+    settings.endGroup();
+
+    // [FolderView] SidePane* keys -- feeds buildSidebar()'s
+    // Fm::buildSidePaneStyleSheet() call and sidebar_->setIconSize().
+    settings.beginGroup(QStringLiteral("FolderView"));
+    sidePaneIconSize_ = settings.value(QStringLiteral("SidePaneIconSize"), sidePaneIconSize_).toInt();
+    sidePaneItemSpacing_ = settings.value(QStringLiteral("SidePaneItemSpacing"), sidePaneItemSpacing_).toInt();
+    sidePaneItemHorizontalPadding_ = settings.value(QStringLiteral("SidePaneItemHorizontalPadding"), sidePaneItemHorizontalPadding_).toInt();
+    sidePaneItemFontSize_ = settings.value(QStringLiteral("SidePaneItemFontSize"), sidePaneItemFontSize_).toInt();
+    sidePaneFontWeight_ = settings.value(QStringLiteral("SidePaneFontWeight"), sidePaneFontWeight_).toInt();
+    sidePaneSelectorColor_ = QColor(settings.value(QStringLiteral("SidePaneSelectorColor"), sidePaneSelectorColor_.name()).toString());
+    sidePaneSelectorOpacity_ = qBound(0, settings.value(QStringLiteral("SidePaneSelectorOpacity"), sidePaneSelectorOpacity_).toInt(), 255);
     settings.endGroup();
 
     // [Desktop] group -- feeds loadWallpaperFromConfig()/
