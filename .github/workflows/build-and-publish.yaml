@@ -124,6 +124,17 @@ jobs:
           cd "${{ matrix.pkgdir }}"
           sudo -u builduser makepkg -s --noconfirm --needed
 
+      - name: Stage built package(s) outside the checkout
+        run: |
+          shopt -s nullglob
+          pkgs=("${{ matrix.pkgdir }}"/*.pkg.tar.zst)
+          if (( ${#pkgs[@]} == 0 )); then
+            echo "No package produced in ${{ matrix.pkgdir }}, skipping." >&2
+            exit 1
+          fi
+          mkdir -p /tmp/built-pkgs
+          cp "${pkgs[@]}" /tmp/built-pkgs/
+
       - name: Import signing key
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
@@ -156,14 +167,7 @@ jobs:
           ./sign.sh --pull
 
       - name: Drop built package(s) into repo dir
-        run: |
-          shopt -s nullglob
-          pkgs=("${{ matrix.pkgdir }}"/*.pkg.tar.zst)
-          if (( ${#pkgs[@]} == 0 )); then
-            echo "No package produced in ${{ matrix.pkgdir }}, skipping." >&2
-            exit 1
-          fi
-          cp "${pkgs[@]}" .
+        run: cp /tmp/built-pkgs/*.pkg.tar.zst .
 
       - name: Sign, rebuild db, push to R2
         run: ./sign.sh
