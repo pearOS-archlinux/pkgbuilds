@@ -147,7 +147,13 @@ rebuild_db_work() {
 	if ((total == 0)); then
 		return 1
 	fi
-	repo-add pearos.db.tar.gz *.pkg.tar.zst
+	# repo-add keeps whichever entry it saw last, and the shell glob is sorted
+	# by name, not by version: "26.8.0" sorts before "6.5.0", so an older package
+	# left in the bucket would win. pacsort orders them the way pacman compares
+	# versions, which puts the newest one last.
+	local ordered=()
+	mapfile -t ordered < <(printf '%s\n' *.pkg.tar.zst | pacsort --files)
+	repo-add pearos.db.tar.gz "${ordered[@]}"
 	prune_missing_from_db
 }
 
