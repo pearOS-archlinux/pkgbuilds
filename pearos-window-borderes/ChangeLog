@@ -1,0 +1,107 @@
+V6.5
+---------
+ * Bumped the version to 6.5.
+ * Added an option for round bottom corners with no borders.
+
+V6.4
+---------
+ * Bumped the version to 6.4 and imported some changes from Breeze 6.4.0.
+ * Used `KDecoration3::snapToPixelGrid` is a few places.
+
+V6.3
+---------
+ * Bumped the version to 6.3 and imported some changes from Breeze 6.3.0.
+ * Fixed a problem in a ui file.
+ * Removed the dialog option because it never worked on Wayland, and, since KDecoration3, it doesn't work on X11 either.
+
+V6.2
+---------
+ * Bumped the version to 6.2 and imported some changes from Breeze 6.2.0.
+ * Silenced a compilation warning.
+ * Code cleanup.
+
+V6.1
+---------
+ * Bumped the version to 6.1 and imported some changes from Breeze 6.1.5.
+
+V6.0
+---------
+ * Bumped the version to 6.0 and imported some changes from Breeze 6.0.2.
+
+V5.27
+---------
+ * Bumped the version to 5.27 and imported useful changes from breeze-5.27.2.
+ * Removed the option about drawing border on maximized and tiled windows (it was both ugly and confusing).
+ * Removed the 1-pix empty gap below shaded windows.
+ * Smaller shadow for inactive windows (without any shadow animation).
+ * Removed the activation state animation. It was redundant and wasn't consistent with Qt's activation state (which Kvantum supports).
+
+ V5.26
+---------
+ * Bumped the version to 5.26 without any change.
+
+V5.25
+---------
+ * Enabled the new decoration blurring of KWin (without "blur glitches").
+
+V5.24
+---------
+ * Bumped the version to 5.24 and silenced compilation warnings.
+
+V5.23
+---------
+ * Bumped the version to 5.23 and imported some changes from breeze-5.23.1.
+ * Imported https://invent.kde.org/plasma/breeze/-/commit/f2b81df6522b611bdf8e2fde7947bde82c35147e
+
+V5.22
+---------
+ * Bumped the version to 5.22 and imported useful changes from breeze-5.22.1.
+
+V5.21
+---------
+ * Bumped the version to 5.21 without any change (breeze-5.21.0 added shadow animation but I didn't import it to save resources).
+
+V5.20
+---------
+ * Bumped the version to 5.20 without any change (breeze-5.20.0 removed button animation settings but I kept them).
+
+V5.19
+---------
+ * Imported useful changes from Breeze 5.19.1.
+ * Changed QVariantAnimation emuns to QAbstractAnimation ones.
+
+V5.18
+---------
+ * Imported some of the changes from Breeze 5.18.0.
+
+V5.17
+---------
+ * Imported some of the changes from Breeze 5.17.1.
+ * Milder hover/press backgrounds for non-macOS buttons.
+
+V5.16
+---------
+ * Imported some of the changes from Breeze 5.16.0.
+ * Added an option for extra horizontal title margin.
+
+V5.15
+---------
+ * Imported the changes from Breeze 5.15.0.
+ * Added the checkbox "Only for dialogs" to the exception dialog to support separate settings for dialogs.
+
+V5.14
+---------
+ * Upgraded for Breeze 5.14 with its new shadows.
+ * Applied the upstream patch https://phabricator.kde.org/D16596.
+ * Replaced font boldness checkbox with weight combobox.
+ * Also include borders in the opacity override.
+
+V5.13
+---------
+ * First version, made out of Breeze 5.13 and BreezeBlurred with new options.
+ * Set the font style name for KDE to render it correctly. I don't know why KDE needs that while LXQt doesn't.
+ * Added an option for not using macOS-like buttons.
+ * Added flatness to the exception list.
+ * Made inactive macOS-like buttons gray.
+ * Added a setting for button spacing.
+ * Added opacity override to the exception dialog.

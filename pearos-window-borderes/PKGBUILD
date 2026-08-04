@@ -1,0 +1,29 @@
+_cmakedir="$startdir"
+pkgname=pearos-window-borders
+pkgver=26.8.0
+pkgrel=1
+pkgdesc="pearOS-style KWin window border"
+arch=('x86_64')
+url="https://pearos.xyz"
+license=('GPL3')
+# linked libraries, checked with readelf; kwin is the runtime host of the plugin
+# and pearos-muternvf carries the font the titlebar defaults to
+depends=('kdecoration' 'kwin' 'qt6-base' 'kconfig' 'kcmutils' 'kcoreaddons'
+         'kguiaddons' 'ki18n' 'kwidgetsaddons' 'pearos-muternvf')
+makedepends=('cmake' 'extra-cmake-modules' 'ninja')
+install="$pkgname.install"
+source=()
+
+build() {
+  cmake -S "$_cmakedir" -B "$srcdir/build" -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBUILD_TESTING=OFF \
+    -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+  cmake --build "$srcdir/build"
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install "$srcdir/build"
+}

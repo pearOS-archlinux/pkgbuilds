@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Description": "Reports the process of every window to the pearOS window decoration, so that it can mark windows that are running something",
+        "EnabledByDefault": true,
+        "Icon": "preferences-system-windows",
+        "Id": "pearos-busywatcher",
+        "License": "GPL-3.0+",
+        "Name": "pearOS Busy Watcher",
+        "Version": "1.0"
+    },
+    "X-Plasma-API": "javascript",
+    "KPackageStructure": "KWin/Script",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

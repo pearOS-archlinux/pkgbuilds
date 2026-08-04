@@ -1,0 +1,12 @@
+{
+    "KPlugin": {
+        "Description": "pearOS-style window decoration for the Plasma Desktop",
+        "EnabledByDefault": true,
+        "Name": "pearOS"
+    },
+    "X-KDE-ConfigModule": "kcm_pearos",
+    "org.kde.kdecoration3": {
+        "blur": true,
+        "recommendedBorderSize": "None"
+    }
+}

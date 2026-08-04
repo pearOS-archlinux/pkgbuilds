@@ -1,0 +1,20 @@
+_enable_script() {
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file /etc/xdg/kwinrc --group Plugins --key pearos-busywatcherEnabled true
+    fi
+}
+
+post_install() {
+    _enable_script
+    echo ":: Log out and back in to load the new window decoration."
+}
+
+post_upgrade() {
+    _enable_script
+}
+
+post_remove() {
+    if command -v kwriteconfig6 >/dev/null 2>&1; then
+        kwriteconfig6 --file /etc/xdg/kwinrc --group Plugins --key pearos-busywatcherEnabled --delete
+    fi
+}
