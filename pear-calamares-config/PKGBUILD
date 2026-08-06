@@ -1,7 +1,7 @@
 # Maintainer: Alexandru Balan
 pkgname=pear-calamares-config
 pkgver=26.8.0
-pkgrel=4
+pkgrel=5
 pkgdesc="Calamares config files for pearOS and NiceC0re based Systems"
 arch=('any')
 url="https://github.com/pearOS-archlinux"
