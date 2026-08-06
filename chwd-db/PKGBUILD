@@ -1,6 +1,6 @@
 pkgname=chwd-db
 pkgver=1.24.1
-pkgrel=1
+pkgrel=2
 pkgdesc="Transitional dummy package - the hardware profile database ships inside chwd"
 arch=('any')
 url="https://github.com/cachyos/chwd"
