@@ -1,7 +1,7 @@
 # Maintainer: pearOS-archlinux <https://github.com/pearOS-archlinux>
 pkgname=pearos-builder
 pkgver=26.8
-pkgrel=7
+pkgrel=8
 pkgdesc="pearOS ISO builder source tree (build-binary, ISO Builder GUI, airootfs profile), installed at /usr/share/pearOS/dev"
 arch=('any')
 url="https://github.com/pearOS-archlinux/iso"
@@ -21,6 +21,11 @@ package() {
   install -dm755 "$pkgdir/usr/share/pearOS/dev"
   cp -a . "$pkgdir/usr/share/pearOS/dev/"
   rm -rf "$pkgdir/usr/share/pearOS/dev/.git" "$pkgdir/usr/share/pearOS/dev/arch-package"
+
+  # Version marker so the GUI can tell its per-user working copy
+  # (~/.local/share/pearOS/dev) apart from a stale one after an upgrade.
+  printf '%s\n' "$pkgver-$pkgrel" > "$pkgdir/usr/share/pearOS/dev/.pearos-dev-version"
+  chmod 644 "$pkgdir/usr/share/pearOS/dev/.pearos-dev-version"
 
   chmod 755 "$pkgdir/usr/share/pearOS/dev/build-binary"
   chmod 755 "$pkgdir/usr/share/pearOS/dev/iso-builder/pearos-builder"

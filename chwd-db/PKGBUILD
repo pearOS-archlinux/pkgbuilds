@@ -1,0 +1,23 @@
+pkgname=chwd-db
+pkgver=1.24.1
+pkgrel=1
+pkgdesc="Transitional dummy package - the hardware profile database ships inside chwd"
+arch=('any')
+url="https://github.com/cachyos/chwd"
+license=('GPL-3.0-or-later')
+depends=('chwd')
+options=(!strip !emptydirs)
+
+package() {
+    install -d "${pkgdir}/usr/share/doc/${pkgname}"
+    cat > "${pkgdir}/usr/share/doc/${pkgname}/README" <<'DOC'
+chwd-db is a transitional dummy package and installs no functional files.
+
+The hardware profile database it used to carry now ships inside chwd itself,
+under /var/lib/chwd/db/{pci,usb}. chwd declares provides/replaces/conflicts on
+chwd-db, so any reference to this name is already satisfied by chwd alone.
+
+This package exists only so that configurations still naming chwd-db keep
+resolving. It can be dropped once nothing references it.
+DOC
+}
