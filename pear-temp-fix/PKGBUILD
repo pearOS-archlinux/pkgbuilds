@@ -2,7 +2,7 @@
 
 pkgname=pear-temp-fix
 pkgver=26.8.2
-pkgrel=1
+pkgrel=2
 pkgdesc="libprocesscore patcher, [cachyos] repo enabler, mirror refresher and linux-firmware epoch realigner"
 arch=('x86_64')
 url="https://github.com/pearOS-archlinux/iso/"
