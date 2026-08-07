@@ -1,13 +1,13 @@
 # Maintainer: Alexandru Balan <alex@pear-software.com>
 
 pkgname=pear-temp-fix
-pkgver=26.7
+pkgver=26.8
 pkgrel=1
-pkgdesc="libprocesscore.so.10 -> .so.11 patcher"
+pkgdesc="libprocesscore.so.10 -> .so.11 patcher and [cachyos] repository enabler"
 arch=('x86_64')
 url="https://github.com/pearOS-archlinux/iso/"
 license=('MIT')
-depends=()
+depends=('cachyos-keyring')
 install="${pkgname}.install"
 
 package() {
