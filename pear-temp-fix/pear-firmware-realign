@@ -1,55 +1,119 @@
 #!/usr/bin/env bash
 set -u
 
-stamp=/var/lib/pear-temp-fix/firmware-realigned
+statedir=/var/lib/pear-temp-fix
+mirror_stamp="$statedir/mirrors-refreshed"
+fw_stamp="$statedir/firmware-realigned"
+kernel_stamp="$statedir/kernel-realigned"
 
-refresh_mirrors() {
-    command -v reflector >/dev/null 2>&1 || return 0
-    echo "refreshing mirrorlist with reflector"
-    reflector --save /etc/pacman.d/mirrorlist \
-              --protocol https \
-              --age 12 \
-              --completion-percent 100 \
-              --score 50 \
-              --sort rate \
-              --number 25 \
-              --connection-timeout 5 \
-              --download-timeout 5 || echo "reflector failed, keeping existing mirrorlist"
+mark() {
+    install -d "$statedir"
+    : > "$1"
 }
 
-if [ -e "$stamp" ]; then
+busy() {
+    if [ -e /var/lib/pacman/db.lck ]; then
+        echo "pacman is busy, retrying on next boot"
+        return 0
+    fi
+    return 1
+}
+
+refresh_mirrors() {
+    [ -e "$mirror_stamp" ] && return 0
+    command -v reflector >/dev/null 2>&1 || return 0
+    echo "refreshing mirrorlist with reflector"
+    if reflector --save /etc/pacman.d/mirrorlist \
+                 --protocol https \
+                 --age 12 \
+                 --completion-percent 100 \
+                 --score 50 \
+                 --sort rate \
+                 --number 25 \
+                 --connection-timeout 5 \
+                 --download-timeout 5; then
+        mark "$mirror_stamp"
+    else
+        echo "reflector failed, keeping existing mirrorlist"
+    fi
+}
+
+realign_kernel() {
+    [ -e "$kernel_stamp" ] && return 0
+    [ -e /boot/vmlinuz-linux ] || { mark "$kernel_stamp"; return 0; }
+
+    if pacman -Qo /boot/vmlinuz-linux >/dev/null 2>&1; then
+        echo "/boot/vmlinuz-linux belongs to a package, leaving it alone"
+        mark "$kernel_stamp"
+        return 0
+    fi
+
+    local kbase=""
+    for f in /usr/lib/modules/*/pkgbase; do
+        [ -e "$f" ] || continue
+        kbase="$(cat "$f")"
+    done
+
+    if [ -z "$kbase" ]; then
+        echo "no kernel pkgbase found, not touching /boot"
+        return 1
+    fi
+
+    echo "orphaned /boot/vmlinuz-linux found, reinstalling $kbase"
+    if ! pacman -S --noconfirm "$kbase"; then
+        echo "reinstall failed, retrying on next boot"
+        return 1
+    fi
+
+    if [ ! -e "/boot/vmlinuz-$kbase" ]; then
+        echo "/boot/vmlinuz-$kbase still missing, keeping the old files"
+        return 1
+    fi
+
+    rm -f /boot/vmlinuz-linux /boot/initramfs-linux.img /boot/initramfs-linux-fallback.img
+    pacman -Qo /etc/mkinitcpio.d/linux.preset >/dev/null 2>&1 || rm -f /etc/mkinitcpio.d/linux.preset
+
+    mkinitcpio -P || true
+
+    if [ -e /boot/grub/grub.cfg ] && command -v grub-mkconfig >/dev/null 2>&1; then
+        grub-mkconfig -o /boot/grub/grub.cfg || true
+    fi
+
+    mark "$kernel_stamp"
+    echo "kernel realigned to $kbase"
+}
+
+realign_firmware() {
+    [ -e "$fw_stamp" ] && return 0
+
+    local pkgs=()
+    while read -r name ver; do
+        case "$ver" in
+            *:*) pkgs+=("$name") ;;
+        esac
+    done < <(pacman -Q 2>/dev/null | grep '^linux-firmware')
+
+    if [ "${#pkgs[@]}" -eq 0 ]; then
+        mark "$fw_stamp"
+        return 0
+    fi
+
+    echo "realigning to the repository baseline: ${pkgs[*]}"
+    if ! pacman -S --noconfirm "${pkgs[@]}"; then
+        echo "pacman failed, retrying on next boot"
+        return 1
+    fi
+    mark "$fw_stamp"
+}
+
+if [ -e "$mirror_stamp" ] && [ -e "$kernel_stamp" ] && [ -e "$fw_stamp" ]; then
     exit 0
 fi
 
-if [ -e /var/lib/pacman/db.lck ]; then
-    echo "pacman is busy, retrying on next boot"
-    exit 0
-fi
-
-pkgs=()
-while read -r name ver; do
-    case "$ver" in
-        *:*) pkgs+=("$name") ;;
-    esac
-done < <(pacman -Q 2>/dev/null | grep '^linux-firmware')
-
-if [ "${#pkgs[@]}" -eq 0 ]; then
-    install -d "$(dirname "$stamp")"
-    : > "$stamp"
-    refresh_mirrors
-    echo "no epoch-versioned firmware packages, mirrors refreshed"
-    exit 0
-fi
+busy && exit 0
 
 refresh_mirrors
+realign_kernel
+realign_firmware
 
-echo "realigning to the repository baseline: ${pkgs[*]}"
-
-if ! pacman -Sy --noconfirm "${pkgs[@]}"; then
-    echo "pacman failed, retrying on next boot"
-    exit 1
-fi
-
-install -d "$(dirname "$stamp")"
-: > "$stamp"
 echo "done"

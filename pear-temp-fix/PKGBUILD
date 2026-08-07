@@ -1,9 +1,9 @@
 # Maintainer: Alexandru Balan <alex@pear-software.com>
 
 pkgname=pear-temp-fix
-pkgver=26.8.2
-pkgrel=2
-pkgdesc="libprocesscore patcher, [cachyos] repo enabler, mirror refresher and linux-firmware epoch realigner"
+pkgver=26.8.3
+pkgrel=1
+pkgdesc="Realigns existing pearOS installs to the Arch package baseline: mirrors, kernel naming, linux-firmware epoch, [cachyos] repo"
 arch=('x86_64')
 url="https://github.com/pearOS-archlinux/iso/"
 license=('MIT')

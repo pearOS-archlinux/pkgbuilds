@@ -1,6 +1,5 @@
 [Unit]
-Description=Refresh Arch mirrors and realign epoch-versioned linux-firmware packages
-ConditionPathExists=!/var/lib/pear-temp-fix/firmware-realigned
+Description=Realign pearOS installs to the Arch package baseline
 Wants=network-online.target
 After=network-online.target
 
