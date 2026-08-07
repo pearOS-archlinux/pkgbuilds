@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -u
+
+stamp=/var/lib/pear-temp-fix/firmware-realigned
+
+if [ -e "$stamp" ]; then
+    exit 0
+fi
+
+if [ -e /var/lib/pacman/db.lck ]; then
+    echo "pacman is busy, retrying on next boot"
+    exit 0
+fi
+
+pkgs=()
+while read -r name ver; do
+    case "$ver" in
+        *:*) pkgs+=("$name") ;;
+    esac
+done < <(pacman -Q 2>/dev/null | grep '^linux-firmware')
+
+if [ "${#pkgs[@]}" -eq 0 ]; then
+    install -d "$(dirname "$stamp")"
+    : > "$stamp"
+    echo "no epoch-versioned firmware packages, nothing to do"
+    exit 0
+fi
+
+echo "realigning to the repository baseline: ${pkgs[*]}"
+
+if ! pacman -S --noconfirm "${pkgs[@]}"; then
+    echo "pacman failed, retrying on next boot"
+    exit 1
+fi
+
+install -d "$(dirname "$stamp")"
+: > "$stamp"
+echo "done"

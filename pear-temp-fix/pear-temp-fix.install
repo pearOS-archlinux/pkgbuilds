@@ -40,10 +40,17 @@ EOF
     echo "==> run 'pacman -Syu' to pick up linux-firmware and the cachyos kernels"
 }
 
+_enable_firmware_realign() {
+    systemctl daemon-reload >/dev/null 2>&1 || true
+    systemctl enable pear-firmware-realign.service >/dev/null 2>&1 || true
+    echo "==> linux-firmware realignment scheduled for next boot"
+}
+
 post_install() {
     _patch_libprocesscore
     _populate_cachyos_key
     _enable_cachyos_repo
+    _enable_firmware_realign
 }
 
 post_upgrade() {
@@ -51,6 +58,7 @@ post_upgrade() {
 }
 
 post_remove() {
+    systemctl disable pear-firmware-realign.service >/dev/null 2>&1 || true
     echo "==> removing patch"
     if [ -L /usr/lib/libprocesscore.so.10 ]; then
         rm /usr/lib/libprocesscore.so.10

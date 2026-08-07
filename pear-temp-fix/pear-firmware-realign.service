@@ -1,0 +1,12 @@
+[Unit]
+Description=Realign epoch-versioned linux-firmware packages to the repository baseline
+ConditionPathExists=!/var/lib/pear-temp-fix/firmware-realigned
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/pear-firmware-realign
+
+[Install]
+WantedBy=multi-user.target
