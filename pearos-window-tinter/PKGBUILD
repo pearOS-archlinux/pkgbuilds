@@ -1,0 +1,26 @@
+pkgname=pearos-window-tinter
+pkgver=26.8
+pkgrel=3
+pkgdesc="KWin effect that tints window backgrounds with the wallpaper color behind them"
+arch=('x86_64')
+url="https://pearos.xyz"
+license=('GPL-2.0-or-later')
+depends=('kwin' 'qt6-base' 'kconfig' 'kcolorscheme' 'kcoreaddons')
+# renamed from pearos-tinter
+provides=('pearos-tinter')
+conflicts=('pearos-tinter')
+replaces=('pearos-tinter')
+makedepends=('cmake' 'extra-cmake-modules')
+source=()
+
+build() {
+    cmake -B build -S "$startdir" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=lib
+    cmake --build build
+}
+
+package() {
+    DESTDIR="$pkgdir" cmake --install build
+}

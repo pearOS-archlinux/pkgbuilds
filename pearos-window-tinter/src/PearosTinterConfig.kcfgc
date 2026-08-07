@@ -1,0 +1,4 @@
+File=options.kcfg
+ClassName=PearosTinterConfig
+Singleton=true
+Mutators=true

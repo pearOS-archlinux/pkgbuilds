@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+    <kcfgfile name="kwinrc"/>
+    <group name="Effect-PearosTinter">
+        <!-- How far a background pixel is pulled towards the wallpaper color.
+             Filer uses 7-8% for the same look (SidebarTint/MainWindowTint). -->
+        <entry name="TintAmount" type="UInt">
+            <default>8</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+
+        <!-- Keep saturated pixels (icons, thumbnails, photos) untinted. -->
+        <entry name="ChromaGuard" type="UInt">
+            <default>100</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="ChromaLow" type="UInt">
+            <default>10</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="ChromaHigh" type="UInt">
+            <default>35</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+
+        <!-- Keep high local contrast pixels (text, edges) untinted. -->
+        <entry name="EdgeGuard" type="UInt">
+            <default>100</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="EdgeLow" type="UInt">
+            <default>2</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="EdgeHigh" type="UInt">
+            <default>12</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+
+        <!-- Optional color key: only tint pixels close to KeyColor. Off by
+             default because KWin's own color scheme is a poor guess for GTK,
+             Electron and self-skinned apps. -->
+        <entry name="KeyStrength" type="UInt">
+            <default>0</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="KeyFromColorScheme" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="KeyColor" type="Color">
+            <default>#1e1e1e</default>
+        </entry>
+        <entry name="KeyTolerance" type="UInt">
+            <default>12</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+        <entry name="KeySoftness" type="UInt">
+            <default>15</default>
+            <min>0</min>
+            <max>100</max>
+        </entry>
+
+        <!-- Window filtering. -->
+        <entry name="IncludeDialogs" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="SkipFullScreen" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="SuspendDuringResize" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="Blacklist" type="StringList">
+            <default>mpv,vlc,kwin_wayland,plasmashell</default>
+        </entry>
+
+        <!-- Wallpaper sampling resolution (long edge, in pixels). -->
+        <entry name="SampleResolution" type="UInt">
+            <default>256</default>
+            <min>16</min>
+            <max>1024</max>
+        </entry>
+    </group>
+</kcfg>

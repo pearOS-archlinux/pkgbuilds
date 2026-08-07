@@ -1,0 +1,12 @@
+# makepkg / cmake build output
+build/
+pkg/
+.makepkg/
+*.pkg.tar.*
+*.src.tar.gz
+*.log
+
+# editor / patch leftovers
+*~
+*.orig
+*.rej

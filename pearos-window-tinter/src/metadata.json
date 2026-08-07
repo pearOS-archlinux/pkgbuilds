@@ -1,0 +1,11 @@
+{
+    "KPlugin": {
+        "Category": "Appearance",
+        "Description": "Tints window backgrounds with the color of the wallpaper behind them",
+        "EnabledByDefault": false,
+        "Icon": "preferences-desktop-wallpaper",
+        "Id": "kwin4_effect_pearostinter",
+        "License": "GPL",
+        "Name": "pearOS Window Tinter"
+    }
+}
