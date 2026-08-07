@@ -232,6 +232,10 @@ namespace Breeze
         connect(w, &KDecoration3::DecoratedWindow::maximizedChanged, this, &Decoration::updateButtonsGeometry);
         connect(w, &KDecoration3::DecoratedWindow::adjacentScreenEdgesChanged, this, &Decoration::updateButtonsGeometry);
         connect(w, &KDecoration3::DecoratedWindow::shadedChanged, this, &Decoration::updateButtonsGeometry);
+        // the buttons are centered in the titlebar, so any border change must
+        // re-run their layout; borderTop() can still be stale when the other
+        // signals above arrive (e.g. right after a kwin restart)
+        connect(this, &KDecoration3::Decoration::bordersChanged, this, &Decoration::updateButtonsGeometryDelayed);
 
         connect(s.get(), &KDecoration3::DecorationSettings::borderSizeChanged, this, &Decoration::resetBlurRegion);
         connect(s.get(), &KDecoration3::DecorationSettings::spacingChanged, this, &Decoration::resetBlurRegion);
@@ -336,6 +340,9 @@ namespace Breeze
 
         // borders
         recalculateBorders();
+
+        // buttons (sizes and spacing may have changed)
+        updateButtonsGeometryDelayed();
 
         // blur region
         resetBlurRegion();
@@ -610,6 +617,8 @@ namespace Breeze
     //________________________________________________________________
     void Decoration::updateButtonsGeometry()
     {
+        if (!m_leftButtons || !m_rightButtons) return;
+
         const auto s = settings();
 
         // adjust button position
@@ -618,9 +627,14 @@ namespace Breeze
         {
             auto btn = static_cast<Button *>(button);
 
-            // the pearOS buttons are always centered in the fixed height titlebar
+            // the pearOS buttons are always centered in the fixed height titlebar.
+            // Compute that height from the metric instead of borderTop(): the
+            // borders may not have been applied yet when this runs.
+            const qreal titleBarHeight = hideTitleBar()
+                ? borderTop()
+                : KDecoration3::snapToPixelGrid(Metrics::TitleBar_HeightPx, window()->nextScale());
             const int verticalOffset = m_internalSettings->macOSButtons()
-                ? std::max(0.0, (borderTop() - Metrics::MacOSButton_Size)/2)
+                ? std::max(0.0, std::round((titleBarHeight - Metrics::MacOSButton_Size)/2))
                 : (isTopEdge() ? s->smallSpacing() * Metrics::TitleBar_TopMargin : 0);
 
             const QSizeF preferredSize = btn->preferredSize();
@@ -1045,6 +1059,7 @@ namespace Breeze
     {
         setScaledCornerRadius();
         recalculateBorders();
+        updateButtonsGeometry();
     }
 
 } // namespace
