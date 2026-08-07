@@ -1,6 +1,6 @@
 pkgname=pearos-window-tinter
 pkgver=26.8
-pkgrel=3
+pkgrel=4
 pkgdesc="KWin effect that tints window backgrounds with the wallpaper color behind them"
 arch=('x86_64')
 url="https://pearos.xyz"
@@ -10,7 +10,7 @@ depends=('kwin' 'qt6-base' 'kconfig' 'kcolorscheme' 'kcoreaddons')
 provides=('pearos-tinter')
 conflicts=('pearos-tinter')
 replaces=('pearos-tinter')
-makedepends=('cmake' 'extra-cmake-modules')
+makedepends=('cmake' 'extra-cmake-modules' 'vulkan-headers')
 source=()
 
 build() {
