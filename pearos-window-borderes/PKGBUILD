@@ -1,7 +1,7 @@
 _cmakedir="$startdir"
 pkgname=pearos-window-borders
 pkgver=26.8.0
-pkgrel=8
+pkgrel=9
 pkgdesc="pearOS-style KWin window border"
 arch=('x86_64')
 url="https://pearos.xyz"
