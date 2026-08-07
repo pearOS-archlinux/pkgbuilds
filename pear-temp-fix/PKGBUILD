@@ -1,13 +1,13 @@
 # Maintainer: Alexandru Balan <alex@pear-software.com>
 
 pkgname=pear-temp-fix
-pkgver=26.8.1
+pkgver=26.8.2
 pkgrel=1
-pkgdesc="libprocesscore patcher, [cachyos] repository enabler and linux-firmware epoch realigner"
+pkgdesc="libprocesscore patcher, [cachyos] repo enabler, mirror refresher and linux-firmware epoch realigner"
 arch=('x86_64')
 url="https://github.com/pearOS-archlinux/iso/"
 license=('MIT')
-depends=('cachyos-keyring')
+depends=('cachyos-keyring' 'reflector')
 install="${pkgname}.install"
 source=('pear-firmware-realign' 'pear-firmware-realign.service')
 sha256sums=('SKIP' 'SKIP')

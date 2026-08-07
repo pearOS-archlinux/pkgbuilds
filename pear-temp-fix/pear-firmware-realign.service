@@ -1,5 +1,5 @@
 [Unit]
-Description=Realign epoch-versioned linux-firmware packages to the repository baseline
+Description=Refresh Arch mirrors and realign epoch-versioned linux-firmware packages
 ConditionPathExists=!/var/lib/pear-temp-fix/firmware-realigned
 Wants=network-online.target
 After=network-online.target

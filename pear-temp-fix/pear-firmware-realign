@@ -3,6 +3,20 @@ set -u
 
 stamp=/var/lib/pear-temp-fix/firmware-realigned
 
+refresh_mirrors() {
+    command -v reflector >/dev/null 2>&1 || return 0
+    echo "refreshing mirrorlist with reflector"
+    reflector --save /etc/pacman.d/mirrorlist \
+              --protocol https \
+              --age 12 \
+              --completion-percent 100 \
+              --score 50 \
+              --sort rate \
+              --number 25 \
+              --connection-timeout 5 \
+              --download-timeout 5 || echo "reflector failed, keeping existing mirrorlist"
+}
+
 if [ -e "$stamp" ]; then
     exit 0
 fi
@@ -22,13 +36,16 @@ done < <(pacman -Q 2>/dev/null | grep '^linux-firmware')
 if [ "${#pkgs[@]}" -eq 0 ]; then
     install -d "$(dirname "$stamp")"
     : > "$stamp"
-    echo "no epoch-versioned firmware packages, nothing to do"
+    refresh_mirrors
+    echo "no epoch-versioned firmware packages, mirrors refreshed"
     exit 0
 fi
 
+refresh_mirrors
+
 echo "realigning to the repository baseline: ${pkgs[*]}"
 
-if ! pacman -S --noconfirm "${pkgs[@]}"; then
+if ! pacman -Sy --noconfirm "${pkgs[@]}"; then
     echo "pacman failed, retrying on next boot"
     exit 1
 fi
