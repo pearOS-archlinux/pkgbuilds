@@ -1,0 +1,36 @@
+pkgname=pearos-reflector
+_upstream=reflector
+pkgver=2023
+pkgrel=1
+pkgdesc='Retrieve and filter the latest Pacman mirror list. Renamed so it installs alongside Manjaro pacman-mirrors.'
+arch=(any)
+license=(GPL-2.0-only)
+url="https://xyne.dev/projects/reflector"
+depends=(python)
+makedepends=(python-build python-installer python-setuptools python-wheel)
+optdepends=('rsync: rate rsync mirrors')
+conflicts=(reflector)
+backup=(etc/xdg/reflector/reflector.conf)
+source=(https://xyne.dev/projects/reflector/src/${_upstream}-${pkgver}.tar.xz
+        https://gitlab.archlinux.org/archlinux/packaging/packages/reflector/-/raw/main/mp-fork.patch)
+sha512sums=('SKIP'
+            'SKIP')
+
+prepare() {
+  cd $_upstream-$pkgver
+  patch -p1 < "${srcdir}/mp-fork.patch"
+}
+
+build() {
+  cd $_upstream-$pkgver
+  python -m build --wheel --no-isolation
+}
+
+package() {
+  cd $_upstream-$pkgver
+  python -m installer --destdir="$pkgdir" dist/*.whl
+  install -Dm644 "man/${_upstream}.1.gz" "${pkgdir}/usr/share/man/man1/${_upstream}.1.gz"
+  install -Dm644 'reflector.service' "$pkgdir/usr/lib/systemd/system/reflector.service"
+  install -Dm644 'reflector.timer' "$pkgdir/usr/lib/systemd/system/reflector.timer"
+  install -Dm644 'reflector.conf' "$pkgdir/etc/xdg/reflector/reflector.conf"
+}
