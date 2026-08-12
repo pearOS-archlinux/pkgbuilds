@@ -1062,6 +1062,47 @@ namespace Breeze
         updateButtonsGeometry();
     }
 
+    //________________________________________________________________
+    void Decoration::scheduleButtonsHoveredUpdate()
+    {
+        // moving from one button to its neighbour delivers a leave and an enter
+        // within the same event; recomputing only once both are in avoids a blink
+        QMetaObject::invokeMethod(this, &Decoration::updateButtonsHovered, Qt::QueuedConnection);
+    }
+
+    //________________________________________________________________
+    void Decoration::updateButtonsHovered()
+    {
+        if (!m_leftButtons || !m_rightButtons) return;
+
+        const auto buttonList = m_leftButtons->buttons() + m_rightButtons->buttons();
+
+        bool hovered = false;
+        for (KDecoration3::DecorationButton *button : buttonList)
+        {
+            switch (button->type())
+            {
+                case KDecoration3::DecorationButtonType::Close:
+                case KDecoration3::DecorationButtonType::Minimize:
+                case KDecoration3::DecorationButtonType::Maximize:
+                break;
+
+                default: continue;
+            }
+
+            if (button->isHovered() || button->isPressed())
+            {
+                hovered = true;
+                break;
+            }
+        }
+
+        if (hovered == m_buttonsHovered) return;
+        m_buttonsHovered = hovered;
+
+        for (KDecoration3::DecorationButton *button : buttonList) button->update();
+    }
+
 } // namespace
 
 

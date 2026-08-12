@@ -55,6 +55,19 @@ namespace Breeze
         //* gap between the button group and the title, in logical pixels
         static constexpr int MacOSTitleBar_TitleGap = 16;
 
+        //* arrangement pictures in the tiling menu, in logical pixels
+        static constexpr int SnapMenu_IconSize = 34;
+
+        //* corner radius of the tiling menu, in logical pixels
+        static constexpr int SnapMenu_Radius = 10;
+
+        //* the arrow pointing back at the button, in logical pixels
+        static constexpr int SnapMenu_ArrowWidth = 26;
+        static constexpr int SnapMenu_ArrowHeight = 11;
+
+        //* how far the arrow sits from the left edge of the panel, in logical pixels
+        static constexpr int SnapMenu_ArrowOffset = 38;
+
         //* titlebar metrics, in units of small spacing
         static constexpr int TitleBar_TopMargin = 2;
         static constexpr int TitleBar_BottomMargin = 2;

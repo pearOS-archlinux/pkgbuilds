@@ -55,6 +55,10 @@ namespace Breeze
         //* intercept clicks on the close button when it is configured to minimize
         void mousePressEvent(QMouseEvent *event) override;
 
+        //* suppress the framework tooltips ("Close", "Minimize", ...)
+        void hoverEnterEvent(QHoverEvent *event) override;
+        void hoverMoveEvent(QHoverEvent *event) override;
+
         public:
 
         //* padding

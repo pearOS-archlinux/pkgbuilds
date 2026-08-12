@@ -24,6 +24,7 @@
 #include <KColorUtils>
 #include <KLocalizedString>
 #include <KDecoration3/DecoratedWindow>
+#include <KWindowEffects>
 //#include <KIconLoader>
 
 #include <QDBusConnection>
@@ -33,9 +34,16 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QGuiApplication>
+#include <QGridLayout>
+#include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QPainterPath>
 #include <QTimer>
+#include <QToolButton>
+#include <QScreen>
+#include <QWindow>
+#include <QWidgetAction>
 #include <QVariantAnimation>
 
 namespace Breeze
@@ -54,6 +62,73 @@ namespace Breeze
                                   QStringLiteral("/Effects"),
                                   QStringLiteral("org.kde.kwin.Effects"));
         }
+
+        //* a menu shaped like a macOS popover: a rounded panel with an arrow that
+        //* points back at the button it belongs to
+        class PopoverMenu : public QMenu
+        {
+
+            public:
+
+            //* the panel paints itself, so the style is told to leave it alone
+            explicit PopoverMenu(const QColor &background, const QColor &outline)
+                : QMenu()
+                , m_background(background)
+                , m_outline(outline)
+            {}
+
+            //* where the arrow meets the panel, in window coordinates
+            void setArrowCenter(qreal x)
+            {
+                const qreal margin = Metrics::SnapMenu_Radius + Metrics::SnapMenu_ArrowWidth/2.0;
+                m_arrowCenter = qBound(margin, x, width() - margin);
+                update();
+            }
+
+            //* the panel and its arrow as one shape, outline and blur region alike
+            QPainterPath shape() const
+            {
+                const qreal arrowHeight = Metrics::SnapMenu_ArrowHeight;
+                const qreal arrowWidth = Metrics::SnapMenu_ArrowWidth;
+
+                // half a pixel of inset keeps the whole outline inside the window
+                QPainterPath panel;
+                panel.addRoundedRect(QRectF(rect()).adjusted(0.5, arrowHeight + 0.5, -0.5, -0.5),
+                                     Metrics::SnapMenu_Radius, Metrics::SnapMenu_Radius);
+
+                // the base reaches into the panel, so the two merge into one outline
+                QPainterPath arrow;
+                arrow.moveTo(m_arrowCenter - arrowWidth/2, arrowHeight + 2.5);
+                arrow.lineTo(m_arrowCenter - 3, 2.2);
+                // the tip is rounded off, as the corners of the panel are
+                arrow.quadTo(m_arrowCenter, 0.4, m_arrowCenter + 3, 2.2);
+                arrow.lineTo(m_arrowCenter + arrowWidth/2, arrowHeight + 2.5);
+                arrow.closeSubpath();
+
+                return panel.united(arrow);
+            }
+
+            protected:
+
+            void paintEvent(QPaintEvent *event) override
+            {
+                QPainter painter(this);
+                painter.setRenderHints(QPainter::Antialiasing);
+                painter.setPen(QPen(m_outline, 1));
+                painter.setBrush(m_background);
+                painter.drawPath(shape());
+
+                // the style draws the entries on top of it
+                QMenu::paintEvent(event);
+            }
+
+            private:
+
+            QColor m_background;
+            QColor m_outline;
+            qreal m_arrowCenter = Metrics::SnapMenu_Radius + Metrics::SnapMenu_ArrowWidth;
+
+        };
 
     }
 
@@ -77,6 +152,10 @@ namespace Breeze
         connect(decoration->window(), SIGNAL(iconChanged(QIcon)), this, SLOT(update()));
         connect(decoration->settings().get(), &KDecoration3::DecorationSettings::reconfigured, this, &Button::reconfigure);
         connect(this, &KDecoration3::DecorationButton::hoveredChanged, this, &Button::updateAnimationState);
+
+        // hovering one traffic light lights up all of them, as on macOS
+        connect(this, &KDecoration3::DecorationButton::hoveredChanged, this, [decoration]() { decoration->scheduleButtonsHoveredUpdate(); });
+        connect(this, &KDecoration3::DecorationButton::pressedChanged, this, [decoration]() { decoration->scheduleButtonsHoveredUpdate(); });
 
         // hovering the maximize button for a moment offers the tiling options
         if (type == DecorationButtonType::Maximize)
@@ -196,6 +275,20 @@ namespace Breeze
     }
 
     //__________________________________________________________________
+    void Button::hoverEnterEvent(QHoverEvent *event)
+    {
+        KDecoration3::DecorationButton::hoverEnterEvent(event);
+        if (auto d = decoration()) d->requestHideToolTip();
+    }
+
+    //__________________________________________________________________
+    void Button::hoverMoveEvent(QHoverEvent *event)
+    {
+        KDecoration3::DecorationButton::hoverMoveEvent(event);
+        if (auto d = decoration()) d->requestHideToolTip();
+    }
+
+    //__________________________________________________________________
     void Button::mousePressEvent(QMouseEvent *event)
     {
 
@@ -272,42 +365,242 @@ namespace Breeze
     }
 
     //__________________________________________________________________
+    //* a small picture of a screen split into the given fractions; the first
+    //* filledCount of them are the place this window takes, the rest are outlines
+    static QIcon snapIcon(const QList<QRectF> &parts, const QPalette &palette, int filledCount = -1)
+    {
+
+        const int size = Metrics::SnapMenu_IconSize;
+        const qreal dpr = qApp ? qApp->devicePixelRatio() : 1;
+
+        QPixmap pixmap(QSize(size, size) * dpr);
+        pixmap.setDevicePixelRatio(dpr);
+        pixmap.fill(Qt::transparent);
+
+        // a 4:3 screen, centred, with room for the outline
+        const QRectF screen(1, (size - (size - 2)*3/4.0)/2, size - 2, (size - 2)*3/4.0);
+
+        const QColor text(palette.color(QPalette::WindowText));
+        QColor outline(text);
+        outline.setAlphaF(0.55);
+        const QColor fill(255, 255, 255);
+
+        QPainter painter(&pixmap);
+        painter.setRenderHints(QPainter::Antialiasing);
+
+        painter.setPen(QPen(outline, 1));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRoundedRect(screen.adjusted(0.5, 0.5, -0.5, -0.5), 2, 2);
+
+        // the gap keeps neighbouring tiles apart, so two halves do not read as one
+        const int filled(filledCount < 0 ? parts.count() : filledCount);
+        for (int i = 0; i < parts.count(); ++i)
+        {
+            const QRectF &part = parts.at(i);
+            const QRectF tile(screen.x() + part.x()*screen.width(),
+                              screen.y() + part.y()*screen.height(),
+                              part.width()*screen.width(),
+                              part.height()*screen.height());
+
+            if (i < filled)
+            {
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(fill);
+                painter.drawRoundedRect(tile.adjusted(2, 2, -2, -2), 1, 1);
+            }
+
+            else
+            {
+                painter.setPen(QPen(outline, 1));
+                painter.setBrush(Qt::NoBrush);
+                painter.drawRoundedRect(tile.adjusted(2.5, 2.5, -2.5, -2.5), 1, 1);
+            }
+        }
+
+        return QIcon(pixmap);
+
+    }
+
+    //__________________________________________________________________
+    //* an outlined rounded rectangle split down the middle, as macOS marks
+    //* the full screen entry
+    static QIcon splitViewIcon(const QPalette &palette)
+    {
+
+        const int size = 16;
+        const qreal dpr = qApp ? qApp->devicePixelRatio() : 1;
+
+        QPixmap pixmap(QSize(size, size) * dpr);
+        pixmap.setDevicePixelRatio(dpr);
+        pixmap.fill(Qt::transparent);
+
+        const QRectF frame(0.75, 2.75, size - 1.5, size - 5.5);
+
+        QColor line(palette.color(QPalette::WindowText));
+        line.setAlphaF(0.8);
+
+        QPainter painter(&pixmap);
+        painter.setRenderHints(QPainter::Antialiasing);
+        painter.setPen(QPen(line, 1.1));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRoundedRect(frame, 2.5, 2.5);
+        painter.drawLine(QPointF(frame.center().x(), frame.top() + 0.5),
+                         QPointF(frame.center().x(), frame.bottom() - 0.5));
+
+        return QIcon(pixmap);
+
+    }
+
+    //__________________________________________________________________
     void Button::showSnapMenu()
     {
 
         auto d = qobject_cast<Decoration*>(decoration());
         if (!d || !isHovered()) return;
 
-        QMenu *menu = new QMenu();
+        const QPalette palette(QMenu().palette());
+        const QColor windowColor(palette.color(QPalette::Window));
+        const QColor textColor(palette.color(QPalette::WindowText));
+        const QColor highlightColor(palette.color(QPalette::Highlight));
+        const bool dark(qGray(windowColor.rgb()) < 128);
+
+        QColor background(windowColor);
+        background.setAlphaF(0.55);
+
+        // the same line the window borders wear: the panel color mixed with 14%
+        // of its opposite, so it reads as an edge rather than a bright stroke
+        QColor outline(KColorUtils::mix(windowColor, dark ? Qt::white : Qt::black, 0.14));
+        outline.setAlphaF(0.75);
+
+        PopoverMenu *menu = new PopoverMenu(background, outline);
         menu->setAttribute(Qt::WA_DeleteOnClose);
+
+        // a see-through panel, for the compositor to blur behind; the attribute
+        // has to be in place before the window is created
+        menu->setAttribute(Qt::WA_TranslucentBackground);
+
+        auto rgba = [](const QColor &color) {
+            return QStringLiteral("rgba(%1,%2,%3,%4)").arg(color.red()).arg(color.green())
+                .arg(color.blue()).arg(QString::number(color.alphaF(), 'f', 3));
+        };
+
+        QColor hover(textColor);
+        hover.setAlphaF(0.15);
+        QColor pressed(textColor);
+        pressed.setAlphaF(0.28);
+        QColor separator(textColor);
+        separator.setAlphaF(0.15);
+
+        // the panel itself is painted by the menu, so the style only lays out the
+        // entries; the top padding is what leaves room for the arrow
+        menu->setStyleSheet(QStringLiteral(
+            "QMenu { background: transparent; border: none; padding: 4px; padding-top: %1px; }"
+            "QMenu::item { padding: 5px 14px; margin: 1px 4px; border-radius: 5px; }"
+            "QMenu::item:selected { background-color: %2; }"
+            "QMenu::separator { height: 1px; background-color: %3; margin: 4px 8px; }"
+            "QToolButton { border: none; border-radius: 5px; padding: 2px; }"
+            "QToolButton:hover { background-color: %4; }"
+            "QToolButton:pressed { background-color: %5; }")
+            .arg(Metrics::SnapMenu_ArrowHeight + 4)
+            .arg(rgba(highlightColor), rgba(separator), rgba(hover), rgba(pressed)));
 
         // KDecoration3 has no tiling request, so the kwin shortcuts are used; the
         // arrangements that move other windows live in the companion kwin script,
         // which registers them as shortcuts of its own
-        auto addShortcut = [menu](const QString &title, const QString &shortcut) {
-            menu->addAction(title, menu, [shortcut]() {
-                QDBusInterface shortcuts(QStringLiteral("org.kde.kglobalaccel"),
-                                         QStringLiteral("/component/kwin"),
-                                         QStringLiteral("org.kde.kglobalaccel.Component"));
-                shortcuts.call(QStringLiteral("invokeShortcut"), shortcut);
-            });
+        auto invokeShortcut = [](const QString &shortcut) {
+            QDBusInterface shortcuts(QStringLiteral("org.kde.kglobalaccel"),
+                                     QStringLiteral("/component/kwin"),
+                                     QStringLiteral("org.kde.kglobalaccel.Component"));
+            shortcuts.call(QStringLiteral("invokeShortcut"), shortcut);
         };
 
-        addShortcut(i18n("Tile Left"), QStringLiteral("Window Quick Tile Left"));
-        addShortcut(i18n("Tile Right"), QStringLiteral("Window Quick Tile Right"));
-        addShortcut(i18n("Tile Top"), QStringLiteral("Window Quick Tile Top"));
-        addShortcut(i18n("Tile Bottom"), QStringLiteral("Window Quick Tile Bottom"));
+        // addSection() draws nothing in some styles, so the headings are labels
+        auto addHeading = [menu](const QString &text) {
+            QLabel *label = new QLabel(text, menu);
+            QFont font(label->font());
+            font.setWeight(QFont::ExtraBold);
+            font.setPointSizeF(font.pointSizeF() * 0.78);
+            label->setFont(font);
+            label->setContentsMargins(9, 4, 9, 2);
+
+            QColor color(menu->palette().color(QPalette::WindowText));
+            color.setAlphaF(0.6);
+            QPalette palette(label->palette());
+            palette.setColor(QPalette::WindowText, color);
+            label->setPalette(palette);
+
+            QWidgetAction *action = new QWidgetAction(menu);
+            action->setDefaultWidget(label);
+            action->setEnabled(false);
+            menu->addAction(action);
+        };
+
+        // the arrangements are shown as pictures of themselves, one row per section
+        auto addTileRow = [menu]() {
+            QWidget *row = new QWidget(menu);
+            QGridLayout *grid = new QGridLayout(row);
+            grid->setContentsMargins(20, 2, 20, 2);
+            grid->setSpacing(22);
+
+            QWidgetAction *action = new QWidgetAction(menu);
+            action->setDefaultWidget(row);
+            menu->addAction(action);
+
+            return grid;
+        };
+
+        auto addTile = [menu](QGridLayout *grid, int column, const QString &title,
+                              const QList<QRectF> &parts, std::function<void()> activate,
+                              int filledCount = -1)
+        {
+            QToolButton *button = new QToolButton(grid->parentWidget());
+            button->setAutoRaise(true);
+            button->setIconSize(QSize(Metrics::SnapMenu_IconSize, Metrics::SnapMenu_IconSize));
+            button->setIcon(snapIcon(parts, menu->palette(), filledCount));
+            button->setToolTip(title);
+            button->setAccessibleName(title);
+            QObject::connect(button, &QToolButton::clicked, menu, [menu, activate]() {
+                menu->close();
+                activate();
+            });
+            grid->addWidget(button, 0, column);
+        };
+
+        // halves, as fractions of the screen
+        addHeading(i18n("Move & Resize"));
+        QGridLayout *halves = addTileRow();
+
+        addTile(halves, 0, i18n("Tile Left"), {QRectF(0, 0, 0.5, 1)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("Window Quick Tile Left")); });
+        addTile(halves, 1, i18n("Tile Right"), {QRectF(0.5, 0, 0.5, 1)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("Window Quick Tile Right")); });
+        addTile(halves, 2, i18n("Tile Top"), {QRectF(0, 0, 1, 0.5)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("Window Quick Tile Top")); });
+        addTile(halves, 3, i18n("Tile Bottom"), {QRectF(0, 0.5, 1, 0.5)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("Window Quick Tile Bottom")); });
+
+        // whole-screen arrangements
+        menu->addSeparator();
+        addHeading(i18n("Fill & Arrange"));
+        QGridLayout *arrangements = addTileRow();
+
+        addTile(arrangements, 0, i18n("Maximize"), {QRectF(0, 0, 1, 1)},
+            [d]() { d->requestToggleMaximization(Qt::LeftButton); });
+        addTile(arrangements, 1, i18n("Left & Right"), {QRectF(0, 0, 0.5, 1), QRectF(0.5, 0, 0.5, 1)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("pearOS Arrange Two")); }, 1);
+        addTile(arrangements, 2, i18n("Left & Top, Bottom"),
+            {QRectF(0, 0, 0.5, 1), QRectF(0.5, 0, 0.5, 0.5), QRectF(0.5, 0.5, 0.5, 0.5)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("pearOS Arrange Three")); }, 1);
+        addTile(arrangements, 3, i18n("Four Windows"),
+            {QRectF(0, 0, 0.5, 0.5), QRectF(0.5, 0, 0.5, 0.5), QRectF(0, 0.5, 0.5, 0.5), QRectF(0.5, 0.5, 0.5, 0.5)},
+            [invokeShortcut]() { invokeShortcut(QStringLiteral("pearOS Arrange Four")); });
 
         menu->addSeparator();
-        menu->addSection(i18n("Fill & Arrange"));
+        menu->addAction(splitViewIcon(palette), i18n("Full Screen"), menu, [this]() { fullScreenWindow(); });
 
-        menu->addAction(i18n("Maximize"), menu, [d]() { d->requestToggleMaximization(Qt::LeftButton); });
-        addShortcut(i18n("Left && Right"), QStringLiteral("pearOS Arrange Two"));
-        addShortcut(i18n("Left && Top, Bottom"), QStringLiteral("pearOS Arrange Three"));
-        addShortcut(i18n("Four Windows"), QStringLiteral("pearOS Arrange Four"));
-
-        menu->addSeparator();
-        menu->addAction(i18n("Full Screen"), menu, [this]() { fullScreenWindow(); });
+        auto addShortcut = [menu, invokeShortcut](const QString &title, const QString &shortcut) {
+            menu->addAction(title, menu, [invokeShortcut, shortcut]() { invokeShortcut(shortcut); });
+        };
 
         // only worth offering when there is somewhere to move to
         if (QGuiApplication::screens().count() > 1)
@@ -319,6 +612,30 @@ namespace Breeze
         KDecoration3::Positioner positioner;
         positioner.setAnchorRect(geometry());
         d->popup(positioner, menu);
+
+        // kwin lines the panel up with the button, which would leave the arrow in
+        // the corner; the panel is placed by hand instead, so that the arrow keeps
+        // a fixed distance from its left edge and stays over the button
+        const int arrowCenter = Metrics::SnapMenu_ArrowOffset;
+        QPoint position(QCursor::pos().x() - arrowCenter, menu->y());
+
+        if (const QScreen *screen = menu->screen())
+        {
+            const QRect available(screen->availableGeometry());
+            position.setX(qBound(available.left(), position.x(), available.right() - menu->width()));
+        }
+
+        menu->move(position);
+        menu->setArrowCenter(QCursor::pos().x() - position.x());
+
+        // the blur is asked for once the panel has a size, so that it can follow
+        // the rounded corners and the arrow instead of squaring them off
+        if (QWindow *handle = menu->windowHandle())
+        {
+            const QRegion region(menu->shape().toFillPolygon().toPolygon());
+            KWindowEffects::enableBlurBehind(handle, true, region);
+            KWindowEffects::enableBackgroundContrast(handle, true, 1.0, 1.0, 1.0, region);
+        }
 
     }
 
@@ -343,17 +660,19 @@ namespace Breeze
 
         painter->setRenderHints(QPainter::Antialiasing);
 
+        // the whole group reacts to the pointer, no matter which button it is over
+        const bool hovered(d->buttonsHovered());
+
         // a dot marks a window that is running something, as an edited document is
-        // marked on macOS; the symbol shown on hover takes precedence over it
+        // marked on macOS; it keeps its place on hover, where the symbol would go
         const bool busy(type() == DecorationButtonType::Close
-            && !isHovered() && !isPressed()
             && d->internalSettings()->showBusyIndicator()
             && BusyWatcher::self()->isBusy(d->window()->caption()));
 
         const qreal dotRadius(rect.width()/5);
 
         // on inactive windows the circles are plain white at 16% opacity
-        if (!active && !isHovered() && !isPressed())
+        if (!active && !hovered)
         {
             painter->setPen(Qt::NoPen);
             painter->setBrush(QColor(255, 255, 255, 41));
@@ -382,8 +701,8 @@ namespace Breeze
             painter->drawEllipse(rect.center(), dotRadius, dotRadius);
         }
 
-        // the symbol only shows up on hover, as on macOS
-        if (isHovered() || isPressed())
+        // the symbols only show up on hover, as on macOS
+        if (hovered && !busy)
         {
             painter->save();
             painter->translate(rect.center());

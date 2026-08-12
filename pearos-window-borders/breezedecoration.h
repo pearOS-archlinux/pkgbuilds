@@ -65,6 +65,14 @@ namespace Breeze
         //* button size
         int buttonSize() const;
 
+        //* true while any of the traffic-light buttons is hovered, as on macOS,
+        //* where all three light up together
+        bool buttonsHovered() const
+        { return m_buttonsHovered; }
+
+        //* recompute the above once the current hover events are all delivered
+        void scheduleButtonsHoveredUpdate();
+
         //*@name colors
         //@{
         QColor titleBarColor() const;
@@ -97,6 +105,7 @@ namespace Breeze
         void updateTitleBar();
         void updateActiveState();
         void updateScale();
+        void updateButtonsHovered();
 
         private:
 
@@ -137,6 +146,8 @@ namespace Breeze
         InternalSettingsPtr m_internalSettings;
         KDecoration3::DecorationButtonGroup *m_leftButtons = nullptr;
         KDecoration3::DecorationButtonGroup *m_rightButtons = nullptr;
+
+        bool m_buttonsHovered = false;
 
         //*frame corner radius, scaled according to DPI
         qreal m_scaledCornerRadius = 3;
