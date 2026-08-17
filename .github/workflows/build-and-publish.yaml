@@ -107,6 +107,18 @@ jobs:
           pacman -Syu --noconfirm
           pacman -S --noconfirm --needed base-devel sudo git rclone
 
+          # cachyos-keyring ships a hook that appends [cachyos] to
+          # pacman.conf on install (see gh-actions/pacman.conf - it's not
+          # defined there, only [pearos]/[inled]/core/extra/multilib are).
+          # Several packages in [pearos] pull it in transitively (via
+          # pear-temp-fix), so it can appear mid-build inside makepkg's own
+          # dependency resolution - a newly-appended repo with no synced
+          # database makes pacman refuse to resolve *any* further
+          # dependencies, from any repo. Install it explicitly now and
+          # re-sync, so [cachyos] is already valid before makepkg ever runs.
+          pacman -S --noconfirm --needed cachyos-keyring
+          pacman -Sy --noconfirm
+
       - name: Create unprivileged build user
         run: |
           useradd -m builduser
