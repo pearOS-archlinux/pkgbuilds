@@ -1,4 +1,4 @@
-PKGNAME  := pearos-dock
+PKGNAME  := pearos-liquidgel
 BUILDDIR := $(CURDIR)/.pkgbuild
 
 .PHONY: all clean

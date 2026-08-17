@@ -1,0 +1,123 @@
+cmake_minimum_required(VERSION 3.16.0)
+
+project(pearos_liquidgel)
+set(PROJECT_VERSION "26.1")
+set(PROJECT_VERSION_MAJOR 0)
+
+set(KF_MIN_VERSION "5.240.0")
+set(QT_MIN_VERSION "6.6.0")
+set(QT_MAJOR_VERSION 6)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(CPACK_PACKAGE_NAME "pearos-liquidgel")
+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+set(CPACK_PACKAGE_FILE_NAME "pearos-liquidgel")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Fork of the KWin Blur effect for pearOS with additional features (including force blur) and bug fixes")
+include(CPack)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+endif()
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DQT_NO_DEBUG_OUTPUT")
+
+find_package(ECM REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+
+option(BETTERBLUR_WAYLAND "Whether to build pearOS Liquid Gel for Wayland if present." ON)
+option(BETTERBLUR_X11 "Whether to build pearOS Liquid Gel for X11 if present." ON)
+
+include(FeatureSummary)
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
+
+find_package(Qt6 ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS
+    Gui
+    Core
+    DBus
+    UiTools
+    Widgets
+    OpenGL
+    Network
+    Xml
+)
+
+include_directories(${Qt6Widgets_INCLUDE_DIRS} ${Qt6Network_INCLUDE_DIRS} ${Qt6OpenGL_INCLUDE_DIRS} ${Qt6Xml_INCLUDE_DIRS})
+add_definitions(${Qt6Widgets_DEFINITIONS})
+
+find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+    Config
+    ConfigWidgets
+    CoreAddons
+    Crash
+    GlobalAccel
+    I18n
+    KIO
+    Service
+    #Init
+    Notifications
+    Service
+    WidgetsAddons
+    WindowSystem
+    GuiAddons
+    KCMUtils
+)
+
+find_package(epoxy REQUIRED)
+
+find_package(X11 REQUIRED)
+find_package(XCB REQUIRED COMPONENTS XCB)
+
+if(BETTERBLUR_WAYLAND)
+    find_package(KWin COMPONENTS
+        kwineffects
+    )
+    if (${KWin_FOUND})
+        find_package(KWinDBusInterface CONFIG REQUIRED)
+    else()
+        set(BETTERBLUR_WAYLAND OFF)
+    endif()
+endif()
+if(BETTERBLUR_X11)
+    find_package(KWinX11 COMPONENTS
+        kwineffects
+    )
+    if (${KWinX11_FOUND})
+        find_package(KWinX11DBusInterface CONFIG REQUIRED)
+        set(KWin_VERSION ${KWinX11_VERSION})
+    else()
+        set(BETTERBLUR_X11 OFF)
+    endif()
+endif()
+
+if(${KWin_VERSION} VERSION_LESS 6.4)
+    message(FATAL_ERROR "pearOS Liquid Gel does not support your Plasma version (${KWin_VERSION}). See the README for more information.")
+endif()
+
+# Newer KWin changed Effect::drawWindow() to return bool (whether the window
+# was actually painted) instead of void. Probe for it so `override` stays
+# correct on both old and new KWin, same approach as pearos-magiclamp.
+if(BETTERBLUR_WAYLAND)
+    file(WRITE "${CMAKE_BINARY_DIR}/kwin_drawwindow_probe.cc"
+"#include <effect/effect.h>
+struct Probe : KWin::Effect {
+    bool drawWindow(const KWin::RenderTarget&, const KWin::RenderViewport&, KWin::EffectWindow*, int, const KWin::Region&, KWin::WindowPaintData&) override { return true; }
+};
+int main() { return 0; }
+")
+    try_compile(KWIN_DRAWWINDOW_RETURNS_BOOL
+        SOURCES "${CMAKE_BINARY_DIR}/kwin_drawwindow_probe.cc"
+        LINK_LIBRARIES KWin::kwin Qt6::Core Qt6::Gui KF6::CoreAddons
+        CXX_STANDARD 20
+        CXX_STANDARD_REQUIRED ON)
+endif()
+
+find_package(KDecoration3 REQUIRED)
+
+add_subdirectory(src)
+
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

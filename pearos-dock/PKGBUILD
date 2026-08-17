@@ -1,6 +1,6 @@
 pkgname=pearos-dock
 pkgver=26.6.10
-pkgrel=3
+pkgrel=4
 pkgdesc="Tahoe-style dock for KDE Plasma 6"
 arch=('x86_64')
 url="https://github.com/pearOS-ArchLinux/pearos-dock"
@@ -27,22 +27,19 @@ makedepends=(
     'kwin'
     'plasma-activities'
 )
-source=("$pkgname-$pkgver.tar.gz")
-sha256sums=('SHA256SUM_PLACEHOLDER')
+source=()
 
 build() {
-    cd "$srcdir/$pkgname-$pkgver"
-    cmake -B build \
+    cmake -S "$startdir" -B "$srcdir/build" \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_INSTALL_PREFIX=/usr
-    make -C build -j$(nproc)
+    cmake --build "$srcdir/build"
 }
 
 package() {
-    cd "$srcdir/$pkgname-$pkgver"
-    make -C build DESTDIR="$pkgdir" install
+    DESTDIR="$pkgdir" cmake --install "$srcdir/build"
 
-    local skinsrc="$srcdir/$pkgname-$pkgver/package/contents/skins"
+    local skinsrc="$startdir/package/contents/skins"
     local skindst="$pkgdir/usr/share/plasma/plasmoids/PearDock/contents/skins"
     install -dm755 "$skindst"
     cp -r "$skinsrc"/. "$skindst/"
