@@ -1,0 +1,827 @@
+/*
+ *   SPDX-FileCopyrightText: 2012-2013 Eike Hein <hein@kde.org>
+ *   SPDX-FileCopyrightText: 2024 Nate Graham <nate@kde.org>
+ *
+ *   SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
+pragma ComponentBehavior: Bound
+
+import QtQuick
+import QtQuick.Layouts
+
+import org.kde.plasma.core as PlasmaCore
+import org.kde.ksvg as KSvg
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.plasma.components as PlasmaComponents3
+import org.kde.kirigami as Kirigami
+import PearDock as TaskManagerApplet
+import org.kde.plasma.plasmoid
+
+import "code/LayoutMetrics.js" as LayoutMetrics
+import "code/TaskTools.js" as TaskTools
+import "code/DockZoom.js" as DockZoom
+
+PlasmaCore.ToolTipArea {
+    id: task
+
+    activeFocusOnTab: true
+
+    // To achieve a bottom-to-top layout on vertical panels, the task manager
+    // is rotated by 180 degrees(see main.qml). This makes the tasks rotated,
+    // so un-rotate them here to fix that.
+    rotation: Plasmoid.configuration.reverseMode && Plasmoid.formFactor === PlasmaCore.Types.Vertical ? 180 : 0
+
+    implicitHeight: inPopup
+    ? LayoutMetrics.preferredHeightInPopup()
+    : (tasksRoot.vertical
+    ? LayoutMetrics.preferredMinHeight()
+    : Math.max(tasksRoot.height / Plasmoid.configuration.maxStripes,
+               LayoutMetrics.preferredMinHeight()))
+    implicitWidth: tasksRoot.vertical
+    ? Math.max(LayoutMetrics.preferredMinWidth(), Math.min(LayoutMetrics.preferredMaxWidth(), tasksRoot.width / Plasmoid.configuration.maxStripes))
+    : 0
+
+    Layout.fillWidth: true
+    Layout.fillHeight: !inPopup
+    Layout.maximumWidth: tasksRoot.vertical
+    ? -1
+    : ((model.IsLauncher && !tasksRoot.iconsOnly) ? tasksRoot.height / taskList.rows : LayoutMetrics.preferredMaxWidth())
+    Layout.maximumHeight: tasksRoot.vertical ? LayoutMetrics.preferredMaxHeight() : -1
+
+    required property var model
+    required property int index
+    required property /*main.qml*/ Item tasksRoot
+
+    readonly property int pid: model.AppPid
+    readonly property string appName: model.AppName
+    readonly property string appId: model.AppId.replace(/\.desktop/, '')
+    readonly property bool isIcon: tasksRoot.iconsOnly || model.IsLauncher
+    property bool toolTipOpen: false
+    property bool inPopup: false
+    property bool isWindow: model.IsWindow
+    property int childCount: model.ChildCount
+    property int previousChildCount: 0
+    property alias labelText: label.text
+    property QtObject contextMenu: null
+    readonly property bool smartLauncherEnabled: !inPopup
+    property QtObject smartLauncherItem: null
+
+    property Item audioStreamIcon: null
+    property var audioStreams: []
+    property bool delayAudioStreamIndicator: false
+    property bool completed: false
+    readonly property bool audioIndicatorsEnabled: Plasmoid.configuration.indicateAudioStreams
+    readonly property bool tooltipControlsEnabled: Plasmoid.configuration.tooltipControls
+    readonly property bool hasAudioStream: audioStreams.length > 0
+    readonly property bool playingAudio: hasAudioStream && audioStreams.some(item => !item.corked)
+    readonly property bool muted: hasAudioStream && audioStreams.every(item => item.muted)
+
+    readonly property bool highlighted: (inPopup && activeFocus) || (!inPopup && containsMouse)
+    || (task.contextMenu && task.contextMenu.status === PlasmaExtras.Menu.Open)
+    || (!!tasksRoot.groupDialog && tasksRoot.groupDialog.visualParent === task)
+
+    active: Plasmoid.configuration.showToolTips && !inPopup && !tasksRoot.groupDialog && task.contextMenu?.status !== PlasmaExtras.Menu.Open
+    interactive: false
+    location: Plasmoid.location
+    mainItem: null
+    mainText: model.AppName || model.display
+    subText: ""
+
+    // y hace que el panel se expanda elásticamente.
+    width: Plasmoid.configuration.iconSize
+    height: tasksRoot.height
+
+    // Desactivamos el recorte para que el zoom y el reflejo "vuelen" fuera
+    clip: false
+
+    // Esta propiedad la activamos desde el MouseArea del main.qml
+    property bool isHovered: false
+
+    property Item dockRef: null // Esto recibirá el 'dockMouseArea' de main.qml
+
+    readonly property real _baseSize: Plasmoid.configuration.iconSize
+    readonly property real _sigma: _baseSize * Plasmoid.configuration.amplitud
+    readonly property real _zoom: (Plasmoid.configuration.magnification || 0) / 100
+
+    // ---------------------------------------------------------
+    // INICIO DEL CÓDIGO ZOOM (OSX EFFECT)
+    // ---------------------------------------------------------
+
+    property real zoomFactor: DockZoom.calculateZoomFactor(
+        dockRef,
+        Plasmoid.configuration.iconSize,
+        Plasmoid.configuration.amplitud,
+        Plasmoid.configuration.magnification,
+        tasksRoot.vertical,
+        (dockRef ? dockRef.dockLauncherCount : 0) + index,
+        entryProgress
+    )
+
+    property real entryProgress: (dockRef && dockRef.insideDock) ? 1.0 : 0.0
+
+    Behavior on entryProgress {
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.OutCubic
+        }
+    }
+
+    Accessible.name: model.display
+    Accessible.description: {
+        if (!model.display) {
+            return "";
+        }
+
+        if (model.IsLauncher) {
+            return i18nc("@info:usagetip %1 application name", "Launch %1", model.display)
+        }
+
+        let smartLauncherDescription = "";
+        if (iconBox.active) {
+            smartLauncherDescription += i18ncp("@info:tooltip", "There is %1 new message.", "There are %1 new messages.", task.smartLauncherItem.count);
+        }
+
+        if (model.IsGroupParent) {
+            switch (Plasmoid.configuration.groupedTaskVisualization) {
+                case 0:
+                    break; // Use the default description
+                case 1: {
+                    return `${i18nc("@info:usagetip %1 task name", "Show Task tooltip for %1", model.display)}; ${smartLauncherDescription}`;
+                }
+                case 2: {
+                    if (effectWatcher.registered) {
+                        return `${i18nc("@info:usagetip %1 task name", "Show windows side by side for %1", model.display)}; ${smartLauncherDescription}`;
+                    }
+                    // fallthrough
+                }
+                default:
+                    return `${i18nc("@info:usagetip %1 task name", "Open textual list of windows for %1", model.display)}; ${smartLauncherDescription}`;
+            }
+        }
+
+        return `${i18nc("@info:usagetip %1 task name", "Activate %1", model.display)}; ${smartLauncherDescription}`;
+    }
+    Accessible.role: Accessible.Button
+    Accessible.onPressAction: leftTapHandler.leftClick()
+
+    onToolTipVisibleChanged: toolTipVisible => {
+        task.toolTipOpen = toolTipVisible;
+        if (!toolTipVisible) {
+            tasksRoot.toolTipOpenedByClick = null;
+        } else {
+            tasksRoot.toolTipAreaItem = task;
+        }
+    }
+
+    onContainsMouseChanged: {
+        if (containsMouse) {
+            task.forceActiveFocus(Qt.MouseFocusReason);
+            task.updateMainItemBindings();
+        } else {
+            tasksRoot.toolTipOpenedByClick = null;
+        }
+    }
+
+    onHighlightedChanged: {
+        // ensure it doesn't get stuck with a window highlighted
+        tasksRoot.cancelHighlightWindows();
+    }
+
+    onPidChanged: updateAudioStreams({delay: false})
+    onAppNameChanged: updateAudioStreams({delay: false})
+
+    onIsWindowChanged: {
+        if (model.IsWindow) {
+            taskInitComponent.createObject(task);
+            updateAudioStreams({delay: false});
+        }
+    }
+
+    onChildCountChanged: {
+        if (TaskTools.taskManagerInstanceCount < 2 && childCount > previousChildCount) {
+            tasksModel.requestPublishDelegateGeometry(modelIndex(), backend.globalRect(task), task);
+        }
+
+        previousChildCount = childCount;
+    }
+
+    onIndexChanged: {
+        hideToolTip();
+
+        if (!inPopup && !tasksRoot.vertical
+            && !Plasmoid.configuration.separateLaunchers) {
+            tasksRoot.requestLayout();
+            }
+    }
+
+    onSmartLauncherEnabledChanged: {
+        if (smartLauncherEnabled && !smartLauncherItem) {
+            const component = Qt.createComponent("PearDock", "SmartLauncherItem");
+            const smartLauncher = component.createObject(task);
+            component.destroy();
+
+            smartLauncher.launcherUrl = Qt.binding(() => model.LauncherUrlWithoutIcon);
+
+            smartLauncherItem = smartLauncher;
+        }
+    }
+
+    onHasAudioStreamChanged: {
+        const audioStreamIconActive = hasAudioStream && audioIndicatorsEnabled;
+        if (!audioStreamIconActive) {
+            if (audioStreamIcon !== null) {
+                audioStreamIcon.destroy();
+                audioStreamIcon = null;
+            }
+            return;
+        }
+        // Create item on demand instead of using Loader to reduce memory consumption,
+        // because only a few applications have audio streams.
+        const component = Qt.createComponent("AudioStream.qml");
+        audioStreamIcon = component.createObject(task);
+        component.destroy();
+    }
+    onAudioIndicatorsEnabledChanged: task.hasAudioStreamChanged()
+
+    Keys.onMenuPressed: event => contextMenuTimer.start()
+    Keys.onReturnPressed: event => TaskTools.activateTask(modelIndex(), model, event.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered)
+    Keys.onEnterPressed: event => Keys.returnPressed(event);
+    Keys.onSpacePressed: event => Keys.returnPressed(event);
+    Keys.onUpPressed: event => Keys.leftPressed(event)
+    Keys.onDownPressed: event => Keys.rightPressed(event)
+    Keys.onLeftPressed: event => {
+        if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+            tasksModel.move(task.index, task.index - 1);
+        } else {
+            event.accepted = false;
+        }
+    }
+    Keys.onRightPressed: event => {
+        if (!inPopup && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier)) {
+            tasksModel.move(task.index, task.index + 1);
+        } else {
+            event.accepted = false;
+        }
+    }
+
+    function modelIndex(): /*QModelIndex*/ var {
+        return inPopup
+        ? tasksModel.makeModelIndex(groupDialog.visualParent.index, index)
+        : tasksModel.makeModelIndex(index);
+    }
+
+    function showContextMenu(args: var): void {
+        task.hideImmediately();
+        contextMenu = tasksRoot.createContextMenu(task, modelIndex(), args) as ContextMenu;
+        contextMenu.show();
+    }
+
+    function updateAudioStreams(args: var): void {
+        if (args) {
+            // When the task just appeared (e.g. virtual desktop switch), show the audio indicator
+            // right away. Only when audio streams change during the lifetime of this task, delay
+            // showing that to avoid distraction.
+            delayAudioStreamIndicator = !!args.delay;
+        }
+
+        var pa = pulseAudio.item;
+        if (!pa || !task.isWindow) {
+            task.audioStreams = [];
+            return;
+        }
+
+        // Check appid first for app using portal
+        // https://docs.pipewire.org/page_portal.html
+        var streams = pa.streamsForAppId(task.appId);
+        if (!streams.length) {
+            streams = pa.streamsForPid(model.AppPid);
+            if (streams.length) {
+                pa.registerPidMatch(model.AppName);
+            } else {
+                // We only want to fall back to appName matching if we never managed to map
+                // a PID to an audio stream window. Otherwise if you have two instances of
+                // an application, one playing and the other not, it will look up appName
+                // for the non-playing instance and erroneously show an indicator on both.
+                if (!pa.hasPidMatch(model.AppName)) {
+                    streams = pa.streamsForAppName(model.AppName);
+                }
+            }
+        }
+
+        task.audioStreams = streams;
+    }
+
+    function toggleMuted(): void {
+        if (muted) {
+            task.audioStreams.forEach(item => item.unmute());
+        } else {
+            task.audioStreams.forEach(item => item.mute());
+        }
+    }
+
+    function updateMainItemBindings(): void {
+        tasksRoot.toolTipAreaItem = this;
+    }
+
+    Connections {
+        target: pulseAudio.item
+        ignoreUnknownSignals: true // Plasma-PA might not be available
+        function onStreamsChanged(): void {
+            task.updateAudioStreams({delay: true})
+        }
+    }
+
+    TapHandler {
+        id: menuTapHandler
+        acceptedButtons: Qt.LeftButton
+        acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Stylus
+        gesturePolicy: TapHandler.ReleaseWithinBounds
+        onLongPressed: {
+            // When we're a launcher, there's no window controls, so we can show all
+            // places without the menu getting super huge.
+            if (task.model.IsLauncher) {
+                task.showContextMenu({showAllPlaces: true})
+            } else {
+                task.showContextMenu();
+            }
+        }
+    }
+
+    TapHandler {
+        acceptedButtons: Qt.RightButton
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.Stylus
+        gesturePolicy: TapHandler.WithinBounds // Release grab when menu appears
+        onPressedChanged: if (pressed) contextMenuTimer.start()
+    }
+
+    Timer {
+        id: contextMenuTimer
+        interval: 0
+        onTriggered: menuTapHandler.longPressed()
+    }
+
+    TapHandler {
+        id: leftTapHandler
+        acceptedButtons: Qt.LeftButton
+        onTapped: (eventPoint, button) => leftClick()
+
+        function leftClick(): void {
+            if (task.active) {
+                task.hideToolTip();
+            }
+            TaskTools.activateTask(modelIndex(), model, point.modifiers, task, Plasmoid, tasksRoot, effectWatcher.registered);
+        }
+    }
+
+    TapHandler {
+        acceptedButtons: Qt.MiddleButton | Qt.BackButton | Qt.ForwardButton
+        onTapped: (eventPoint, button) => {
+            if (button === Qt.MiddleButton) {
+                if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.NewInstance) {
+                    tasksModel.requestNewInstance(modelIndex());
+                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.Close) {
+                    tasksModel.requestClose(modelIndex());
+                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleMinimized) {
+                    tasksModel.requestToggleMinimized(modelIndex());
+                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.ToggleGrouping) {
+                    tasksModel.requestToggleGrouping(modelIndex());
+                } else if (Plasmoid.configuration.middleClickAction === TaskManagerApplet.Backend.BringToCurrentDesktop) {
+                    tasksModel.requestVirtualDesktops(modelIndex(), [virtualDesktopInfo.currentDesktop]);
+                }
+            } else if (button === Qt.BackButton || button === Qt.ForwardButton) {
+                const playerData = mpris2Source.playerForLauncherUrl(task.model.LauncherUrlWithoutIcon, task.model.AppPid);
+                if (playerData) {
+                    if (button === Qt.BackButton) {
+                        playerData.Previous();
+                    } else {
+                        playerData.Next();
+                    }
+                } else {
+                    eventPoint.accepted = false;
+                }
+            }
+
+            task.tasksRoot.cancelHighlightWindows();
+        }
+    }
+
+    KSvg.FrameSvgItem {
+        id: frame
+
+          anchors {
+            fill: parent
+
+            topMargin: {
+                if (!task.tasksRoot.vertical && taskList.rows > 1) {
+                    return LayoutMetrics.iconMargin
+                }
+
+                let iconAlign = Math.round(parent.height - Plasmoid.configuration.iconSize * zoomFactor) - Kirigami.Units.smallSpacing
+                let indicatorOffset = -Kirigami.Units.gridUnit / tasks.skinParams.positionTaskIndicator
+
+                return tasksRoot.isTopPanel ? indicatorOffset : iconAlign
+            }
+            bottomMargin: {
+                if (!task.tasksRoot.vertical && taskList.rows > 1) {
+                    return LayoutMetrics.iconMargin
+                }
+
+                let iconAlign = Math.round(parent.height - Plasmoid.configuration.iconSize * zoomFactor) - Kirigami.Units.smallSpacing
+                let indicatorOffset = -Kirigami.Units.gridUnit / tasks.skinParams.positionTaskIndicator
+
+                return tasksRoot.isTopPanel ? iconAlign : indicatorOffset
+            }
+            leftMargin: {
+                if ((inPopup || tasksRoot.vertical) && taskList.columns > 1) {
+                    return LayoutMetrics.iconMargin
+                }
+
+                let iconAlign = Math.round(parent.width - Plasmoid.configuration.iconSize * zoomFactor) - Kirigami.Units.smallSpacing * 0.5
+                let indicatorOffset = -Kirigami.Units.gridUnit / tasks.skinParams.positionTaskIndicator
+
+                return tasksRoot.isLeftPanel ? indicatorOffset : iconAlign
+            }
+            rightMargin: {
+                if (!task.tasksRoot.vertical && taskList.rows > 1) {
+                    return LayoutMetrics.iconMargin
+                }
+
+                let iconAlign = Math.round(parent.width - Plasmoid.configuration.iconSize * zoomFactor) - Kirigami.Units.smallSpacing * 0.5
+                let indicatorOffset = -Kirigami.Units.gridUnit / tasks.skinParams.positionTaskIndicator
+
+                return tasksRoot.isLeftPanel ? iconAlign : indicatorOffset
+            }
+        }
+
+        imagePath: tasks.skinParams.imagetask
+        property bool isHovered: task.highlighted && Plasmoid.configuration.taskHoverEffect
+        property string basePrefix: "normal"
+        prefix: TaskTools.taskPrefix(basePrefix, Plasmoid.location)
+
+
+        // Avoid repositioning delegate item after dragFinished
+        DragHandler {
+            id: dragHandler
+            grabPermissions: PointerHandler.CanTakeOverFromHandlersOfDifferentType
+
+            function setRequestedInhibitDnd(value: bool): void {
+                // This is modifying the value in the panel containment that
+                // inhibits accepting drag and drop, so that we don't accidentally
+                // drop the task on this panel.
+                let item = this;
+                while (item.parent) {
+                    item = item.parent;
+                    if (item.appletRequestsInhibitDnD !== undefined) {
+                        item.appletRequestsInhibitDnD = value
+                    }
+                }
+            }
+
+            onActiveChanged: {
+                if (active) {
+                    icon.grabToImage(result => {
+                        if (!dragHandler.active) {
+                            // BUG 466675 grabToImage is async, so avoid updating dragSource when active is false
+                            return;
+                        }
+                        setRequestedInhibitDnd(true);
+                        tasksRoot.dragSource = task;
+                        dragHelper.Drag.imageSource = result.url;
+                        dragHelper.Drag.mimeData = {
+                            "text/x-orgkdeplasmataskmanager_taskurl": backend.tryDecodeApplicationsUrl(model.LauncherUrlWithoutIcon).toString(),
+                                     [model.MimeType]: model.MimeData,
+                                     "application/x-orgkdeplasmataskmanager_taskbuttonitem": model.MimeData,
+                        };
+                        dragHelper.Drag.active = dragHandler.active;
+                    });
+                } else {
+                    setRequestedInhibitDnd(false);
+                    dragHelper.Drag.active = false;
+                    dragHelper.Drag.imageSource = "";
+                }
+            }
+        }
+    }
+
+    Loader {
+        id: taskProgressOverlayLoader
+
+        anchors.fill: frame
+        asynchronous: true
+        active: task.smartLauncherItem && task.smartLauncherItem.progressVisible
+
+        source: "TaskProgressOverlay.qml"
+    }
+
+        Loader {
+            id: iconBox
+
+            // Mantenemos el contenedor con un tamaño fijo
+            width: Plasmoid.configuration.iconSize
+            height: Plasmoid.configuration.iconSize
+
+           anchors.centerIn: tasksRoot.vertical
+           ? parent
+           : undefined
+
+           anchors.bottom: ((!tasksRoot.vertical) && Plasmoid.location === PlasmaCore.Types.BottomEdge)
+           ? parent.bottom
+           : parent.bottom
+
+           anchors.bottomMargin: ((!tasksRoot.vertical) && Plasmoid.location === PlasmaCore.Types.BottomEdge)
+           ? 0
+           : Math.round((tasksRoot.height / 2) - (Kirigami.Units.iconSizes.small * 0.14))
+
+
+           anchors.horizontalCenter: (!tasksRoot.vertical)
+           ? parent.horizontalCenter
+           : undefined
+
+            property int baseRenderSize: Plasmoid.configuration.iconSize * 2
+
+            SequentialAnimation {
+                id: bounceAnimation
+                running: task.model.IsStartup || task.model.IsDemandingAttention || (task.smartLauncherItem && task.smartLauncherItem.urgent)
+                loops: Animation.Infinite
+                alwaysRunToEnd: true
+
+                // Calculamos la altura del salto considerando el factor de escala (zoom)
+                property real jumpHeight: {
+                    let currentSize = Plasmoid.configuration.iconSize * zoomFactor;
+                    let idealJump = currentSize * 0.6; // Salto base: 60% del tamaño del icono
+
+                    // Calculamos el espacio disponible para evitar que el icono se corte con el borde del panel
+                    let headroom = Math.max(0, tasksRoot.height - Plasmoid.configuration.iconSize);
+
+                    // Limitamos el salto al espacio real disponible
+                    return Math.min(idealJump, headroom);
+                }
+
+                // Animación de ascenso (impulso)
+                NumberAnimation {
+                    target: iconBox
+                    property: "anchors.bottomMargin"
+                    from: 0
+                    to: bounceAnimation.jumpHeight
+                    duration: 300
+                    easing.type: Easing.OutQuad
+                }
+
+                // Animación de descenso (gravedad)
+                NumberAnimation {
+                    target: iconBox
+                    property: "anchors.bottomMargin"
+                    to: 0
+                    duration: 300
+                    easing.type: Easing.InQuad
+                }
+            }
+
+            // El zoom se aplica solo como transformación visual al contenedor completo
+            scale: zoomFactor
+            transformOrigin: {
+                switch (Plasmoid.location) {
+                    case PlasmaCore.Types.BottomEdge:
+                        return Item.Bottom;
+
+                    case PlasmaCore.Types.TopEdge:
+                        return Item.Top;
+
+                    case PlasmaCore.Types.LeftEdge:
+                        return Item.Left;
+                    case PlasmaCore.Types.RightEdge:
+                        return Item.Right;
+
+                    default:
+                        return Item.Bottom;
+                }
+            }
+
+            asynchronous: true
+            active: task.smartLauncherItem && task.smartLauncherItem.countVisible
+            source: "TaskBadgeOverlay.qml"
+
+            function adjustMargin(isVertical: bool, size: real, margin: real): real {
+                if (!size) {
+                    return margin;
+                }
+
+                var margins = isVertical ? LayoutMetrics.horizontalMargins() : LayoutMetrics.verticalMargins();
+
+                if ((size - margins) < Kirigami.Units.iconSizes.small) {
+                    return Math.ceil((margin * (Kirigami.Units.iconSizes.small / size)) / 2);
+                }
+
+                return margin;
+            }
+
+            Kirigami.Icon {
+                id: icon
+
+                width: iconBox.baseRenderSize
+                height: iconBox.baseRenderSize
+
+                source: model.decoration
+
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: tasksRoot.isTopPanel ? 0 : Kirigami.Units.smallSpacing
+                anchors.topMargin: tasksRoot.isTopPanel ? Kirigami.Units.smallSpacing : 0
+
+                transformOrigin: Item.Bottom
+
+                scale: 1 / (iconBox.baseRenderSize / iconBox.width)
+
+                smooth: true
+                antialiasing: true
+            }
+
+            Item {
+                id: reflectionContainer
+
+                visible: Plasmoid.configuration.showReflection
+                opacity: 0.4
+                clip: true
+                z: -5
+
+                width: tasksRoot.vertical
+                ? iconBox.width / 2
+                : iconBox.width
+
+                height: tasksRoot.vertical
+                ? iconBox.height
+                : iconBox.height / 2
+
+                x: {
+                    switch (Plasmoid.location) {
+
+                        case PlasmaCore.Types.LeftEdge:
+                            return -width - Kirigami.Units.smallSpacing * 2.5
+
+                        case PlasmaCore.Types.RightEdge:
+                            return iconBox.width + Kirigami.Units.smallSpacing * 2.5
+
+                        default:
+                            return 0
+                    }
+                }
+
+                y: {
+                    switch (Plasmoid.location) {
+
+                        case PlasmaCore.Types.TopEdge:
+                            return -height - Kirigami.Units.smallSpacing * 2
+
+                        case PlasmaCore.Types.BottomEdge:
+                            return iconBox.height + Kirigami.Units.smallSpacing * 2
+
+                        default:
+                            return 0
+                    }
+                }
+
+                Kirigami.Icon {
+                    id: reflectionIcon
+
+                    width: icon.width
+                    height: icon.height
+
+                    source: icon.source
+                    smooth: true
+                    antialiasing: true
+
+                    anchors.centerIn: parent
+
+                    scale: icon.scale
+
+                    transform: Scale {
+                        origin.x: reflectionIcon.width / 2
+                        origin.y: reflectionIcon.height / 2
+
+                        xScale: tasksRoot.vertical ? -1 : 1
+                        yScale: tasksRoot.vertical ? 1 : -1
+                    }
+                }
+            }
+
+            states: [
+                // Using a state transition avoids a binding loop between label.visible and
+                // the text label margin, which derives from the icon width.
+                State {
+                    name: "standalone"
+                    when: !label.visible && task.parent
+
+                    AnchorChanges {
+                        target: iconBox
+                        anchors.left: undefined
+                        anchors.horizontalCenter: parent.horizontalCenter
+                    }
+
+                    PropertyChanges {
+                        target: iconBox
+                        anchors.leftMargin: 0
+                        width: Plasmoid.configuration.iconSize
+                    }
+                }
+            ]
+
+            Loader {
+                anchors.centerIn: parent
+                width: Plasmoid.configuration.iconSize
+                height: Plasmoid.configuration.iconSize
+                active: false
+                sourceComponent: busyIndicator
+            }
+        }
+
+
+
+
+
+    PlasmaComponents3.Label {
+        id: label
+
+        visible: (task.inPopup || !task.tasksRoot.iconsOnly && !task.model.IsLauncher
+        && (parent.width - iconBox.height - Kirigami.Units.smallSpacing) >= LayoutMetrics.spaceRequiredToShowText())
+
+        anchors {
+            fill: parent
+            leftMargin: taskFrame.margins.left + iconBox.width + LayoutMetrics.labelMargin
+            topMargin: taskFrame.margins.top
+            rightMargin: taskFrame.margins.right + (task.audioStreamIcon !== null && task.audioStreamIcon.visible ? (task.audioStreamIcon.width + LayoutMetrics.labelMargin) : 0)
+            bottomMargin: taskFrame.margins.bottom
+        }
+
+        wrapMode: (maximumLineCount === 1) ? Text.NoWrap : Text.Wrap
+        elide: Text.ElideRight
+        textFormat: Text.PlainText
+        verticalAlignment: Text.AlignVCenter
+        maximumLineCount: Plasmoid.configuration.maxTextLines || undefined
+
+        // The accessible item of this element is only used for debugging
+        // purposes, and it will never gain focus (thus it won't interfere
+        // with screenreaders).
+        Accessible.ignored: !visible
+        Accessible.name: parent.Accessible.name + "-labelhint"
+
+        // use State to avoid unnecessary re-evaluation when the label is invisible
+        states: State {
+            name: "labelVisible"
+            when: label.visible
+
+            PropertyChanges {
+                label.text: task.model.display
+            }
+        }
+    }
+
+    states: [
+        State {
+            name: "launcher"
+            when: task.model.IsLauncher
+
+            PropertyChanges {
+                frame.basePrefix: ""
+            }
+        },
+        State {
+            name: "attention"
+            when: task.model.IsDemandingAttention || (task.smartLauncherItem && task.smartLauncherItem.urgent)
+
+            PropertyChanges {
+                frame.basePrefix: "attention"
+            }
+        },
+        State {
+            name: "minimized"
+            when: task.model.IsMinimized
+
+            PropertyChanges {
+                frame.basePrefix: "minimized"
+            }
+        },
+    ]
+
+    Component.onCompleted: {
+        if (!inPopup && model.IsWindow) {
+            updateAudioStreams({delay: false});
+            console.log(
+                "iconBox y=", iconBox.y,
+                "iconBox x=", iconBox.x,
+                "top=", iconBox.anchors.top,
+                "bottom=", iconBox.anchors.bottom
+            );
+        }
+
+        if (!inPopup && !model.IsWindow) {
+            taskInitComponent.createObject(task);
+        }
+        completed = true;
+    }
+    Component.onDestruction: {
+        /* if (moveAnim.running) {
+         *           (task.parent as TaskList).animationsRunning -= 1;
+    } */
+    }
+}

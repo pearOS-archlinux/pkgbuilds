@@ -1,0 +1,138 @@
+/*
+ S PDX-FileCopyrightText:* 2017 Kai Uwe Broulik <kde@privat.broulik.de>
+
+ SPDX-License-Identifier: GPL-2.0-or-later
+ */
+
+pragma ComponentBehavior: Bound
+
+import QtQuick
+
+import org.kde.plasma.plasmoid
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.kirigami as Kirigami
+import org.kde.ksvg as KSvg
+
+Item {
+    id: audioStreamIconBox
+    parent: icon
+
+    width: Math.round(Math.min(Math.min(iconBox.width, iconBox.height) * 0.4, Kirigami.Units.iconSizes.smallMedium))
+    height: width
+
+    anchors {
+        top: parent.top
+        right: parent.right
+        rightMargin: Math.round(indicatorScale) + (Kirigami.Units.smallSpacing * 2)
+        topMargin: Math.round(indicatorScale) + (Kirigami.Units.smallSpacing * 3)
+    }
+
+    readonly property real indicatorScale: 1.2
+
+    activeFocusOnTab: true
+
+    // Using States rather than a simple Behavior we can apply different transitions,
+    // which allows us to delay showing the icon but hide it instantly still.
+    states: [
+        State {
+            name: "playing"
+            when: task.playingAudio && !task.muted
+            PropertyChanges {
+                audioStreamIconBox.opacity: 1
+                audioStreamIcon.source: "audio-volume-high-symbolic" + (Application.layoutDirection === Qt.RightToLeft ? "-rtl" : "")
+            }
+        },
+        State {
+            name: "muted"
+            when: task.muted
+            PropertyChanges {
+                audioStreamIconBox.opacity: 1
+                audioStreamIcon.source: "audio-volume-muted-symbolic" + (Application.layoutDirection === Qt.RightToLeft ? "-rtl" : "")
+            }
+        }
+    ]
+
+    transitions: [
+        Transition {
+            from: ""
+            to: "playing"
+            SequentialAnimation {
+                // Delay showing the play indicator so we don't flash it for brief sounds.
+                PauseAnimation {
+                    duration: !task.delayAudioStreamIndicator || inPopup ? 0 : 2000
+                }
+                NumberAnimation {
+                    property: "opacity"
+                    duration: Kirigami.Units.longDuration
+                }
+            }
+        },
+        Transition {
+            from: ""
+            to: "muted"
+            SequentialAnimation {
+                NumberAnimation {
+                    property: "opacity"
+                    duration: Kirigami.Units.longDuration
+                }
+            }
+        },
+        Transition {
+            to: ""
+            NumberAnimation {
+                property: "opacity"
+                duration: Kirigami.Units.longDuration
+            }
+        }
+    ]
+
+    opacity: 0
+    visible: opacity > 0
+
+    Keys.onReturnPressed: event => toggleMuted()
+    Keys.onEnterPressed: event => Keys.returnPressed(event);
+    Keys.onSpacePressed: event => Keys.returnPressed(event);
+
+    Accessible.checkable: true
+    Accessible.checked: task.muted
+    Accessible.name: task.muted ? i18nc("@action:button", "Unmute") : i18nc("@action:button", "Mute")
+    Accessible.description: task.muted ? i18nc("@info:tooltip %1 is the window title", "Unmute %1", model.display) : i18nc("@info:tooltip %1 is the window title", "Mute %1", model.display)
+    Accessible.role: Accessible.Button
+
+    HoverHandler {
+        id: hoverHandler
+        enabled: Plasmoid.configuration.interactiveMute
+    }
+
+    TapHandler {
+        id: tapHandler
+        gesturePolicy: TapHandler.ReleaseWithinBounds // Exclusive grab
+        enabled: Plasmoid.configuration.interactiveMute
+        onTapped: (eventPoint, button) => toggleMuted()
+    }
+
+    PlasmaExtras.Highlight {
+        anchors.fill: audioStreamIcon
+        hovered: hoverHandler.hovered || parent.activeFocus
+        pressed: tapHandler.pressed
+    }
+
+    Kirigami.Icon {
+        id: audioStreamIcon
+
+        // Need audio indicator twice, to keep iconBox in the center.
+        readonly property real requiredSpace: Math.min(iconBox.width, iconBox.height)
+        + Math.min(Math.min(iconBox.width, iconBox.height), Kirigami.Units.iconSizes.smallMedium) * 2
+
+        source: "audio-volume-high-symbolic" + (Application.layoutDirection === Qt.RightToLeft ? "-rtl" : "")
+        selected: tapHandler.pressed
+
+        height: Math.round(Plasmoid.configuration.iconSize * audioStreamIconBox.indicatorScale)
+        width: height
+
+        anchors {
+            verticalCenter: parent.verticalCenter
+            horizontalCenter: parent.horizontalCenter
+        }
+    }
+}
