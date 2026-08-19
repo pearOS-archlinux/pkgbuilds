@@ -73,6 +73,18 @@ namespace Breeze
         //* recompute the above once the current hover events are all delivered
         void scheduleButtonsHoveredUpdate();
 
+        //* current opacity of the hairline separator below the title bar; always
+        //* 0 or 1 unless HairlineMode is Auto, in which case it follows the
+        //* titlebar-hover fade animation
+        qreal hairlineOpacity() const;
+
+        protected:
+        void hoverEnterEvent(QHoverEvent *event) override;
+        void hoverLeaveEvent(QHoverEvent *event) override;
+        void hoverMoveEvent(QHoverEvent *event) override;
+
+        public:
+
         //*@name colors
         //@{
         QColor titleBarColor() const;
@@ -106,6 +118,7 @@ namespace Breeze
         void updateActiveState();
         void updateScale();
         void updateButtonsHovered();
+        void updateHairlineAnimationState();
 
         private:
 
@@ -122,6 +135,10 @@ namespace Breeze
         void updateBorderOutline();
 
         void createButtons();
+        //* (re)fills the left/right button groups; close, minimize and maximize
+        //* always go left in that order, macOS-style, no matter what the user's
+        //* global button layout setting says
+        void populateButtons();
         void paintTitleBar(QPainter *painter, const QRectF &repaintRegion);
         void updateShadow();
 
@@ -148,6 +165,11 @@ namespace Breeze
         KDecoration3::DecorationButtonGroup *m_rightButtons = nullptr;
 
         bool m_buttonsHovered = false;
+
+        //* fades the hairline separator in/out on titlebar hover when
+        //* HairlineMode is Auto; otherwise unused
+        QVariantAnimation *m_hairlineAnimation = nullptr;
+        bool m_titleBarHovered = false;
 
         //*frame corner radius, scaled according to DPI
         qreal m_scaledCornerRadius = 3;

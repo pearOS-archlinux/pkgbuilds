@@ -41,6 +41,7 @@
 #include <QDBusMessage>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
+#include <QHoverEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QTextStream>
@@ -150,8 +151,17 @@ namespace Breeze
     //________________________________________________________________
     Decoration::Decoration(QObject *parent, const QVariantList &args)
         : KDecoration3::Decoration(parent, args)
+        , m_hairlineAnimation(new QVariantAnimation(this))
     {
         g_sDecoCount++;
+
+        // hairline fade animation (HairlineMode::Auto only)
+        m_hairlineAnimation->setStartValue(0.0);
+        m_hairlineAnimation->setEndValue(1.0);
+        m_hairlineAnimation->setEasingCurve(QEasingCurve::InOutQuad);
+        connect(m_hairlineAnimation, &QVariantAnimation::valueChanged, this, [this]() {
+            update();
+        });
     }
 
     //________________________________________________________________
@@ -203,8 +213,11 @@ namespace Breeze
 
         // buttons
         connect(s.get(), &KDecoration3::DecorationSettings::spacingChanged, this, &Decoration::updateButtonsGeometryDelayed);
-        connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::updateButtonsGeometryDelayed);
-        connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::updateButtonsGeometryDelayed);
+        // the left/right button *membership* is pinned for close/minimize/maximize
+        // (see populateButtons()), but other button types still follow this
+        // setting, so a change still needs a full repopulate, not just a reposition
+        connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsLeftChanged, this, &Decoration::populateButtons);
+        connect(s.get(), &KDecoration3::DecorationSettings::decorationButtonsRightChanged, this, &Decoration::populateButtons);
 
         // full reconfiguration
         connect(s.get(), &KDecoration3::DecorationSettings::reconfigured, this, &Decoration::reconfigure);
@@ -335,6 +348,8 @@ namespace Breeze
     void Decoration::reconfigure()
     {
         m_internalSettings = SettingsProvider::self()->internalSettings(this);
+
+        m_hairlineAnimation->setDuration(m_internalSettings->animationsDuration());
 
         setScaledCornerRadius();
 
@@ -587,8 +602,55 @@ namespace Breeze
     //________________________________________________________________
     void Decoration::createButtons()
     {
-        m_leftButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Left, this, &Button::create);
-        m_rightButtons = new KDecoration3::DecorationButtonGroup(KDecoration3::DecorationButtonGroup::Position::Right, this, &Button::create);
+        // built with the manual (non-auto-populating) constructor: membership is
+        // entirely up to populateButtons(), so close/minimize/maximize can be
+        // pinned to the left regardless of the user's global button layout
+        m_leftButtons = new KDecoration3::DecorationButtonGroup(this);
+        m_rightButtons = new KDecoration3::DecorationButtonGroup(this);
+        populateButtons();
+    }
+
+    //________________________________________________________________
+    void Decoration::populateButtons()
+    {
+        if (!m_leftButtons || !m_rightButtons) return;
+
+        for (auto *button : m_leftButtons->buttons() + m_rightButtons->buttons())
+        {
+            delete button;
+        }
+
+        // pearOS always shows close, minimize and maximize on the left, in that
+        // order, macOS-style -- never wherever the user's global "Window
+        // Decorations" button layout puts them.
+        static const QList<KDecoration3::DecorationButtonType> macButtons = {
+            KDecoration3::DecorationButtonType::Close,
+            KDecoration3::DecorationButtonType::Minimize,
+            KDecoration3::DecorationButtonType::Maximize,
+        };
+        for (auto type : macButtons)
+        {
+            m_leftButtons->addButton(Button::create(type, this, m_leftButtons));
+        }
+
+        // any other button type the user configured (rare: keep above/below,
+        // shade, context help, ...) keeps whatever side they picked; the three
+        // above are excluded here since they were just placed above. The Menu
+        // button (the app icon) is dropped entirely -- pearOS has no use for
+        // it next to the mac-style traffic lights, regardless of what the
+        // user's global button layout says.
+        const auto s = settings();
+        for (auto type : s->decorationButtonsLeft())
+        {
+            if (macButtons.contains(type) || type == KDecoration3::DecorationButtonType::Menu) continue;
+            m_leftButtons->addButton(Button::create(type, this, m_leftButtons));
+        }
+        for (auto type : s->decorationButtonsRight())
+        {
+            if (macButtons.contains(type) || type == KDecoration3::DecorationButtonType::Menu) continue;
+            m_rightButtons->addButton(Button::create(type, this, m_rightButtons));
+        }
+
         updateButtonsGeometry();
     }
 
@@ -756,10 +818,12 @@ namespace Breeze
             const bool darkTitleBar(qGray(titleBarColor().rgb()) < 128);
             const int lineValue = darkTitleBar ? 255 : 0;
 
-            // separator below the titlebar
-            if (!hideTitleBar() && !w->isShaded() && m_internalSettings->showHairline())
+            // separator below the titlebar; in Auto mode this fades in/out with
+            // titlebar hover instead of being flatly on or off
+            const qreal hairlineOpacity = this->hairlineOpacity();
+            if (!hideTitleBar() && !w->isShaded() && hairlineOpacity > 0.0)
             {
-                painter->setPen(QPen(QColor(lineValue, lineValue, lineValue, 26), 0.67));
+                painter->setPen(QPen(QColor(lineValue, lineValue, lineValue, qRound(26 * hairlineOpacity)), 0.67));
                 const qreal y = borderTop() - 0.335;
                 painter->drawLine(QPointF(0, y), QPointF(size().width(), y));
             }
@@ -1101,6 +1165,70 @@ namespace Breeze
         m_buttonsHovered = hovered;
 
         for (KDecoration3::DecorationButton *button : buttonList) button->update();
+    }
+
+    //________________________________________________________________
+    qreal Decoration::hairlineOpacity() const
+    {
+        switch (m_internalSettings->hairlineMode())
+        {
+            case InternalSettings::HairlineOff: return 0.0;
+            case InternalSettings::HairlineOn: return 1.0;
+            case InternalSettings::HairlineAuto:
+            default: return m_hairlineAnimation->currentValue().toReal();
+        }
+    }
+
+    //________________________________________________________________
+    void Decoration::updateHairlineAnimationState()
+    {
+        if (m_internalSettings->hairlineMode() != InternalSettings::HairlineAuto) return;
+
+        const bool hovered = m_titleBarHovered;
+        if (!m_internalSettings->animationsEnabled())
+        {
+            m_hairlineAnimation->stop();
+            update();
+            return;
+        }
+
+        const auto dir = hovered ? QAbstractAnimation::Forward : QAbstractAnimation::Backward;
+        if (m_hairlineAnimation->state() == QAbstractAnimation::Running && m_hairlineAnimation->direction() != dir)
+            m_hairlineAnimation->stop();
+        m_hairlineAnimation->setDirection(dir);
+        if (m_hairlineAnimation->state() != QAbstractAnimation::Running) m_hairlineAnimation->start();
+    }
+
+    //________________________________________________________________
+    void Decoration::hoverEnterEvent(QHoverEvent *event)
+    {
+        KDecoration3::Decoration::hoverEnterEvent(event);
+
+        const bool hovered = !hideTitleBar() && titleBar().contains(event->position());
+        if (hovered == m_titleBarHovered) return;
+        m_titleBarHovered = hovered;
+        updateHairlineAnimationState();
+    }
+
+    //________________________________________________________________
+    void Decoration::hoverLeaveEvent(QHoverEvent *event)
+    {
+        KDecoration3::Decoration::hoverLeaveEvent(event);
+
+        if (!m_titleBarHovered) return;
+        m_titleBarHovered = false;
+        updateHairlineAnimationState();
+    }
+
+    //________________________________________________________________
+    void Decoration::hoverMoveEvent(QHoverEvent *event)
+    {
+        KDecoration3::Decoration::hoverMoveEvent(event);
+
+        const bool hovered = !hideTitleBar() && titleBar().contains(event->position());
+        if (hovered == m_titleBarHovered) return;
+        m_titleBarHovered = hovered;
+        updateHairlineAnimationState();
     }
 
 } // namespace

@@ -68,9 +68,15 @@
       <default>true</default>
     </entry>
 
-    <!-- hairline separator below the titlebar -->
-    <entry name="ShowHairline" type = "Bool">
-      <default>true</default>
+    <!-- hairline separator below the titlebar: always off, always on, or
+         faded in/out on titlebar hover -->
+    <entry name="HairlineMode" type = "Enum">
+      <choices>
+          <choice name="HairlineOff"/>
+          <choice name="HairlineOn"/>
+          <choice name="HairlineAuto"/>
+      </choices>
+      <default>HairlineOn</default>
     </entry>
   </group>
 
@@ -134,6 +140,17 @@
 
     <entry name="MacOSButtons" type = "Bool">
         <default>true</default>
+    </entry>
+
+    <!-- visual style of the traffic-light buttons (only used when MacOSButtons
+         is on): Pahoe is the flat-fill original, Goldwing is the glossy
+         gradient one with filled hover glyphs -->
+    <entry name="TrafficLightStyle" type = "Enum">
+      <choices>
+          <choice name="StylePahoe"/>
+          <choice name="StyleGoldwing"/>
+      </choices>
+      <default>StyleGoldwing</default>
     </entry>
 
     <entry name="BackgroundOpacity" type = "Int">

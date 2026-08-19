@@ -34,6 +34,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QGuiApplication>
+#include <QRadialGradient>
 #include <QGridLayout>
 #include <QIcon>
 #include <QLabel>
@@ -340,25 +341,32 @@ namespace Breeze
         if (!d) return;
 
         // the magic lamp animation is tied to the window geometry, and looks broken when a
-        // window is minimized from the close button, so it is unloaded around the request
-        bool restoreMagicLamp(false);
+        // window is minimized from the close button, so it is unloaded around the request.
+        // pearOS's own magic lamp effect is preferred; the stock KDE one is the fallback for
+        // systems where the pearOS effect isn't installed or loaded.
+        QString effectToRestore;
         if (d->internalSettings()->closeMinimizeSkipMagicLamp())
         {
             auto interface = effectsInterface();
-            const QDBusReply<bool> loaded = interface.call(QStringLiteral("isEffectLoaded"), QStringLiteral("magiclamp"));
-            if (loaded.isValid() && loaded.value())
+            static const QString candidates[] = { QStringLiteral("kwin4_effect_pearosmagiclamp"), QStringLiteral("magiclamp") };
+            for (const QString &candidate : candidates)
             {
-                interface.call(QStringLiteral("unloadEffect"), QStringLiteral("magiclamp"));
-                restoreMagicLamp = true;
+                const QDBusReply<bool> loaded = interface.call(QStringLiteral("isEffectLoaded"), candidate);
+                if (loaded.isValid() && loaded.value())
+                {
+                    interface.call(QStringLiteral("unloadEffect"), candidate);
+                    effectToRestore = candidate;
+                    break;
+                }
             }
         }
 
         d->requestMinimize();
 
-        if (restoreMagicLamp)
+        if (!effectToRestore.isEmpty())
         {
-            QTimer::singleShot(500, this, []() {
-                effectsInterface().call(QStringLiteral("loadEffect"), QStringLiteral("magiclamp"));
+            QTimer::singleShot(500, this, [effectToRestore]() {
+                effectsInterface().call(QStringLiteral("loadEffect"), effectToRestore);
             });
         }
 
@@ -671,7 +679,8 @@ namespace Breeze
 
         const qreal dotRadius(rect.width()/5);
 
-        // on inactive windows the circles are plain white at 16% opacity
+        // on inactive windows the circles are plain white at 16% opacity,
+        // regardless of style
         if (!active && !hovered)
         {
             painter->setPen(Qt::NoPen);
@@ -687,6 +696,20 @@ namespace Breeze
 
             return true;
         }
+
+        if (d->internalSettings()->trafficLightStyle() == InternalSettings::StyleGoldwing)
+            drawGoldwingButton(painter, rect, fill, hovered, busy, dotRadius);
+        else
+            drawPahoeButton(painter, rect, fill, hovered, busy, dotRadius);
+
+        return true;
+
+    }
+
+    //__________________________________________________________________
+    //* Pahoe: the original flat-fill circle with thin stroked glyphs
+    void Button::drawPahoeButton(QPainter *painter, const QRectF &rect, QColor fill, bool hovered, bool busy, qreal dotRadius) const
+    {
 
         if (isPressed()) fill = fill.darker(115);
 
@@ -726,16 +749,8 @@ namespace Breeze
                 break;
 
                 case DecorationButtonType::Maximize:
-                if (isChecked())
-                {
-                    painter->drawLine(QPointF(-3.5, 0), QPointF(3.5, 0));
-                    painter->drawLine(QPointF(0, -3.5), QPointF(0, 3.5));
-                }
-                else
-                {
-                    painter->drawLine(QPointF(-3.5, 0), QPointF(3.5, 0));
-                    painter->drawLine(QPointF(0, -3.5), QPointF(0, 3.5));
-                }
+                painter->drawLine(QPointF(-3.5, 0), QPointF(3.5, 0));
+                painter->drawLine(QPointF(0, -3.5), QPointF(0, 3.5));
                 break;
 
                 default: break;
@@ -744,7 +759,114 @@ namespace Breeze
             painter->restore();
         }
 
-        return true;
+    }
+
+    //__________________________________________________________________
+    //* mixes @p c toward @p towards by @p t (0 = c, 1 = towards); used to keep
+    //* the Goldwing gradient/glyph stops derived from the button's own hue
+    //* instead of hand-picked absolute colors
+    static QColor mixColor(const QColor &c, const QColor &towards, qreal t)
+    {
+        return QColor::fromRgbF(
+            c.redF()   + (towards.redF()   - c.redF())   * t,
+            c.greenF() + (towards.greenF() - c.greenF()) * t,
+            c.blueF()  + (towards.blueF()  - c.blueF())  * t,
+            c.alphaF());
+    }
+
+    //__________________________________________________________________
+    //* Goldwing: soft pastel glossy circle -- brightest at the center,
+    //* settling to the nominal color at the rim, with a thin darker ring
+    //* (in the same hue, not plain black) for definition. Reference:
+    //* ~/Desktop/example.webp -- the reference art reads as a fairly flat,
+    //* pastel-soft fill with a colored outline, not a strongly banded
+    //* gradient; a mild center glow gets closest without going muddy.
+    void Button::drawGoldwingButton(QPainter *painter, const QRectF &rect, QColor fill, bool hovered, bool busy, qreal dotRadius) const
+    {
+
+        if (isPressed()) fill = fill.darker(115);
+
+        const QRectF circleRect(rect.adjusted(0.25, 0.25, -0.25, -0.25));
+
+        QRadialGradient gradient(circleRect.center(), circleRect.width()/2);
+        gradient.setColorAt(0.0, mixColor(fill, Qt::white, 0.32));
+        gradient.setColorAt(1.0, fill);
+
+        painter->setPen(QPen(mixColor(fill, Qt::black, 0.32), 0.75));
+        painter->setBrush(gradient);
+        painter->drawEllipse(circleRect);
+
+        if (busy)
+        {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(QColor(0, 0, 0, 145));
+            painter->drawEllipse(rect.center(), dotRadius, dotRadius);
+        }
+
+        // the symbols only show up on hover, as on macOS; they are bold, filled
+        // shapes in a darker shade of the button's own color, not black strokes
+        if (hovered && !busy)
+        {
+            painter->save();
+            painter->translate(rect.center());
+            painter->scale(rect.width()/14, rect.width()/14);
+
+            const QColor glyphColor = mixColor(fill, Qt::black, 0.62);
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(glyphColor);
+
+            switch (type())
+            {
+                case DecorationButtonType::Close:
+                {
+                    QPainterPath path;
+                    auto thickLine = [&path](QPointF from, QPointF to, qreal width) {
+                        const QLineF line(from, to);
+                        const QPointF normal = line.normalVector().unitVector().p2() - line.p1();
+                        const QPointF offset = normal * (width/2);
+                        QPolygonF quad;
+                        quad << from - offset << from + offset << to + offset << to - offset;
+                        path.addPolygon(quad);
+                    };
+                    thickLine(QPointF(-3, -3), QPointF(3, 3), 1.7);
+                    thickLine(QPointF(-3, 3), QPointF(3, -3), 1.7);
+                    path.setFillRule(Qt::WindingFill);
+                    painter->drawPath(path);
+                    break;
+                }
+
+                case DecorationButtonType::Minimize:
+                painter->drawRoundedRect(QRectF(-3.5, -0.85, 7, 1.7), 0.85, 0.85);
+                break;
+
+                case DecorationButtonType::Maximize:
+                {
+                    // a filled rounded square with a lighter diagonal stripe
+                    // cut through it (bottom-left to top-right), matching the
+                    // reference art (~/Desktop/example.webp) rather than the
+                    // classic macOS double-arrow zoom glyph
+                    QPainterPath square;
+                    square.addRoundedRect(QRectF(-2.6, -2.6, 5.2, 5.2), 0.9, 0.9);
+                    painter->setPen(Qt::NoPen);
+                    painter->setBrush(glyphColor);
+                    painter->drawPath(square);
+
+                    painter->save();
+                    painter->setClipPath(square);
+                    QPen stripePen(mixColor(glyphColor, Qt::white, 0.7));
+                    stripePen.setWidthF(0.9);
+                    stripePen.setCapStyle(Qt::RoundCap);
+                    painter->setPen(stripePen);
+                    painter->drawLine(QPointF(-2.8, 2.8), QPointF(2.8, -2.8));
+                    painter->restore();
+                    break;
+                }
+
+                default: break;
+            }
+
+            painter->restore();
+        }
 
     }
 

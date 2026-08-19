@@ -123,6 +123,10 @@ namespace Breeze
 
         //* draw the flat pearOS button, returns false for other button types
         bool drawMacOSButton(QPainter *) const;
+        //* the original flat-fill traffic light, with thin stroked glyphs
+        void drawPahoeButton(QPainter *, const QRectF &rect, QColor fill, bool hovered, bool busy, qreal dotRadius) const;
+        //* glossy gradient traffic light, with bold filled glyphs
+        void drawGoldwingButton(QPainter *, const QRectF &rect, QColor fill, bool hovered, bool busy, qreal dotRadius) const;
 
         //* minimize the window, optionally bypassing the magic lamp effect
         void minimizeWindow();

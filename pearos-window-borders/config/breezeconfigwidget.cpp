@@ -55,11 +55,12 @@ namespace Breeze
         connect(m_ui.closeButtonMinimizes, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
         connect(m_ui.closeMinimizeSkipMagicLamp, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
         connect(m_ui.maximizeButtonFullScreens, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
-        connect(m_ui.showHairline, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
+        connect(m_ui.hairlineMode, SIGNAL(currentIndexChanged(int)), SLOT(updateChanged()));
         connect(m_ui.showBusyIndicator, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
         connect(m_ui.showOutline, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
         connect(m_ui.showSnapMenu, &QAbstractButton::clicked, this, &ConfigWidget::updateChanged);
         connect(m_ui.macOSButtons, SIGNAL(clicked()), SLOT(updateChanged()) );
+        connect(m_ui.trafficLightStyle, SIGNAL(currentIndexChanged(int)), SLOT(updateChanged()));
         connect(m_ui.opacitySpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int /*i*/) {updateChanged();});
         connect(m_ui.gradientSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int /*i*/) {updateChanged();});
 
@@ -105,13 +106,15 @@ namespace Breeze
         m_ui.closeMinimizeSkipMagicLamp->setChecked(m_internalSettings->closeMinimizeSkipMagicLamp());
         m_ui.closeMinimizeSkipMagicLamp->setEnabled(m_internalSettings->closeButtonMinimizes());
         m_ui.maximizeButtonFullScreens->setChecked(m_internalSettings->maximizeButtonFullScreens());
-        m_ui.showHairline->setChecked(m_internalSettings->showHairline());
+        m_ui.hairlineMode->setCurrentIndex(m_internalSettings->hairlineMode());
         m_ui.showBusyIndicator->setChecked(m_internalSettings->showBusyIndicator());
         m_ui.showOutline->setChecked(m_internalSettings->showOutline());
         m_ui.showSnapMenu->setChecked(m_internalSettings->showSnapMenu());
         m_ui.animationsEnabled->setChecked(m_internalSettings->animationsEnabled());
         m_ui.animationsDuration->setValue(m_internalSettings->animationsDuration());
         m_ui.macOSButtons->setChecked(m_internalSettings->macOSButtons());
+        m_ui.trafficLightStyle->setCurrentIndex(m_internalSettings->trafficLightStyle());
+        m_ui.trafficLightStyle->setEnabled(m_internalSettings->macOSButtons());
         m_ui.opacitySpinBox->setValue(m_internalSettings->backgroundOpacity());
         m_ui.gradientSpinBox->setValue(m_internalSettings->backgroundGradientIntensity());
 
@@ -179,13 +182,14 @@ namespace Breeze
         m_internalSettings->setCloseButtonMinimizes(m_ui.closeButtonMinimizes->isChecked());
         m_internalSettings->setCloseMinimizeSkipMagicLamp(m_ui.closeMinimizeSkipMagicLamp->isChecked());
         m_internalSettings->setMaximizeButtonFullScreens(m_ui.maximizeButtonFullScreens->isChecked());
-        m_internalSettings->setShowHairline(m_ui.showHairline->isChecked());
+        m_internalSettings->setHairlineMode(m_ui.hairlineMode->currentIndex());
         m_internalSettings->setShowBusyIndicator(m_ui.showBusyIndicator->isChecked());
         m_internalSettings->setShowOutline(m_ui.showOutline->isChecked());
         m_internalSettings->setShowSnapMenu(m_ui.showSnapMenu->isChecked());
         m_internalSettings->setAnimationsEnabled(m_ui.animationsEnabled->isChecked());
         m_internalSettings->setAnimationsDuration(m_ui.animationsDuration->value());
         m_internalSettings->setMacOSButtons(m_ui.macOSButtons->isChecked());
+        m_internalSettings->setTrafficLightStyle(m_ui.trafficLightStyle->currentIndex());
         m_internalSettings->setBackgroundOpacity(m_ui.opacitySpinBox->value());
         m_internalSettings->setBackgroundGradientIntensity(m_ui.gradientSpinBox->value());
 
@@ -267,13 +271,15 @@ namespace Breeze
         m_ui.closeMinimizeSkipMagicLamp->setChecked(m_internalSettings->closeMinimizeSkipMagicLamp());
         m_ui.closeMinimizeSkipMagicLamp->setEnabled(m_internalSettings->closeButtonMinimizes());
         m_ui.maximizeButtonFullScreens->setChecked(m_internalSettings->maximizeButtonFullScreens());
-        m_ui.showHairline->setChecked(m_internalSettings->showHairline());
+        m_ui.hairlineMode->setCurrentIndex(m_internalSettings->hairlineMode());
         m_ui.showBusyIndicator->setChecked(m_internalSettings->showBusyIndicator());
         m_ui.showOutline->setChecked(m_internalSettings->showOutline());
         m_ui.showSnapMenu->setChecked(m_internalSettings->showSnapMenu());
         m_ui.animationsEnabled->setChecked(m_internalSettings->animationsEnabled());
         m_ui.animationsDuration->setValue(m_internalSettings->animationsDuration());
         m_ui.macOSButtons->setChecked(m_internalSettings->macOSButtons());
+        m_ui.trafficLightStyle->setCurrentIndex(m_internalSettings->trafficLightStyle());
+        m_ui.trafficLightStyle->setEnabled(m_internalSettings->macOSButtons());
         m_ui.opacitySpinBox->setValue(m_internalSettings->backgroundOpacity());
         m_ui.gradientSpinBox->setValue(m_internalSettings->backgroundGradientIntensity());
 
@@ -323,6 +329,8 @@ namespace Breeze
 
         if (m_ui.macOSButtons->isChecked() != m_internalSettings->macOSButtons())
             modified = true;
+        if (m_ui.trafficLightStyle->currentIndex() != m_internalSettings->trafficLightStyle())
+            modified = true;
         if (m_ui.titleAlignment->currentIndex() != m_internalSettings->titleAlignment())
             modified = true;
         else if (m_ui.buttonSize->currentIndex() != m_internalSettings->buttonSize())
@@ -341,7 +349,7 @@ namespace Breeze
             modified = true;
         else if (m_ui.maximizeButtonFullScreens->isChecked() != m_internalSettings->maximizeButtonFullScreens())
             modified = true;
-        else if (m_ui.showHairline->isChecked() != m_internalSettings->showHairline())
+        else if (m_ui.hairlineMode->currentIndex() != m_internalSettings->hairlineMode())
             modified = true;
         else if (m_ui.showBusyIndicator->isChecked() != m_internalSettings->showBusyIndicator())
             modified = true;

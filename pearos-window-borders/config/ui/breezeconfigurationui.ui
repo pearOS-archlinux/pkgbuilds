@@ -215,11 +215,36 @@
         </widget>
        </item>
        <item row="6" column="0" colspan="3">
-        <widget class="QCheckBox" name="macOSButtons">
-         <property name="text">
-          <string>macOS-like buttons</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_macOSButtons">
+         <item>
+          <widget class="QCheckBox" name="macOSButtons">
+           <property name="text">
+            <string>macOS-like buttons</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="trafficLightStyle">
+           <item>
+            <property name="text">
+             <string comment="@item:inlistbox macOS-like button style">Pahoe</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string comment="@item:inlistbox macOS-like button style">Goldwing (latest)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_macOSButtons">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item row="7" column="0" colspan="3">
         <widget class="QCheckBox" name="roundedCorners">
@@ -274,11 +299,44 @@
         </widget>
        </item>
        <item row="14" column="0" colspan="3">
-        <widget class="QCheckBox" name="showHairline">
-         <property name="text">
-          <string>Show hairline below the title bar</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_hairline">
+         <item>
+          <widget class="QLabel" name="label_hairline">
+           <property name="text">
+            <string>Hairline below the title bar:</string>
+           </property>
+           <property name="buddy">
+            <cstring>hairlineMode</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="hairlineMode">
+           <item>
+            <property name="text">
+             <string comment="@item:inlistbox Hairline below the title bar:">Off</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string comment="@item:inlistbox Hairline below the title bar:">On</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string comment="@item:inlistbox Hairline below the title bar:">Auto (show on hover)</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_hairline">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item row="15" column="0" colspan="3">
         <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,0,1">
@@ -733,6 +791,12 @@
      <y>188</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>macOSButtons</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>trafficLightStyle</receiver>
+   <slot>setEnabled(bool)</slot>
   </connection>
  </connections>
 </ui>
