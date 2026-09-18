@@ -41,6 +41,13 @@ jobs:
 
       - uses: actions/checkout@v4
 
+      - name: Trust the workspace directory for git
+        # actions/checkout's own safe.directory fix-up runs as the runner
+        # user on the host; steps in this container run as root against a
+        # workspace owned by a different uid, which git treats as "dubious
+        # ownership" until told otherwise.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Setup pacman.conf + mirrorlist
         run: |
           cp gh-actions/pacman.conf /etc/pacman.conf
@@ -78,15 +85,6 @@ jobs:
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-
-      - name: Debug git state
-        run: |
-          pwd
-          ls -la
-          git rev-parse --show-toplevel || echo "not a worktree"
-          git status || true
-          whoami
-          stat -c '%U %G' .
 
       - name: Bump pkgrel and record kwin version
         if: steps.compare.outputs.changed == 'true'
