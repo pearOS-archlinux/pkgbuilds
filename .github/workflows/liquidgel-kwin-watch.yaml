@@ -45,6 +45,9 @@ jobs:
           pacman-key -a gh-actions/keys/inled.gpg
           pacman-key --lsign-key 89F828A9675B63CD0077CE9965AA57CF36E2018F
 
+      - name: Install git and curl
+        run: pacman -Sy --noconfirm --needed git curl
+
       - name: Query current kwin version
         id: kwin
         run: |
