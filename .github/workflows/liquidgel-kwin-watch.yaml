@@ -1,0 +1,86 @@
+name: Bump pearos-liquidgel on kwin update
+
+# pearos-liquidgel links against kwin's plugin ABI. build-and-publish.yaml
+# only rebuilds a package when its own PKGBUILD gets a version bump, so a
+# kwin update in the upstream [extra] repo (which this repo does not build)
+# never triggers a rebuild on its own -- the signed package on the CDN goes
+# stale and breaks against the new kwin. This job checks the kwin version
+# daily and, when it changed since the last recorded build, bumps
+# pearos-liquidgel's pkgrel and pushes -- which then triggers the normal
+# build-and-publish.yaml push-triggered pipeline for just that package.
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-kwin-version:
+    runs-on: ubuntu-latest
+
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pacman.conf + mirrorlist
+        run: |
+          cp gh-actions/pacman.conf /etc/pacman.conf
+          cp gh-actions/mirrorlist /etc/pacman.d/mirrorlist
+
+      - name: Init pacman keyring
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+
+          pacman-key -a gh-actions/keys/pearos.gpg
+          pacman-key --lsign-key 4C1A9F3C131ACA95
+
+          pacman-key -a gh-actions/keys/inled.gpg
+          pacman-key --lsign-key 89F828A9675B63CD0077CE9965AA57CF36E2018F
+
+      - name: Query current kwin version
+        id: kwin
+        run: |
+          pacman -Sy --noconfirm
+          ver=$(pacman -Si extra/kwin | awk -F': ' '/^Version/{print $2; exit}')
+          if [[ -z "$ver" ]]; then
+            echo "Could not resolve kwin version from [extra]" >&2
+            exit 1
+          fi
+          echo "Current kwin version: $ver"
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+
+      - name: Compare against last built-against version
+        id: compare
+        run: |
+          stamp="pearos-liquidgel/.built-against-kwin"
+          last=""
+          [[ -f "$stamp" ]] && last=$(cat "$stamp")
+          echo "Last built against: ${last:-<none>}"
+          if [[ "$last" == "${{ steps.kwin.outputs.version }}" ]]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump pkgrel and record kwin version
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          cd pearos-liquidgel
+
+          current_rel=$(grep -E '^pkgrel=' PKGBUILD | cut -d= -f2)
+          new_rel=$((current_rel + 1))
+          sed -i "s/^pkgrel=.*/pkgrel=${new_rel}/" PKGBUILD
+          echo "${{ steps.kwin.outputs.version }}" > .built-against-kwin
+
+          git config user.name "pearOS build bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add PKGBUILD .built-against-kwin
+          git commit -m "pearos-liquidgel: rebuild against kwin ${{ steps.kwin.outputs.version }} (pkgrel ${new_rel})"
+          git push origin HEAD:main
