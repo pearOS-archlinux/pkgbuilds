@@ -79,6 +79,15 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Debug git state
+        run: |
+          pwd
+          ls -la
+          git rev-parse --show-toplevel || echo "not a worktree"
+          git status || true
+          whoami
+          stat -c '%U %G' .
+
       - name: Bump pkgrel and record kwin version
         if: steps.compare.outputs.changed == 'true'
         run: |
