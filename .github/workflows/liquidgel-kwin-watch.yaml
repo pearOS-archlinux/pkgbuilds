@@ -27,6 +27,18 @@ jobs:
       options: --privileged
 
     steps:
+      # git has to exist before actions/checkout, or checkout falls back to
+      # its API tarball download (no .git dir) and every later git command
+      # fails with "not in a git directory". The archlinux:latest image
+      # ships neither git nor curl, and this repo's PKGBUILD isn't checked
+      # out yet, so install both from the image's default (official) Arch
+      # mirrors first -- no custom repo/keys needed just for that.
+      - name: Install git and curl
+        run: |
+          pacman-key --init
+          pacman-key --populate archlinux
+          pacman -Sy --noconfirm --needed git curl
+
       - uses: actions/checkout@v4
 
       - name: Setup pacman.conf + mirrorlist
@@ -34,19 +46,13 @@ jobs:
           cp gh-actions/pacman.conf /etc/pacman.conf
           cp gh-actions/mirrorlist /etc/pacman.d/mirrorlist
 
-      - name: Init pacman keyring
+      - name: Trust pearos/inled signing keys
         run: |
-          pacman-key --init
-          pacman-key --populate archlinux
-
           pacman-key -a gh-actions/keys/pearos.gpg
           pacman-key --lsign-key 4C1A9F3C131ACA95
 
           pacman-key -a gh-actions/keys/inled.gpg
           pacman-key --lsign-key 89F828A9675B63CD0077CE9965AA57CF36E2018F
-
-      - name: Install git and curl
-        run: pacman -Sy --noconfirm --needed git curl
 
       - name: Query current kwin version
         id: kwin
