@@ -1,63 +1,78 @@
-# Maintainer: Alexandru Balan <alxb421@gmail.com>
+# Maintainer: Alexandru Balan <alex@pear-software.com>
+# Based on Arch's kscreenlocker PKGBUILD (Antonio Rojas <arojas@archlinux.org>).
+#
+# Upstream kscreenlocker on purpose. The pearOS fork (kept in
+# ../kscreenlocker-fork) exported KSldApp::lock(EstablishLock, int) and used
+# PlasmaQuick::SharedQmlEngine, neither of which exists in Plasma 6.8: kwin_wayland
+# 6.8 aborted with "undefined symbol ... KSldApp::lock", Plasma never started and
+# SDDM looped on a black screen.
+#
+# epoch=1 because the fork was versioned 26.7.2, which pacman ranks above Arch's
+# 6.8.x, so installed systems would never have been moved off it. Because of the
+# epoch this package shadows [extra]: bump pkgver here whenever Arch ships a new
+# kscreenlocker (see liquidgel-kwin-watch.yaml for the same problem with kwin).
+
 pkgname=kscreenlocker
-pkgver=26.7.2
-pkgrel=5
-pkgdesc="pearOS dark theme for KDE Screen Locker"
-arch=('x86_64')
-url="https://github.com/pearOS-archlinux/pkgbuilds"
-license=('GPL-2.0-or-later')
-depends=(
-    kconfig kcoreaddons kcrash kglobalaccel ki18n kidletime kio
-    knotifications ksvg kwindowsystem kxmlgui layer-shell-qt libkscreen
-    plasma-workspace qt6-base qt6-declarative qt6-5compat
-    xcb-util-keysyms libxcb pam
-)
-makedepends=(
-    cmake extra-cmake-modules ninja
-    kcmutils
-    qt6-wayland wayland wayland-protocols
-)
-conflicts=('kscreenlocker')
-provides=('kscreenlocker')
-install="$pkgname.install"
+epoch=1
+pkgver=6.8.2
+_dirver=$(echo $pkgver | cut -d. -f1-3)
+pkgrel=1
+pkgdesc='Library and components for secure lock screen architecture'
+arch=(x86_64)
+url='https://kde.org/plasma-desktop/'
+license=(LGPL-2.0-or-later)
+depends=(glibc
+         kcmutils
+         kconfig
+         kcoreaddons
+         kcrash
+         kdeclarative
+         kglobalaccel
+         ki18n
+         kidletime
+         kio
+         kirigami
+         knotifications
+         kpackage
+         ksvg
+         kwindowsystem
+         kxmlgui
+         layer-shell-qt
+         libkscreen
+         libstdc++
+         pam
+         libplasma
+         qt6-base
+         qt6-declarative)
+makedepends=(extra-cmake-modules
+             kdoctools)
+groups=(plasma)
+options=(!debug)
+source=(https://download.kde.org/stable/plasma/$_dirver/$pkgname-$pkgver.tar.xz{,.sig}
+        kde.pam
+        kde-fingerprint.pam 
+        kde-smartcard.pam)
+sha256sums=('24538edbdb72840bbfaf5e4e4fce40f25029a46dd0e35277317be95211f7f968'
+            'SKIP'
+            'adba7bb7c27eb3a572e5e9d3cea0dbeebe59d3634472d1863d14fe892cb13b2b'
+            '32734b4e1ec8b7f7e32b6cb2d68285c5c4f15f53736bba085096e76095181241'
+            '5d9c31cbf66e8e455b9559c929f184efd598f714743d5a1e6ce20adb44dc4b2d')
+validpgpkeys=('E0A3EB202F8E57528E13E72FD7574483BB57B18D'  # Jonathan Esk-Riddell <jr@jriddell.org>
+              '0AAC775BB6437A8D9AF7A3ACFE0784117FBCE11D'  # Bhushan Shah <bshah@kde.org>
+              'D07BD8662C56CB291B316EB2F5675605C74E02CF'  # David Edmundson <davidedmundson@kde.org>
+              '1FA881591C26B276D7A5518EEAAF29B42A678C20') # Marco Martin <notmart@gmail.com>
 
 build() {
-    cmake -B "$srcdir/build" -S "$startdir" \
-        -G Ninja \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=/usr \
-        -DCMAKE_SKIP_RPATH=ON \
-        -DBUILD_TESTING=OFF
-    ninja -C "$srcdir/build"
+  cmake -B build  -S $pkgname-$pkgver \
+    -DKDE_INSTALL_LIBEXECDIR=/usr/lib \
+    -DBUILD_TESTING=OFF
+  cmake --build build
 }
 
 package() {
-    DESTDIR="$pkgdir" ninja -C "$srcdir/build" install
+  DESTDIR="$pkgdir" cmake --install build
 
-    # PAM services — cmake doesn't install these, must be shipped manually
-    install -Dm644 "$startdir/kde.pam" "$pkgdir/etc/pam.d/kde"
-    install -Dm644 "$startdir/kde-fingerprint.pam" "$pkgdir/etc/pam.d/kde-fingerprint"
-
-    # Store theme files in /usr/share/pearos/lockscreen/
-    # The pacman hook copies them to plasma-desktop's lockscreen path.
-    local theme="$pkgdir/usr/share/pearos/lockscreen"
-
-    install -Dm644 "$startdir/lockscreen/LockScreenUi.qml" \
-        "$theme/LockScreenUi.qml"
-
-    for font in "$startdir/lockscreen/fonts/"*.otf; do
-        install -Dm644 "$font" "$theme/fonts/$(basename "$font")"
-        install -Dm644 "$font" "$pkgdir/usr/share/fonts/pearos/$(basename "$font")"
-    done
-
-    for img in "$startdir/pearOS-dark/images/"*.svg; do
-        install -Dm644 "$img" "$theme/images/$(basename "$img")"
-    done
-
-    # Pacman hook — re-applies QML/images after plasma-desktop or this package updates
-    install -Dm644 "$startdir/hooks/pearos-lockscreen.hook" \
-        "$pkgdir/usr/share/libalpm/hooks/pearos-lockscreen.hook"
-
-    install -Dm755 "$startdir/hooks/apply-lockscreen-theme.sh" \
-        "$pkgdir/usr/share/pearos/apply-lockscreen-theme.sh"
+  install -Dm644 "$srcdir"/kde.pam "$pkgdir"/usr/lib/pam.d/kde
+  install -Dm644 "$srcdir"/kde-fingerprint.pam "$pkgdir"/usr/lib/pam.d/kde-fingerprint
+  install -Dm644 "$srcdir"/kde-smartcard.pam "$pkgdir"/usr/lib/pam.d/kde-smartcard
 }

@@ -2,10 +2,20 @@
 Description=Realign pearOS installs to the Arch package baseline
 Wants=network-online.target
 After=network-online.target
+# The live ISO has no install to realign; running reflector and pacman there
+# only delays the desktop.
+ConditionPathExists=!/run/archiso
 
 [Service]
-Type=oneshot
+# Not Type=oneshot: a oneshot keeps multi-user.target and graphical.target (and
+# so the display manager) waiting until it exits. With reflector rating mirrors
+# and pacman reinstalling packages that meant minutes of black screen at boot.
+Type=simple
 ExecStart=/usr/bin/pear-firmware-realign
+Nice=10
+IOSchedulingClass=idle
+TimeoutStopSec=30
+RuntimeMaxSec=3600
 
 [Install]
 WantedBy=multi-user.target
