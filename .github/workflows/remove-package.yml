@@ -1,0 +1,96 @@
+name: Remove package from the R2 repo
+
+# Manual. Pulls the [pearos] repo from R2, deletes every file of one package
+# (.pkg.tar.zst and .sig), lets sign.sh drop it from pearos.db and pushes the
+# result back (sign.sh syncs with --delete-after, so the objects disappear from
+# R2 too). Run with dry_run first to see exactly what would go.
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Exact package name to remove (e.g. kscreenlocker)"
+        required: true
+      dry_run:
+        description: "Only list what would be removed"
+        type: boolean
+        default: true
+
+jobs:
+  remove:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate the package name
+        run: |
+          case "${{ inputs.package }}" in
+            ""|*[!a-z0-9@._+-]*) echo "invalid package name"; exit 1 ;;
+          esac
+
+      - name: Install tools
+        run: pacman -Syu --noconfirm && pacman -S --noconfirm --needed base-devel git rclone gnupg
+
+      - name: Stage sign.sh in an isolated dir
+        run: |
+          mkdir -p /tmp/r2-stage
+          cp sign.sh /tmp/r2-stage/sign.sh
+          chmod +x /tmp/r2-stage/sign.sh
+
+      - name: Import signing key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo "$GPG_PASSPHRASE" > /tmp/r2-stage/.gpg-passphrase
+          chmod 600 /tmp/r2-stage/.gpg-passphrase
+
+      - name: Configure rclone (R2)
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ENDPOINT_URL: ${{ secrets.R2_ENDPOINT_URL }}
+        run: |
+          mkdir -p "${HOME}/.config/rclone"
+          cat > "${HOME}/.config/rclone/rclone.conf" <<EOT
+          [r2-pearos]
+          type = s3
+          provider = Cloudflare
+          access_key_id = ${R2_ACCESS_KEY_ID}
+          secret_access_key = ${R2_SECRET_ACCESS_KEY}
+          endpoint = ${R2_ENDPOINT_URL}
+          acl = private
+          EOT
+
+      - name: Pull current repo state from R2
+        working-directory: /tmp/r2-stage
+        run: |
+          ./sign.sh --pull
+          cp "$GITHUB_WORKSPACE/sign.sh" sign.sh && chmod +x sign.sh
+
+      - name: Show what will be removed
+        working-directory: /tmp/r2-stage
+        run: |
+          shopt -s nullglob
+          files=( "${{ inputs.package }}"-[0-9]*-*.pkg.tar.zst "${{ inputs.package }}"-[0-9]*-*.pkg.tar.zst.sig )
+          echo "Packages in the repo before: $(ls *.pkg.tar.zst | wc -l)"
+          if (( ${#files[@]} == 0 )); then echo "No files for '${{ inputs.package }}' in the repo."; exit 1; fi
+          printf 'Will remove: %s\n' "${files[@]}"
+          echo "In pearos.db:"; tar -tzf pearos.db.tar.gz | sed 's#/.*##' | sort -u | grep -E "^${{ inputs.package }}-[0-9]" || echo "  (not in db)"
+
+      - name: Remove and republish
+        if: ${{ !inputs.dry_run }}
+        working-directory: /tmp/r2-stage
+        run: |
+          shopt -s nullglob
+          rm -f "${{ inputs.package }}"-[0-9]*-*.pkg.tar.zst "${{ inputs.package }}"-[0-9]*-*.pkg.tar.zst.sig
+          ./sign.sh
+          echo "--- db now has:"; tar -tzf pearos.db.tar.gz | sed 's#/.*##' | sort -u | grep -E "^${{ inputs.package }}-[0-9]" || echo "  ${{ inputs.package }} is gone from the db"
+          echo "--- R2 now has:"; rclone lsf "r2-pearos:package-repo/main/x86_64" | grep -E "^${{ inputs.package }}-[0-9]" || echo "  no ${{ inputs.package }} files"
+
+      - name: Clean up passphrase
+        if: always()
+        run: rm -f /tmp/r2-stage/.gpg-passphrase
