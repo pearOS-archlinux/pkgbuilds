@@ -42,10 +42,13 @@ set_wallpaper_if_pearos() {
   local mode="$1"
   # Determine current wallpaper using Plasma config
   local current
-  current="$(grep "Image=" ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null \
-    | grep -v "Image=true" \
-    | sed 's/.*Image=//' \
-    | tail -n 1)"
+  # Anchor on "^Image=": an unanchored match also hits PreviewImage= and
+  # customButtonImage= (the launchpad icon, last in the file), so the old
+  # `grep Image= | tail -n 1` never saw the wallpaper and the light/dark
+  # wallpaper swap was silently skipped. Same lookup as the Settings app.
+  current="$(grep '^Image=' ~/.config/plasma-org.kde.plasma.desktop-appletsrc 2>/dev/null \
+    | head -n 1 \
+    | sed 's/^Image=//')"
   # Normalize file:// URIs to plain paths
   current="${current#file://}"
   msg "DEBUG wallpaper current: '${current}'"
