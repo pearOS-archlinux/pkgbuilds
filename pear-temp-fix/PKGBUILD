@@ -2,8 +2,8 @@
 
 pkgname=pear-temp-fix
 pkgver=26.8.4
-pkgrel=2
-pkgdesc="Realigns existing pearOS installs to the Arch package baseline: mirrors, kernel naming, linux-firmware epoch, [cachyos] repo"
+pkgrel=3
+pkgdesc="Realigns existing pearOS installs to the Arch package baseline: mirrors, kernel naming, linux-firmware epoch, [cachyos] repo (kept above [core]/[extra])"
 arch=('x86_64')
 url="https://github.com/pearOS-archlinux/iso/"
 license=('MIT')

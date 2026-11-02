@@ -36,8 +36,65 @@ SigLevel = Required DatabaseOptional
 Server = https://mirror.cachyos.org/repo/$arch/$repo
 EOF
 
-    echo "==> [cachyos] appended to ${conf}, below core/extra/multilib"
+    echo "==> [cachyos] added to ${conf} (it is moved above [core] right after this)"
     echo "==> run 'pacman -Syu' to pick up linux-firmware and the cachyos kernels"
+}
+
+# [cachyos] has to come right after [pearos]/[inled] and BEFORE [core]/[extra]/
+# [multilib], the order CachyOS packages assume. With it below [extra], Arch's
+# zlib-ng-compat (no REPLACES) shadows CachyOS's and `pacman -Syu --noconfirm`
+# aborts on the zlib conflict, and Arch's nvidia-utils shadows the one that
+# linux-cachyos-*-nvidia-open pins by exact version. pearOS packages stay
+# untouched because [pearos] is still first.
+#
+# One-time, idempotent migration: only on pearOS (has [pearos]), only when
+# [cachyos] currently sits below [core]; the new file is validated with
+# pacman-conf before it replaces /etc/pacman.conf, and the old one is kept.
+_order_cachyos_repo() {
+    local conf=/etc/pacman.conf
+    local c_line core_line tmp repos
+
+    grep -q '^\[pearos\]' "${conf}" || return 0
+    c_line=$(grep -n '^\[cachyos\]' "${conf}" | head -n 1 | cut -d: -f1)
+    core_line=$(grep -n '^\[core\]' "${conf}" | head -n 1 | cut -d: -f1)
+    [ -n "${c_line}" ] && [ -n "${core_line}" ] || return 0
+
+    if [ "${c_line}" -lt "${core_line}" ]; then
+        echo "==> [cachyos] is already above [core] in ${conf}"
+    else
+        tmp=$(mktemp) || return 0
+        awk -v c="${c_line}" -v k="${core_line}" '
+            { l[NR] = $0 }
+            END {
+                e = c
+                while (e + 1 <= NR && l[e + 1] != "" && l[e + 1] !~ /^#?\[/) e++
+                for (i = 1; i <= NR; i++) {
+                    if (i == k) { for (j = c; j <= e; j++) print l[j]; print "" }
+                    if (i >= c && i <= e) continue
+                    print l[i]
+                }
+            }' "${conf}" > "${tmp}"
+
+        # valid = pacman-conf parses it and the repo order is pearos < cachyos < core
+        if pacman-conf --config "${tmp}" --repo-list 2>/dev/null | awk '
+                { p[$1] = NR }
+                END { exit !(p["pearos"] && p["cachyos"] && p["core"] && \
+                             p["pearos"] < p["cachyos"] && p["cachyos"] < p["core"]) }'; then
+            cp -p "${conf}" "${conf}.pearos-backup"
+            cat "${tmp}" > "${conf}"
+            echo "==> [cachyos] moved above [core]/[extra]/[multilib] in ${conf}"
+            echo "==> previous file kept as ${conf}.pearos-backup"
+        else
+            echo "==> could not validate the reordered pacman.conf, left ${conf} untouched"
+        fi
+        rm -f "${tmp}"
+    fi
+
+    # The ISO that shipped this workaround for the same problem is not needed now.
+    if grep -q '^IgnorePkg.*lib32-zlib-ng-compat' "${conf}"; then
+        sed -i -E '/^IgnorePkg/ s/[[:space:]]+lib32-zlib-ng-compat//' "${conf}"
+        echo "==> removed the lib32-zlib-ng-compat IgnorePkg workaround"
+    fi
 }
 
 _enable_firmware_realign() {
@@ -50,6 +107,7 @@ post_install() {
     _patch_libprocesscore
     _populate_cachyos_key
     _enable_cachyos_repo
+    _order_cachyos_repo
     _enable_firmware_realign
 }
 
