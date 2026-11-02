@@ -4,7 +4,7 @@ pkgname=system-settings
 _realname=system-settings
 pkgdesc="pearOS System Settings application (Qt6/QML)"
 pkgver=26.7.0
-pkgrel=2
+pkgrel=3
 arch=('x86_64')
 depends=('qt6-base' 'qt6-declarative' 'qt6-5compat'
          'net-tools' 'fprintd' 'power-profiles-daemon' 'jq' 'piri-base')
@@ -32,7 +32,9 @@ build() {
   cmake -S "${srcdir}" -B "${srcdir}/build" \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=/usr
-  cmake --build "${srcdir}/build" --parallel
+  # Unbounded --parallel gets the compiler OOM-killed (exit 137) on the 16 GB
+  # CI runner: every qmlcache .cpp is a big translation unit.
+  cmake --build "${srcdir}/build" --parallel 2
 }
 
 package() {
