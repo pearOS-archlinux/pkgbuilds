@@ -30,10 +30,15 @@ jobs:
           fi
 
           read_version() {
-            # $1 = PKGBUILD contents, echoes "pkgver-pkgrel"
+            # $1 = PKGBUILD contents, echoes "[epoch:]pkgver-pkgrel". The epoch
+            # has to be part of it: dpkg --compare-versions (below) understands
+            # the same "epoch:version-release" syntax as pacman, and without it a
+            # package whose version "went down" on purpose (e.g. 26.7.2 -> epoch 1
+            # + 6.8.2) would be skipped as "did not increase".
             ( set -e
-              eval "$(printf '%s\n' "$1" | grep -E '^\s*pkgver=|^\s*pkgrel=')"
-              printf '%s-%s' "$pkgver" "$pkgrel"
+              epoch=
+              eval "$(printf '%s\n' "$1" | grep -E '^\s*epoch=|^\s*pkgver=|^\s*pkgrel=')"
+              printf '%s%s-%s' "${epoch:+$epoch:}" "$pkgver" "$pkgrel"
             )
           }
 
