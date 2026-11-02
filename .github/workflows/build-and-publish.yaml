@@ -81,6 +81,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Every job pulls the whole R2 repo, adds its package and pushes with
+      # `rclone sync --delete-after`. Run in parallel, the later push deletes
+      # what the earlier one just added (pearos-dock-26.6.10-6 was lost this
+      # way next to pearos-appmenu-26.5-2). One at a time.
+      max-parallel: 1
       matrix:
         pkgdir: ${{ fromJson(needs.detect-changes.outputs.dirs) }}
 
