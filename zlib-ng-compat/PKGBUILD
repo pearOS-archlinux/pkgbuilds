@@ -26,11 +26,13 @@ provides=('zlib' 'libz.so=1-64')
 conflicts=('zlib')
 replaces=('zlib')
 options=('!strip' '!debug')
-source=("https://mirror.cachyos.org/repo/x86_64/cachyos/${pkgname}-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst")
-noextract=("${pkgname}-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst")
+# saved under another name: the download would otherwise look like our own finished package
+_src="cachyos-${pkgname}-${pkgver}-${pkgrel}.pkg.tar.zst"
+source=("${_src}::https://mirror.cachyos.org/repo/x86_64/cachyos/${pkgname}-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst")
+noextract=("${_src}")
 sha256sums=('SKIP')
 
 package() {
-    bsdtar -xf "${srcdir}/${pkgname}-${pkgver}-${pkgrel}-x86_64.pkg.tar.zst" -C "${pkgdir}" \
+    bsdtar -xf "${srcdir}/${_src}" -C "${pkgdir}" \
         --exclude='.BUILDINFO' --exclude='.MTREE' --exclude='.PKGINFO' --exclude='.INSTALL' --exclude='.CHANGELOG'
 }
